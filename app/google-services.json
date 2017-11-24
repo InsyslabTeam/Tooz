@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "663566515256",
+    "firebase_url": "https://tooz-44576.firebaseio.com",
+    "project_id": "tooz-44576",
+    "storage_bucket": "tooz-44576.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:663566515256:android:1a63b724eba06118",
+        "android_client_info": {
+          "package_name": "com.insyslab.tooz"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "663566515256-760b6ov23ehvstu860er8m90deqvu9b6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.insyslab.tooz",
+            "certificate_hash": "31d8698c63dcde58dc9fe084362b0c859cfab546"
+          }
+        },
+        {
+          "client_id": "663566515256-hccck13hfh2dcdv1cgrgc953ovqct8em.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAT_E84vE-XlTlhX1EsSMrCH3UNr9ZUVmU"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "663566515256-hccck13hfh2dcdv1cgrgc953ovqct8em.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
