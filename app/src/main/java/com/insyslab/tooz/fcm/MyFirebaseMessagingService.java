@@ -13,7 +13,7 @@ import android.util.Log;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.google.gson.Gson;
-import com.insyslab.tooz.DashboardActivity;
+import com.insyslab.tooz.ui.activities.DashboardActivity;
 
 import org.json.JSONObject;
 

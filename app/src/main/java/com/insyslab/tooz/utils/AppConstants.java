@@ -33,4 +33,6 @@ public class AppConstants {
 
     public static final String KEY_PUSH_NOTIFICATION = "KEY_PUSH_NOTIFICATION";
     public static final String KEY_PUSH_MESSAGE = "message";
+
+    public static final String KEY_SIGN_IN_RESPONSE = "KEY_SIGN_IN_RESPONSE";
 }

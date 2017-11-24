@@ -11,4 +11,6 @@ public class ConstantClass {
 
     public static final boolean IS_DEV = true;
 
+    public static final int REQUEST_TYPE_001 = 1001;
+    public static final String SIGN_IN_REQUEST = "";
 }
