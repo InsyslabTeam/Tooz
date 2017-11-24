@@ -8,11 +8,6 @@ import static com.insyslab.tooz.utils.ConstantClass.IS_DEV;
 
 public class AppConstants {
 
-    public static final String BASE_DEV_URL = "";
-    public static final String BASE_PROD_URL = "";
-
-    public static final String BASE_URL = IS_DEV ? BASE_DEV_URL : BASE_PROD_URL;
-
     public static final String KEY_USER_SHARED_PREFERENCE = "UserSharedPrefs";
     public static final String KEY_TOOZ_SHARED_PREFERENCE = "TOOZSharedPrefs";
 

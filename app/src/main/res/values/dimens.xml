@@ -18,17 +18,21 @@
     <dimen name="onboarding_footer_margin">2dp</dimen>
     <dimen name="onboarding_sub_title_text">20sp</dimen>
     <dimen name="onboarding_hint_text">12sp</dimen>
+    <dimen name="onboarding_title_separator_height">3dp</dimen>
+    <dimen name="onboarding_input_field_width">200dp</dimen>
 
     <dimen name="mobile_number_title_text">32sp</dimen>
     <dimen name="mobile_number_title_separator_width">64dp</dimen>
-    <dimen name="mobile_number_title_separator_height">3dp</dimen>
-    <dimen name="mobile_number_input_field_width">200dp</dimen>
 
     <dimen name="otp_verification_otp_section_width">200dp</dimen>
     <dimen name="otp_verification_otp_section_height">56dp</dimen>
     <dimen name="otp_verification_input_margin">6dp</dimen>
     <dimen name="otp_verification_input_padding">8dp</dimen>
     <dimen name="otp_verification_input_text">18sp</dimen>
+    <dimen name="otp_verification_text_spacing">4dp</dimen>
+
+    <dimen name="create_profile_title_separator_width">128dp</dimen>
+    <dimen name="create_profile_picture">96dp</dimen>
 
     <!--Dashboard-->
 

@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.insyslab.tooz.models.FragmentState;
@@ -95,5 +96,11 @@ public abstract class BaseFragment extends Fragment {
             });
         }
         builder.show();
+    }
+
+    public void disableEdittext(EditText editText) {
+        editText.setClickable(false);
+        editText.setFocusable(false);
+        editText.setFocusableInTouchMode(false);
     }
 }

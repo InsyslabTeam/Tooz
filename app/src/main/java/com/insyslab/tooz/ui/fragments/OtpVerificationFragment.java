@@ -20,24 +20,32 @@ import android.widget.TextView;
 
 import com.insyslab.tooz.R;
 import com.insyslab.tooz.models.FragmentState;
-import com.insyslab.tooz.utils.AppConstants;
+import com.insyslab.tooz.models.responses.Error;
+import com.insyslab.tooz.models.responses.ResendOtpResponse;
+import com.insyslab.tooz.models.responses.VerifyOtpResponse;
+import com.insyslab.tooz.restclient.BaseResponseInterface;
+import com.insyslab.tooz.ui.activities.OnboardingActivity;
 
 import static com.insyslab.tooz.utils.AppConstants.KEY_OTP_MESSAGE;
 import static com.insyslab.tooz.utils.AppConstants.KEY_OTP_NUMBER;
 import static com.insyslab.tooz.utils.AppConstants.KEY_OTP_SMS;
+import static com.insyslab.tooz.utils.AppConstants.KEY_SIGN_IN_RESPONSE;
 import static com.insyslab.tooz.utils.AppConstants.VAL_OTP_NUMBER;
+import static com.insyslab.tooz.utils.ConstantClass.REQUEST_TYPE_002;
+import static com.insyslab.tooz.utils.ConstantClass.REQUEST_TYPE_003;
 
 /**
  * Created by TaNMay on 26/09/16.
  */
 
-public class OtpVerificationFragment extends BaseFragment {
+public class OtpVerificationFragment extends BaseFragment implements BaseResponseInterface {
 
     public static final String TAG = "OtpVerifFrag ==> ";
 
     private static final String ARG_PARAM1 = "ARG_PARAM1";
 
-    private TextView tvMobileNumber;
+    private RelativeLayout content;
+    private TextView tvMobileNumber, tvResendOtp;
     private EditText etOtpOne, etOtpTwo, etOtpThree, etOtpFour;
     private ImageView ivProceed;
 
@@ -73,7 +81,7 @@ public class OtpVerificationFragment extends BaseFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-
+            Bundle bundle = getArguments().getBundle(ARG_PARAM1);
         }
     }
 
@@ -86,8 +94,13 @@ public class OtpVerificationFragment extends BaseFragment {
         setUpActions();
 
         initAutoReadSms();
+        setUpViewDetails();
 
         return layout;
+    }
+
+    private void setUpViewDetails() {
+        tvMobileNumber.setText("+91 88888 88888");
     }
 
     private String getOtpFromMessage(String message) {
@@ -106,11 +119,35 @@ public class OtpVerificationFragment extends BaseFragment {
     }
 
     private void onProceedClick() {
-        initRequest();
+        String otp = getInputOtp();
+        if (otp.length() == 4) {
+            initVerifyOtpRequest();
+        } else {
+            showSnackbarMessage(content, "Please enter a valid OTP!", true, getString(R.string.ok), null, true);
+        }
     }
 
-    private void initRequest() {
+    private String getInputOtp() {
+        String otp = "";
+        otp += etOtpOne.getText().toString();
+        otp += etOtpTwo.getText().toString();
+        otp += etOtpThree.getText().toString();
+        otp += etOtpFour.getText().toString();
 
+        return otp;
+    }
+
+    private void initVerifyOtpRequest() {
+        openCreateProfileFragment(new VerifyOtpResponse());
+//        showProgressDialog(getString(R.string.loading));
+//
+//        String requestUrl = VERIFY_OTP_REQUEST_URL;
+//        JSONObject requestObject = new RequestBuilder().getVerifyOtpRequestPayload();
+//
+//        if (requestObject != null) {
+//            GenericDataHandler req1GenericDataHandler = new GenericDataHandler(this, getContext(), REQUEST_TYPE_002);
+//            req1GenericDataHandler.jsonObjectRequest(requestObject, requestUrl, Request.Method.POST, VerifyOtpResponse.class);
+//        }
     }
 
     private void initAutoReadSms() {
@@ -118,7 +155,9 @@ public class OtpVerificationFragment extends BaseFragment {
     }
 
     private void initView(View rootView) {
+        content = rootView.findViewById(R.id.fov_content);
         tvMobileNumber = rootView.findViewById(R.id.fov_mobile_number);
+        tvResendOtp = rootView.findViewById(R.id.fov_resend_otp);
         etOtpOne = rootView.findViewById(R.id.fov_otp_digit_one);
         etOtpTwo = rootView.findViewById(R.id.fov_otp_digit_two);
         etOtpThree = rootView.findViewById(R.id.fov_otp_digit_three);
@@ -134,7 +173,30 @@ public class OtpVerificationFragment extends BaseFragment {
             }
         });
 
+        tvResendOtp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onResendOtpClick();
+            }
+        });
+
         setUpOtpInputSection();
+    }
+
+    private void onResendOtpClick() {
+        initResendOtpRequest();
+    }
+
+    private void initResendOtpRequest() {
+//        showProgressDialog(getString(R.string.loading));
+//
+//        String requestUrl = RESEND_OTP_REQUEST_URL;
+//        JSONObject requestObject = new RequestBuilder().getResendOtpRequestPayload();
+//
+//        if (requestObject != null) {
+//            GenericDataHandler req1GenericDataHandler = new GenericDataHandler(this, getContext(), REQUEST_TYPE_003);
+//            req1GenericDataHandler.jsonObjectRequest(requestObject, requestUrl, Request.Method.POST, ResendOtpResponse.class);
+//        }
     }
 
     private void setUpOtpInputSection() {
@@ -191,5 +253,63 @@ public class OtpVerificationFragment extends BaseFragment {
     @Override
     public void onDetach() {
         super.onDetach();
+    }
+
+    @Override
+    public void onResponse(Object success, Object error, final int requestCode) {
+        hideProgressDialog();
+        if (error == null) {
+            switch (requestCode) {
+                case REQUEST_TYPE_002:
+                    onVerifyOtpResponse((VerifyOtpResponse) success);
+                    break;
+                case REQUEST_TYPE_003:
+                    onResendOtpResponse((ResendOtpResponse) success);
+                    break;
+                default:
+                    showToastMessage("ERROR " + requestCode + "!", false);
+                    break;
+            }
+        } else {
+            Error customError = (Error) error;
+            Log.d(TAG, "Error: " + customError.getMessage() + " -- " + customError.getStatus() + " -- ");
+            if (customError.getStatus() == 000) {
+                hideProgressDialog();
+                showNetworkErrorSnackbar(content, getString(R.string.error_no_internet), getString(R.string.retry),
+                        new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                switch (requestCode) {
+                                    case REQUEST_TYPE_002:
+                                        initVerifyOtpRequest();
+                                        break;
+                                    case REQUEST_TYPE_003:
+                                        initResendOtpRequest();
+                                        break;
+                                    default:
+                                        showToastMessage(getString(R.string.error_unknown), false);
+                                }
+                            }
+                        });
+            } else {
+                showSnackbarMessage(content, customError.getMessage(), true, getString(R.string.ok), null, true);
+            }
+
+        }
+
+    }
+
+    private void onResendOtpResponse(ResendOtpResponse success) {
+
+    }
+
+    private void onVerifyOtpResponse(VerifyOtpResponse success) {
+        openCreateProfileFragment(success);
+    }
+
+    private void openCreateProfileFragment(VerifyOtpResponse verifyOtpResponse) {
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(KEY_SIGN_IN_RESPONSE, verifyOtpResponse);
+        ((OnboardingActivity) getActivity()).openThisFragment(CreateProfileFragment.TAG, bundle);
     }
 }

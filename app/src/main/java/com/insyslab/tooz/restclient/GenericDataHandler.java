@@ -12,6 +12,8 @@ import org.json.JSONObject;
 import java.lang.reflect.Type;
 import java.util.Map;
 
+import static com.insyslab.tooz.utils.ConstantClass.BASE_URL;
+
 /**
  * Created by TaNMay on 06/10/17.
  */
@@ -32,23 +34,23 @@ public class GenericDataHandler implements SuccessListener {
     }
 
     public void jsonObjectRequest(JSONObject request, String url, Integer method, Type responseType) {
-        HttpRequestHandler.makeJsonObjectRequest(request, url, token, method, this, responseType, context);
+        HttpRequestHandler.makeJsonObjectRequest(request, BASE_URL + url, token, method, this, responseType, context);
     }
 
     public void jsonArrayRequest(String url, Type responseType) {
-        HttpRequestHandler.makeJsonArrayRequest(url, token, this, responseType, context);
+        HttpRequestHandler.makeJsonArrayRequest(BASE_URL + url, token, this, responseType, context);
     }
 
     public void customRequest(JSONObject request, String url, Integer method, Type responseType) {
-        HttpRequestHandler.makeCustomRequest(request, url, token, method, this, responseType, context);
+        HttpRequestHandler.makeCustomRequest(request, BASE_URL + url, token, method, this, responseType, context);
     }
 
     public void stringRequest(String url, Integer method) {
-        HttpRequestHandler.makeStringRequest(url, token, method, this, context);
+        HttpRequestHandler.makeStringRequest(BASE_URL + url, token, method, this, context);
     }
 
     public void multipartRequest(String url, Integer method, Map<String, VolleyMultipartRequest.DataPart> partMap, Map<String, String> paramsMap, Type responseType) {
-        HttpRequestHandler.makeMultipartRequest(url, method, this, partMap, paramsMap, responseType, context);
+        HttpRequestHandler.makeMultipartRequest(BASE_URL + url, method, this, partMap, paramsMap, responseType, context);
     }
 
     @Override

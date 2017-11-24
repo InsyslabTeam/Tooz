@@ -22,39 +22,39 @@
             android:src="@drawable/ic_logo" />
 
         <TextView
+            style="@style/DefaultOnboardingText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:text="Welcome!"
-            android:textColor="@color/white"
+            android:text="@string/welcome"
             android:textSize="@dimen/mobile_number_title_text" />
 
         <View
             android:layout_width="@dimen/mobile_number_title_separator_width"
-            android:layout_height="@dimen/mobile_number_title_separator_height"
+            android:layout_height="@dimen/onboarding_title_separator_height"
             android:layout_gravity="center_horizontal"
             android:layout_margin="@dimen/onboarding_smaller_spacing"
             android:background="@drawable/ic_rounded_white_rectangle" />
 
         <TextView
+            style="@style/DefaultOnboardingText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_margin="@dimen/onboarding_bigger_spacing"
             android:text="@string/sign_in"
-            android:textColor="@color/white"
             android:textSize="@dimen/onboarding_sub_title_text" />
     </LinearLayout>
 
     <TextView
         android:id="@+id/fmn_footer"
+        style="@style/DefaultOnboardingText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_margin="@dimen/onboarding_footer_margin"
         android:gravity="center_horizontal"
         android:text="@string/sign_in_footer_text"
-        android:textColor="@color/white"
         android:textSize="@dimen/onboarding_hint_text" />
 
     <LinearLayout
@@ -72,6 +72,7 @@
 
             <TextView
                 android:id="@+id/fmn_mobile_number_hint"
+                style="@style/DefaultOnboardingText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
@@ -81,17 +82,17 @@
                 android:paddingLeft="@dimen/onboarding_bigger_spacing"
                 android:paddingRight="@dimen/onboarding_bigger_spacing"
                 android:text="@string/sign_in_mobile_number_hint"
-                android:textColor="@color/white"
                 android:textSize="@dimen/onboarding_hint_text" />
 
             <android.support.design.widget.TextInputLayout
-                android:layout_width="@dimen/mobile_number_input_field_width"
+                android:layout_width="@dimen/onboarding_input_field_width"
                 android:layout_height="wrap_content"
                 android:layout_above="@id/fmn_mobile_number_hint"
                 android:layout_centerHorizontal="true">
 
                 <android.support.design.widget.TextInputEditText
                     android:id="@+id/fmn_mobile_number"
+                    style="@style/DefaultEdittext"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:digits="0123456789"

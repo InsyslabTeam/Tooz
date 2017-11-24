@@ -24,4 +24,12 @@ public class RequestBuilder {
             return null;
         }
     }
+
+    public JSONObject getVerifyOtpRequestPayload() {
+        return null;
+    }
+
+    public JSONObject getResendOtpRequestPayload() {
+        return null;
+    }
 }

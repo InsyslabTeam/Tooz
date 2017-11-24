@@ -1,5 +1,6 @@
 package com.insyslab.tooz.ui.activities;
 
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
@@ -10,6 +11,7 @@ import android.view.View;
 import com.insyslab.tooz.R;
 import com.insyslab.tooz.interfaces.OnRuntimePermissionsResultListener;
 import com.insyslab.tooz.models.FragmentState;
+import com.insyslab.tooz.ui.fragments.CreateProfileFragment;
 import com.insyslab.tooz.ui.fragments.MobileNumberFragment;
 import com.insyslab.tooz.ui.fragments.OtpVerificationFragment;
 
@@ -45,6 +47,11 @@ public class OnboardingActivity extends BaseActivity {
                     .add(R.id.ao_fragment_container, OtpVerificationFragment.newInstance((Bundle) bundle), fragmentTag)
                     .addToBackStack(TAG)
                     .commitAllowingStateLoss();
+        } else if (fragmentTag.equals(CreateProfileFragment.TAG)) {
+            fragmentManager.beginTransaction()
+                    .add(R.id.ao_fragment_container, CreateProfileFragment.newInstance((Bundle) bundle), fragmentTag)
+                    .addToBackStack(TAG)
+                    .commit();
         }
     }
 
@@ -63,19 +70,22 @@ public class OnboardingActivity extends BaseActivity {
                 if (grantResults.length > 0) {
                     boolean smsPermissions = grantResults[0] == PackageManager.PERMISSION_GRANTED
                             && grantResults[1] == PackageManager.PERMISSION_GRANTED;
-                    showSnackbarMessage(
-                            findViewById(R.id.ao_fragment_container),
-                            "SMS Permissions Denied!",
-                            true,
-                            getString(R.string.retry),
-                            new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    requestSmsPermissions();
-                                }
-                            },
-                            false);
                     onRuntimePermissionsResultListener.onSmsPermissionsResult(smsPermissions);
+
+                    if (!smsPermissions) {
+                        showSnackbarMessage(
+                                findViewById(R.id.ao_fragment_container),
+                                "SMS Permissions Denied!",
+                                true,
+                                getString(R.string.retry),
+                                new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        requestSmsPermissions();
+                                    }
+                                },
+                                false);
+                    }
                 }
                 break;
         }
@@ -86,5 +96,11 @@ public class OnboardingActivity extends BaseActivity {
                 READ_SMS,
                 RECEIVE_SMS
         }, REQUEST_SMS_PERMISSION_CODE);
+    }
+
+    public void proceedToDashboard() {
+        Intent intent = new Intent(this, DashboardActivity.class);
+        startActivity(intent);
+        finish();
     }
 }

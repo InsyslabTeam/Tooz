@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/fcp_content"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorPrimary"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/fcp_header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:orientation="vertical"
+        android:padding="@dimen/onboarding_bigger_spacing">
+
+        <TextView
+            style="@style/DefaultOnboardingText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="@dimen/onboarding_bigger_spacing"
+            android:text="@string/create_your_profile"
+            android:textSize="@dimen/mobile_number_title_text" />
+
+        <View
+            android:layout_width="@dimen/create_profile_title_separator_width"
+            android:layout_height="@dimen/onboarding_title_separator_height"
+            android:layout_gravity="center_horizontal"
+            android:layout_margin="@dimen/onboarding_smaller_spacing"
+            android:background="@drawable/ic_rounded_white_rectangle" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/fcp_profile_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/fcp_header"
+        android:layout_marginBottom="@dimen/onboarding_bigger_spacing"
+        android:layout_marginTop="@dimen/onboarding_bigger_spacing"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:weightSum="100">
+
+        <ImageView
+            android:id="@+id/fcp_profile_picture"
+            android:layout_width="@dimen/create_profile_picture"
+            android:layout_height="@dimen/create_profile_picture"
+            android:layout_centerInParent="true"
+            android:src="@drawable/ic_user" />
+
+        <TextView
+            android:id="@+id/fcp_profile_picture_hint"
+            style="@style/DefaultOnboardingText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/onboarding_bigger_spacing"
+            android:paddingLeft="@dimen/onboarding_bigger_spacing"
+            android:paddingRight="@dimen/onboarding_bigger_spacing"
+            android:text="@string/select_a_profile_picture"
+            android:textSize="@dimen/onboarding_hint_text" />
+
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="@dimen/onboarding_input_field_width"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="@dimen/onboarding_bigger_spacing">
+
+            <android.support.design.widget.TextInputEditText
+                android:id="@+id/fcp_name"
+                style="@style/DefaultEdittext"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:hint="@string/name"
+                android:imeOptions="actionDone"
+                android:inputType="textPersonName"
+                android:maxLength="25"
+                android:textColor="@color/white"
+                android:textColorHint="@color/white" />
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="@dimen/onboarding_input_field_width"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="@dimen/onboarding_bigger_spacing">
+
+            <android.support.design.widget.TextInputEditText
+                android:id="@+id/fcp_mobile_number"
+                style="@style/DefaultEdittext"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:digits="0123456789"
+                android:gravity="center_horizontal"
+                android:hint="@string/mobile_number"
+                android:imeOptions="actionDone"
+                android:inputType="phone"
+                android:maxLength="10"
+                android:textColor="@color/white"
+                android:textColorHint="@color/white" />
+        </android.support.design.widget.TextInputLayout>
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/fcp_proceed"
+        android:layout_width="@dimen/onboarding_button_dimen"
+        android:layout_height="@dimen/onboarding_button_dimen"
+        android:layout_below="@id/fcp_profile_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="@dimen/onboarding_bigger_spacing"
+        android:background="@drawable/ic_onboarding_button"
+        android:padding="@dimen/onboarding_bigger_spacing"
+        android:src="@drawable/ic_chevron_right" />
+</RelativeLayout>

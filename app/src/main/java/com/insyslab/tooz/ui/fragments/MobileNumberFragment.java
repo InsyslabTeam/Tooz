@@ -10,26 +10,20 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
-import com.android.volley.Request;
 import com.insyslab.tooz.R;
 import com.insyslab.tooz.interfaces.OnRuntimePermissionsResultListener;
 import com.insyslab.tooz.models.FragmentState;
 import com.insyslab.tooz.models.responses.Error;
 import com.insyslab.tooz.models.responses.SignInResponse;
 import com.insyslab.tooz.restclient.BaseResponseInterface;
-import com.insyslab.tooz.restclient.GenericDataHandler;
-import com.insyslab.tooz.restclient.RequestBuilder;
 import com.insyslab.tooz.ui.activities.OnboardingActivity;
 import com.insyslab.tooz.utils.Util;
 import com.insyslab.tooz.utils.Validator;
-
-import org.json.JSONObject;
 
 import static android.Manifest.permission.READ_SMS;
 import static android.Manifest.permission.RECEIVE_SMS;
 import static com.insyslab.tooz.utils.AppConstants.KEY_SIGN_IN_RESPONSE;
 import static com.insyslab.tooz.utils.ConstantClass.REQUEST_TYPE_001;
-import static com.insyslab.tooz.utils.ConstantClass.SIGN_IN_REQUEST;
 
 /**
  * Created by TaNMay on 26/09/16.
