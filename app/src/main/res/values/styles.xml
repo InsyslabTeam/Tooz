@@ -56,4 +56,10 @@
         <item name="android:minLines">1</item>
         <item name="android:maxLines">1</item>
     </style>
+
+    <style name="SinglelineText">
+        <item name="android:minLines">1</item>
+        <item name="android:maxLines">1</item>
+    </style>
+
 </resources>

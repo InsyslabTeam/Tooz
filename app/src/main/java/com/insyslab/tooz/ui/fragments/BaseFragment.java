@@ -95,6 +95,7 @@ public abstract class BaseFragment extends Fragment {
                 }
             });
         }
+        builder.setCancelable(false);
         builder.show();
     }
 

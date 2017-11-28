@@ -7,4 +7,6 @@ package com.insyslab.tooz.interfaces;
 public interface OnRuntimePermissionsResultListener {
 
     void onSmsPermissionsResult(boolean granted);
+
+    void onContactsPermissionsResult(boolean granted);
 }

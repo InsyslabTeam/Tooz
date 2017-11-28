@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">>
+    <item android:state_pressed="true">
+        <shape android:shape="rectangle">
+            <solid android:color="@color/dashboard_footer_tab_clicked" />
+        </shape>
+        <objectAnimator android:duration="250" android:propertyName="translationZ" android:valueFrom="2.0" android:valueTo="10.0" android:valueType="floatType" />
+    </item>
+
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="@color/dashboard_footer_background" />
+        </shape>
+        <objectAnimator android:duration="250" android:propertyName="translationZ" android:valueFrom="2.0" android:valueTo="10.0" android:valueType="floatType" />
+    </item>
+</selector>

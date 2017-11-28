@@ -21,7 +21,7 @@
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="@dimen/onboarding_bigger_spacing"
             android:text="@string/create_your_profile"
-            android:textSize="@dimen/mobile_number_title_text" />
+            android:textSize="@dimen/onboarding_title_text" />
 
         <View
             android:layout_width="@dimen/create_profile_title_separator_width"

@@ -16,12 +16,12 @@
     <dimen name="onboarding_bigger_spacing">16dp</dimen>
     <dimen name="onboarding_smaller_spacing">8dp</dimen>
     <dimen name="onboarding_footer_margin">2dp</dimen>
-    <dimen name="onboarding_sub_title_text">20sp</dimen>
     <dimen name="onboarding_hint_text">12sp</dimen>
     <dimen name="onboarding_title_separator_height">3dp</dimen>
     <dimen name="onboarding_input_field_width">200dp</dimen>
+    <dimen name="onboarding_title_text">32sp</dimen>
+    <dimen name="onboarding_sub_title_text">20sp</dimen>
 
-    <dimen name="mobile_number_title_text">32sp</dimen>
     <dimen name="mobile_number_title_separator_width">64dp</dimen>
 
     <dimen name="otp_verification_otp_section_width">200dp</dimen>
@@ -34,6 +34,28 @@
     <dimen name="create_profile_title_separator_width">128dp</dimen>
     <dimen name="create_profile_picture">96dp</dimen>
 
+    <dimen name="sync_contacts_title_separator_width">152dp</dimen>
+    <dimen name="sync_contacts_footer_padding_vertical">12dp</dimen>
+    <dimen name="sync_contacts_footer_padding_horizontal">20dp</dimen>
+    <dimen name="sync_contacts_footer_text">18sp</dimen>
+    <dimen name="sync_contacts_select_all_height">36dp</dimen>
+    <dimen name="sync_contacts_select_all_text">16sp</dimen>
+    <dimen name="sync_contacts_select_all_padding">10dp</dimen>
+    <dimen name="sync_contacts_selector">32dp</dimen>
+    <dimen name="sync_contacts_item_margin">10dp</dimen>
+    <dimen name="sync_contacts_item_image">32dp</dimen>
+    <dimen name="sync_contacts_contact_name">14sp</dimen>
+    <dimen name="sync_contacts_contact_number">10sp</dimen>
+
     <!--Dashboard-->
+    <dimen name="dashboard_toolbar_title">24sp</dimen>
+    <dimen name="dashboard_toolbar_icon">32dp</dimen>
+    <dimen name="dashboard_toolbar_margin">16dp</dimen>
+    <dimen name="dashboard_fab_bottom_margin">72dp</dimen>
+    <dimen name="dashboard_footer_height">56dp</dimen>
+    <dimen name="dashboard_footer_divider">2dp</dimen>
+    <dimen name="dashboard_footer_tab_text">16sp</dimen>
+    <dimen name="dashboard_footer_elevation">4dp</dimen>
+    <dimen name="dashboard_footer_tab_margin">6dp</dimen>
 
 </resources>

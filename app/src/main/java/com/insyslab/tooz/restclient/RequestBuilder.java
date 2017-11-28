@@ -10,6 +10,8 @@ import org.json.JSONObject;
 public class RequestBuilder {
 
     private final String key_mobile_number = "mobile_number";
+    private final String key_name = "name";
+    private JSONObject contactSyncRequest;
 
     public RequestBuilder() {
     }
@@ -30,6 +32,22 @@ public class RequestBuilder {
     }
 
     public JSONObject getResendOtpRequestPayload() {
+        return null;
+    }
+
+    public JSONObject getCreateProfileRequestPayload(String name) {
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put(key_name, name);
+            return jsonObject;
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return null;
+        }
+
+    }
+
+    public JSONObject getContactSyncRequest() {
         return null;
     }
 }

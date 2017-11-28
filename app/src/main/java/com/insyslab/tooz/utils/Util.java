@@ -166,4 +166,8 @@ public class Util {
         String formattedAmount = String.format("%.2f", original) + "";
         return formattedAmount;
     }
+
+    public static Boolean isLoggedIn() {
+        return true;
+    }
 }

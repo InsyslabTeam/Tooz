@@ -27,5 +27,12 @@
     <string name="create_your_profile">Create your Profile!</string>
     <string name="name">Name</string>
     <string name="select_a_profile_picture">Select a profile picture</string>
+    <string name="sync_your_contacts">Sync your contacts</string>
+    <string name="skip">SKIP</string>
+    <string name="sync">SYNC</string>
+    <string name="select_all">Select All</string>
+    <string name="upcoming_reminders">Upcoming\nReminders</string>
+    <string name="past_reminders">Past\nReminders</string>
+    <string name="all_contacts">All\nContacts</string>
 
 </resources>

@@ -218,8 +218,10 @@ public class OtpVerificationFragment extends BaseFragment implements BaseRespons
                 if (nextEditText != null && !isEditTextEmpty(currentEditText)) {
                     nextEditText.setText("");
                     nextEditText.requestFocus();
-                } else if (nextEditText == null) onProceedClick();
-                else Log.d(TAG, "Some OTP input error!");
+                } else if (nextEditText == null) {
+                    if (getInputOtp().length() == 4)
+                        onProceedClick();
+                } else Log.d(TAG, "Some OTP input error!");
             }
 
             @Override

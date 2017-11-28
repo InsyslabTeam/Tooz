@@ -1,20 +1,99 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/activity_background"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".ui.activities.DashboardActivity"
     tools:showIn="@layout/activity_dashboard">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    <LinearLayout
+        android:id="@+id/ad_footer"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dashboard_footer_height"
+        android:layout_alignParentBottom="true"
+        android:background="@drawable/ic_dashboard_tab"
+        android:elevation="@dimen/dashboard_footer_elevation"
+        android:orientation="horizontal"
+        android:weightSum="200">
 
-</android.support.constraint.ConstraintLayout>
+        <RelativeLayout
+            android:id="@+id/ad_upcoming"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="66">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_margin="@dimen/dashboard_footer_tab_margin"
+                android:gravity="center"
+                android:text="@string/upcoming_reminders"
+                android:textColor="@color/black"
+                android:textSize="@dimen/dashboard_footer_tab_text" />
+        </RelativeLayout>
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/ic_gradient_divider" />
+
+        <RelativeLayout
+            android:id="@+id/ad_past"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="66">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_margin="@dimen/dashboard_footer_tab_margin"
+                android:gravity="center"
+                android:text="@string/past_reminders"
+                android:textColor="@color/black"
+                android:textSize="@dimen/dashboard_footer_tab_text" />
+        </RelativeLayout>
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/ic_gradient_divider" />
+
+        <RelativeLayout
+            android:id="@+id/ad_all"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="66">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_margin="@dimen/dashboard_footer_tab_margin"
+                android:gravity="center"
+                android:text="@string/all_contacts"
+                android:textColor="@color/black"
+                android:textSize="@dimen/dashboard_footer_tab_text" />
+        </RelativeLayout>
+    </LinearLayout>
+
+    <View
+        android:id="@+id/ad_footer_divider"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dashboard_footer_divider"
+        android:layout_above="@id/ad_footer"
+        android:background="@drawable/ic_gradient_divider" />
+
+    <FrameLayout
+        android:id="@+id/ad_fragment_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/ad_footer_divider" />
+
+</RelativeLayout>

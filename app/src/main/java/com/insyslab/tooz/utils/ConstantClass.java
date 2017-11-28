@@ -24,4 +24,10 @@ public class ConstantClass {
 
     public static final int REQUEST_TYPE_003 = 1003;
     public static final String RESEND_OTP_REQUEST_URL = "";
+
+    public static final int REQUEST_TYPE_004 = 1004;
+    public static final String CREATE_PROFILE_REQUEST_URL = "";
+
+    public static final int REQUEST_TYPE_005 = 1005;
+    public static final String CONTACTS_SYNC_REQUEST_URL = "";
 }

@@ -9,6 +9,7 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import com.insyslab.tooz.R;
+import com.insyslab.tooz.utils.Util;
 
 import static com.insyslab.tooz.utils.ConstantClass.SPLASH_TIME_OUT;
 
@@ -65,7 +66,8 @@ public class SplashActivity extends BaseActivity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                proceedToOnboarding();
+                if (Util.isLoggedIn()) proceedToDashboard();
+                else proceedToOnboarding();
             }
         }, SPLASH_TIME_OUT);
     }
@@ -76,7 +78,7 @@ public class SplashActivity extends BaseActivity {
         finish();
     }
 
-    private void proceedToDashboard(String feedId) {
+    private void proceedToDashboard() {
         Intent i = new Intent(this, DashboardActivity.class);
         startActivity(i);
         finish();

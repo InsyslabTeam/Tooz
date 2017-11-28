@@ -29,7 +29,8 @@ import static com.insyslab.tooz.utils.ConstantClass.REQUEST_TYPE_001;
  * Created by TaNMay on 26/09/16.
  */
 
-public class MobileNumberFragment extends BaseFragment implements OnRuntimePermissionsResultListener, BaseResponseInterface {
+public class MobileNumberFragment extends BaseFragment implements BaseResponseInterface,
+        OnRuntimePermissionsResultListener {
 
     public static final String TAG = "MobileNumberFrag ==> ";
 
@@ -145,6 +146,11 @@ public class MobileNumberFragment extends BaseFragment implements OnRuntimePermi
     @Override
     public void onSmsPermissionsResult(boolean granted) {
         initSignInRequest();
+    }
+
+    @Override
+    public void onContactsPermissionsResult(boolean granted) {
+
     }
 
     @Override

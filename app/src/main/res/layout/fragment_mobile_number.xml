@@ -27,7 +27,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:text="@string/welcome"
-            android:textSize="@dimen/mobile_number_title_text" />
+            android:textSize="@dimen/onboarding_title_text" />
 
         <View
             android:layout_width="@dimen/mobile_number_title_separator_width"
