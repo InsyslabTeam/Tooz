@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/ncv_content"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:visibility="gone">
+
+    <ImageView
+        android:id="@+id/ncv_image"
+        android:layout_width="@dimen/no_content_view_image"
+        android:layout_height="@dimen/no_content_view_image"
+        android:layout_centerInParent="true"
+        android:layout_marginTop="@dimen/no_content_view_image"
+        android:src="@drawable/ic_logo" />
+
+    <TextView
+        android:id="@+id/ncv_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/ncv_image"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="@dimen/no_content_view_text_margin"
+        android:textColor="@color/black"
+        android:textSize="@dimen/no_content_view_title" />
+</RelativeLayout>

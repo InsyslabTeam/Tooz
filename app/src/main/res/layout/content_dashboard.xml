@@ -14,7 +14,7 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/dashboard_footer_height"
         android:layout_alignParentBottom="true"
-        android:background="@drawable/ic_dashboard_tab"
+        android:background="@color/dashboard_footer_background"
         android:elevation="@dimen/dashboard_footer_elevation"
         android:orientation="horizontal"
         android:weightSum="200">
@@ -23,9 +23,11 @@
             android:id="@+id/ad_upcoming"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="66">
+            android:layout_weight="66"
+            android:background="@drawable/ic_dashboard_tab">
 
             <TextView
+                android:id="@+id/ad_upcoming_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
@@ -46,9 +48,11 @@
             android:id="@+id/ad_past"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="66">
+            android:layout_weight="66"
+            android:background="@drawable/ic_dashboard_tab">
 
             <TextView
+                android:id="@+id/ad_past_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
@@ -66,12 +70,14 @@
             android:background="@drawable/ic_gradient_divider" />
 
         <RelativeLayout
-            android:id="@+id/ad_all"
+            android:id="@+id/ad_all_contacts"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="66">
+            android:layout_weight="66"
+            android:background="@drawable/ic_dashboard_tab">
 
             <TextView
+                android:id="@+id/ad_all_contacts_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"

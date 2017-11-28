@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/fs_content"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/fragment_background">
@@ -14,20 +15,17 @@
             android:orientation="vertical">
 
             <RelativeLayout
-                android:id="@+id/fur_header"
+                android:id="@+id/fs_header"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
             </RelativeLayout>
 
             <android.support.v7.widget.RecyclerView
-                android:id="@+id/fur_upcoming_rv"
+                android:id="@+id/fs_settings_rv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:nestedScrollingEnabled="false" />
-
-            <include layout="@layout/no_content_view" />
-
         </LinearLayout>
     </android.support.v4.widget.NestedScrollView>
 </RelativeLayout>

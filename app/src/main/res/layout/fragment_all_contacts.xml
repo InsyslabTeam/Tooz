@@ -14,20 +14,17 @@
             android:orientation="vertical">
 
             <RelativeLayout
-                android:id="@+id/fur_header"
+                android:id="@+id/fac_header"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
             </RelativeLayout>
 
             <android.support.v7.widget.RecyclerView
-                android:id="@+id/fur_upcoming_rv"
+                android:id="@+id/fac_contacts_rv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:nestedScrollingEnabled="false" />
-
-            <include layout="@layout/no_content_view" />
-
         </LinearLayout>
     </android.support.v4.widget.NestedScrollView>
 </RelativeLayout>
