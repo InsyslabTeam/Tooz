@@ -4,6 +4,8 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
 
+    <color name="colorAccentLight">#FF669A</color>
+
     <color name="activity_background">#FFFFFF</color>
     <color name="fragment_background">#FEFEFE</color>
 
@@ -20,4 +22,9 @@
     <color name="dashboard_footer_tab_clicked">#D9D9D9</color>
     <color name="dashboard_footer_deafult_tab_title">#666666</color>
 
+    <color name="colorButtonBlue">#4285F4</color>
+    <color name="colorButtonBlueDark">#346AC3</color>
+
+    <color name="colorButtonRed">#D90A2D</color>
+    <color name="colorButtonRedDark">#AD0824</color>
 </resources>

@@ -10,6 +10,8 @@ public class ContactItem {
 
     private String number;
 
+    private Boolean isBlocked = false;
+
     public String getName() {
         return name;
     }
@@ -24,5 +26,13 @@ public class ContactItem {
 
     public void setNumber(String number) {
         this.number = number;
+    }
+
+    public Boolean isBlocked() {
+        return isBlocked;
+    }
+
+    public void setBlocked(Boolean blocked) {
+        isBlocked = blocked;
     }
 }

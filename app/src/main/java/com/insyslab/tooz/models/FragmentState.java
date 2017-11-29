@@ -8,6 +8,8 @@ public class FragmentState {
 
     private String visibleFragment;
 
+    private String fragmentDetailedName;
+
     public FragmentState(String visibleFragment) {
         this.visibleFragment = visibleFragment;
     }
@@ -18,5 +20,13 @@ public class FragmentState {
 
     public void setVisibleFragment(String visibleFragment) {
         this.visibleFragment = visibleFragment;
+    }
+
+    public String getFragmentDetailedName() {
+        return fragmentDetailedName;
+    }
+
+    public void setFragmentDetailedName(String fragmentDetailedName) {
+        this.fragmentDetailedName = fragmentDetailedName;
     }
 }

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:animateLayoutChanges="true"
+    android:background="@color/white"
+    android:elevation="4dp"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp">
+
+        <ImageView
+            android:id="@+id/ibc_image"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginRight="16dp" />
+
+        <RelativeLayout
+            android:id="@+id/ibc_unblock_sec"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/ibc_image"
+            android:layout_alignParentRight="true"
+            android:layout_alignTop="@id/ibc_image">
+
+            <TextView
+                android:id="@+id/ibc_unblock"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:background="@drawable/ic_blue_button"
+                android:padding="8dp"
+                android:text="@string/unblock"
+                android:textColor="@color/white" />
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/ibc_image"
+            android:layout_alignTop="@id/ibc_image"
+            android:layout_toLeftOf="@id/ibc_unblock_sec"
+            android:layout_toRightOf="@id/ibc_image"
+            android:gravity="center_vertical"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/ibc_name"
+                style="@style/SinglelineText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/black"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/ibc_number"
+                style="@style/SinglelineText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:textSize="12sp" />
+        </LinearLayout>
+    </RelativeLayout>
+
+    <View
+        android:id="@+id/ibc_divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@drawable/ic_gradient_divider" />
+</LinearLayout>

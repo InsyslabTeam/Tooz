@@ -13,6 +13,7 @@ import com.insyslab.tooz.R;
 import com.insyslab.tooz.interfaces.OnSettingItemClickListener;
 import com.insyslab.tooz.models.FragmentState;
 import com.insyslab.tooz.models.SettingsItem;
+import com.insyslab.tooz.ui.activities.SettingsActivity;
 import com.insyslab.tooz.ui.adapters.SettingsAdapter;
 
 import java.util.ArrayList;
@@ -108,11 +109,26 @@ public class SettingsFragment extends BaseFragment implements OnSettingItemClick
         int position = settingsRv.getChildAdapterPosition(view);
         switch (position) {
             case 0:
+                redirectToThisFragment(BlockedContactsFragment.TAG);
                 break;
             case 1:
+                redirectToThisFragment(PreferencesFragment.TAG);
+                break;
+            case 2:
+                redirectToThisFragment(UpdateProfileFragment.TAG);
+                break;
+            case 3:
+                redirectToThisFragment(PrivacyFragment.TAG);
+                break;
+            case 4:
+                redirectToThisFragment(HelpFragment.TAG);
                 break;
             default:
                 break;
         }
+    }
+
+    private void redirectToThisFragment(String tag) {
+        ((SettingsActivity) getActivity()).openThisFragment(tag, null);
     }
 }

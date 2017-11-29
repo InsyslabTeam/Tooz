@@ -93,7 +93,7 @@ public class MobileNumberFragment extends BaseFragment implements BaseResponseIn
         if (mobileNumber == null && mobileNumber.isEmpty()) {
             tietMobileNumber.setError(getString(R.string.error_empty_field));
         } else if (!Validator.isValidMobileNumber(mobileNumber)) {
-            tietMobileNumber.setError("Please enter a valid mobile number");
+            tietMobileNumber.setError(getString(R.string.error_invalid_mobile_number));
         } else {
             if (!verifySmsPermissions()) {
                 initRuntimePermissions();

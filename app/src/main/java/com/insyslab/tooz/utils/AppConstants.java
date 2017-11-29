@@ -15,11 +15,17 @@ public class AppConstants {
     public static final String KEY_SHARED_PREFS_USER = "USER";
 
     public static final String KEY_TO_ONBOARDING = "KEY_TO_ONBOARDING";
+    public static final String KEY_TO_ACTIONS = "KEY_TO_ACTIONS";
+
+    public static final String KEY_SET_REMINDER_TYPE = "KEY_SET_REMINDER_TYPE";
 
     public static final String KEY_OTP_SMS = "otp";
     public static final String KEY_OTP_MESSAGE = "KEY_OTP_MESSAGE";
     public static final String KEY_OTP_NUMBER = "KEY_OTP_NUMBER";
     public static final String KEY_SMS_PDUS = "pdus";
+
+    public static final String VAL_SET_PERSONAL_REMINDER = "VAL_SET_PERSONAL_REMINDER";
+    public static final String VAL_SEND_REMINDER = "VAL_SEND_REMINDER";
 
     public static final String VAL_OTP_NUMBER = "MD-SMSMsg";
 

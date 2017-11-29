@@ -80,7 +80,7 @@ public class CreateProfileFragment extends BaseFragment implements BaseResponseI
         if (name == null && name.isEmpty()) {
             tietName.setError(getString(R.string.error_empty_field));
         } else if (!Validator.isValidName(name)) {
-            tietName.setError("Please enter a valid name!");
+            tietName.setError(getString(R.string.error_invalid_name));
         } else {
             initCreateProfileRequest();
         }

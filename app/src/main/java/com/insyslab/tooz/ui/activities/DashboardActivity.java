@@ -3,7 +3,6 @@ package com.insyslab.tooz.ui.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.Toolbar;
@@ -15,20 +14,30 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.clans.fab.FloatingActionButton;
+import com.github.clans.fab.FloatingActionMenu;
 import com.insyslab.tooz.R;
 import com.insyslab.tooz.models.FragmentState;
+import com.insyslab.tooz.ui.fragments.AddContactFragment;
 import com.insyslab.tooz.ui.fragments.AllContactsFragment;
 import com.insyslab.tooz.ui.fragments.PastRemindersFragment;
+import com.insyslab.tooz.ui.fragments.SetReminderFragment;
 import com.insyslab.tooz.ui.fragments.UpcomingRemindersFragment;
+
+import static com.insyslab.tooz.utils.AppConstants.KEY_SET_REMINDER_TYPE;
+import static com.insyslab.tooz.utils.AppConstants.KEY_TO_ACTIONS;
+import static com.insyslab.tooz.utils.AppConstants.VAL_SEND_REMINDER;
+import static com.insyslab.tooz.utils.AppConstants.VAL_SET_PERSONAL_REMINDER;
 
 public class DashboardActivity extends BaseActivity {
 
     private static final String TAG = "Dashboard ==> ";
 
     private Toolbar toolbar;
-    private FloatingActionButton fab;
     private RelativeLayout upcomingTab, pastTab, allContactsTab;
     private TextView tvUpcoming, tvPast, tvAllContacts;
+    private FloatingActionButton fabAddContact, fabPersonalReminder, fabSendReminder;
+    private FloatingActionMenu floatingActionMenu;
 
     private String currentFragment = null;
     private boolean doubleBackToExitPressedOnce;
@@ -73,13 +82,6 @@ public class DashboardActivity extends BaseActivity {
     }
 
     private void setUpActions() {
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                onDashboardFabClick();
-            }
-        });
-
         upcomingTab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -100,10 +102,50 @@ public class DashboardActivity extends BaseActivity {
                 onAllContactsTabClick();
             }
         });
+
+        fabAddContact.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onAddContactClick();
+            }
+        });
+
+        fabPersonalReminder.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onSetPersonalReminderClick();
+            }
+        });
+
+        fabSendReminder.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onSendReminderClick();
+            }
+        });
     }
 
-    private void onDashboardFabClick() {
+    private void onSendReminderClick() {
+        floatingActionMenu.close(true);
+        openActionsActivity(SetReminderFragment.TAG, VAL_SEND_REMINDER);
+    }
 
+    private void onSetPersonalReminderClick() {
+        floatingActionMenu.close(true);
+        openActionsActivity(SetReminderFragment.TAG, VAL_SET_PERSONAL_REMINDER);
+    }
+
+    private void onAddContactClick() {
+        floatingActionMenu.close(true);
+        openActionsActivity(AddContactFragment.TAG, null);
+    }
+
+    private void openActionsActivity(String fragmentTag, String fragmentType) {
+        Intent intent = new Intent(this, ActionsActivity.class);
+        intent.putExtra(KEY_TO_ACTIONS, fragmentTag);
+        intent.putExtra(KEY_SET_REMINDER_TYPE, fragmentType);
+        startActivity(intent);
+        overridePendingTransition(R.anim.slide_in_from_bottom, 0);
     }
 
     private void onToolbarSettingsClick() {
@@ -171,7 +213,6 @@ public class DashboardActivity extends BaseActivity {
 
     private void initView() {
         toolbar = findViewById(R.id.toolbar);
-        fab = findViewById(R.id.fab);
 
         upcomingTab = findViewById(R.id.ad_upcoming);
         pastTab = findViewById(R.id.ad_past);
@@ -180,6 +221,11 @@ public class DashboardActivity extends BaseActivity {
         tvUpcoming = findViewById(R.id.ad_upcoming_title);
         tvPast = findViewById(R.id.ad_past_title);
         tvAllContacts = findViewById(R.id.ad_all_contacts_title);
+
+        floatingActionMenu = findViewById(R.id.fam);
+        fabAddContact = findViewById(R.id.fab_add_contact);
+        fabPersonalReminder = findViewById(R.id.fab_personal_reminder);
+        fabSendReminder = findViewById(R.id.fab_send_reminder);
     }
 
     @Override
@@ -204,19 +250,14 @@ public class DashboardActivity extends BaseActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_dashboard, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             onToolbarSettingsClick();
             return true;

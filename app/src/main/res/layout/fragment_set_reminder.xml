@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/fsr_content"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:animateLayoutChanges="true"
+    android:background="@color/fragment_background"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/fsr_task_sec"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:visibility="gone">
+
+        <android.support.design.widget.TextInputEditText
+            android:id="@+id/fsr_task"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:gravity="center_horizontal"
+            android:hint="REMIND..."
+            android:imeOptions="actionDone"
+            android:inputType="text"
+            android:maxLength="100"
+            android:maxLines="3" />
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/fsr_time_sec"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:visibility="gone">
+
+        <android.support.design.widget.TextInputEditText
+            android:id="@+id/fsr_time"
+            style="@style/DefaultEdittext"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:gravity="center_horizontal"
+            android:hint="@string/date_time"
+            android:imeOptions="actionDone"
+            android:inputType="text" />
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/fsr_location_sec"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:visibility="gone">
+
+        <android.support.design.widget.TextInputEditText
+            android:id="@+id/fsr_location"
+            style="@style/DefaultEdittext"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:gravity="center_horizontal"
+            android:hint="@string/select_a_location"
+            android:imeOptions="actionDone"
+            android:inputType="text" />
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/fsr_contact_sec"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:visibility="gone">
+
+        <android.support.design.widget.TextInputEditText
+            android:id="@+id/fsr_contact"
+            style="@style/DefaultEdittext"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:gravity="center_horizontal"
+            android:hint="@string/select_contact_s"
+            android:imeOptions="actionDone"
+            android:inputType="text" />
+    </android.support.design.widget.TextInputLayout>
+
+</LinearLayout>
