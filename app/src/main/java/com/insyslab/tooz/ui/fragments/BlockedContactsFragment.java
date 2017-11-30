@@ -14,6 +14,7 @@ import com.insyslab.tooz.R;
 import com.insyslab.tooz.interfaces.OnBlockedContactsClickListener;
 import com.insyslab.tooz.models.ContactItem;
 import com.insyslab.tooz.models.FragmentState;
+import com.insyslab.tooz.ui.activities.SettingsActivity;
 import com.insyslab.tooz.ui.adapters.BlockedContactsAdapter;
 
 import java.util.ArrayList;
@@ -106,6 +107,7 @@ public class BlockedContactsFragment extends BaseFragment implements OnBlockedCo
 
     @Override
     public void onDetach() {
+        updateFragment(new FragmentState(SettingsFragment.TAG));
         super.onDetach();
     }
 
@@ -113,5 +115,13 @@ public class BlockedContactsFragment extends BaseFragment implements OnBlockedCo
     public void onUnblockClick(int position) {
         contactItems.get(position).setBlocked(!contactItems.get(position).isBlocked());
         blockedContactsAdapter.notifyItemChanged(position);
+    }
+
+    public void onSaveClick() {
+        closeThisFragment();
+    }
+
+    private void closeThisFragment() {
+        ((SettingsActivity)getActivity()).closeCurrentFragment();
     }
 }

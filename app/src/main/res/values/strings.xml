@@ -59,5 +59,8 @@
     <string name="error_invalid_name">Please enter a valid name!</string>
     <string name="error_invalid_mobile_number">Please enter a valid mobile number</string>
     <string name="unblock">Unblock</string>
+    <string name="location_bounds">Location Bounds</string>
+    <string name="reminder_advance_alert_time">Reminder Advance Alert Time</string>
+    <string name="snooze_time">Snooze Time</string>
 
 </resources>

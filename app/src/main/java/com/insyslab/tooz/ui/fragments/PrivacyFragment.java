@@ -54,7 +54,7 @@ public class PrivacyFragment extends BaseFragment {
     }
 
     private void initView(View rootView) {
-        content = rootView.findViewById(R.id.fs_content);
+        content = rootView.findViewById(R.id.fprv_content);
     }
 
     private void setUpActions() {
@@ -68,6 +68,7 @@ public class PrivacyFragment extends BaseFragment {
 
     @Override
     public void onDetach() {
+        updateFragment(new FragmentState(SettingsFragment.TAG));
         super.onDetach();
     }
 }

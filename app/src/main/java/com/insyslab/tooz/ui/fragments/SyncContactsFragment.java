@@ -132,6 +132,7 @@ public class SyncContactsFragment extends BaseFragment implements OnSyncContactI
                         phoneContact.setPhoneNumber(contactNumber);
                         phoneContact.setContactImageUri(contactImageUri);
                         phoneContacts.add(phoneContact);
+
                         break;
                     }
                     pCur.close();

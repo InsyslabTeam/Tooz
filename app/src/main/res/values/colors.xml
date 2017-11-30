@@ -12,6 +12,9 @@
     <color name="black">#000000</color>
     <color name="white">#FFFFFF</color>
 
+    <color name="preferences_hint_text">#666666</color>
+    <color name="error_red">#D90A2D</color>
+
     <color name="onboarding_button_default">#FFFFFF</color>
     <color name="onboarding_button_pressed">#E1E1E1</color>
 
