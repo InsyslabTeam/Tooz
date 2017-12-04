@@ -10,4 +10,22 @@
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:background="@drawable/ic_rounded_white_rectangle">
+
+        <AutoCompleteTextView
+            android:id="@+id/fls_search_location"
+            style="@style/DefaultEdittext"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/transparent"
+            android:hint="@string/search_here"
+            android:imeOptions="actionDone"
+            android:inputType="text"
+            android:padding="12dp" />
+    </RelativeLayout>
 </RelativeLayout>

@@ -1,10 +1,14 @@
 package com.insyslab.tooz.ui.fragments;
 
 import android.content.Context;
+import android.location.Location;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.RelativeLayout;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -15,6 +19,10 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.insyslab.tooz.R;
 import com.insyslab.tooz.models.FragmentState;
+import com.insyslab.tooz.ui.activities.ActionsActivity;
+import com.insyslab.tooz.ui.activities.DashboardActivity;
+
+import java.util.List;
 
 import static com.insyslab.tooz.utils.AppConstants.KEY_SET_REMINDER_TYPE;
 
@@ -31,10 +39,11 @@ public class LocationSelectorFragment extends BaseFragment implements OnMapReady
     private OnLocationSelectedListener onLocationSelectedListener;
 
     private RelativeLayout content;
+    private AutoCompleteTextView actvSearchLocation;
+    private GoogleMap mMap;
 
     private String fragmentType = null;
-
-    private GoogleMap mMap;
+    private List<String> strings = null;
 
     public LocationSelectorFragment() {
 
@@ -66,8 +75,15 @@ public class LocationSelectorFragment extends BaseFragment implements OnMapReady
         setUpActions();
 
         initGoogleMaps();
+        initAutoCompleteSearchView();
 
         return layout;
+    }
+
+    private void initAutoCompleteSearchView() {
+        ArrayAdapter adapter = new ArrayAdapter(getContext(), android.R.layout.simple_list_item_1, strings);
+        actvSearchLocation.setAdapter(adapter);
+        actvSearchLocation.setThreshold(1);
     }
 
     private void initGoogleMaps() {
@@ -77,6 +93,7 @@ public class LocationSelectorFragment extends BaseFragment implements OnMapReady
 
     private void initView(View rootView) {
         content = rootView.findViewById(R.id.fls_content);
+        actvSearchLocation = rootView.findViewById(R.id.fls_search_location);
     }
 
     private void setUpActions() {
@@ -110,6 +127,7 @@ public class LocationSelectorFragment extends BaseFragment implements OnMapReady
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+
         LatLng sydney = new LatLng(-34, 151);
         mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));

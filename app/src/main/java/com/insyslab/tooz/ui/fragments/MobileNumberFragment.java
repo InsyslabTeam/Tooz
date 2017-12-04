@@ -160,6 +160,11 @@ public class MobileNumberFragment extends BaseFragment implements BaseResponseIn
     }
 
     @Override
+    public void onLocationPermissionsResult(boolean granted) {
+
+    }
+
+    @Override
     public void onResponse(Object success, Object error, final int requestCode) {
         hideProgressDialog();
         if (error == null) {

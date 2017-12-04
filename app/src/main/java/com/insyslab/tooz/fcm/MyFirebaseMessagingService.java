@@ -13,7 +13,7 @@ import android.util.Log;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.google.gson.Gson;
-import com.insyslab.tooz.ui.activities.DashboardActivity;
+import com.insyslab.tooz.ui.activities.SplashActivity;
 
 import org.json.JSONObject;
 
@@ -53,7 +53,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     }
 
     private void sendNotification(String messageBody, String title, String content) {
-        Intent intent = new Intent(this, DashboardActivity.class);
+        Intent intent = new Intent(this, SplashActivity.class);
         intent.putExtra(KEY_PUSH_MESSAGE, content);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT);
@@ -86,7 +86,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 //                pushNotification.putExtra("message", message);
                 LocalBroadcastManager.getInstance(this).sendBroadcast(pushNotification);
 
-                Intent resultIntent = new Intent(getApplicationContext(), DashboardActivity.class);
+                Intent resultIntent = new Intent(getApplicationContext(), SplashActivity.class);
                 showNotificationMessageWithBigImage(
                         getApplicationContext(),
                         pushNotificationObject.getTitle(),
@@ -100,7 +100,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 notificationUtils.playNotificationSound();
             } else {
                 // app is in background, show the notification in notification tray
-                Intent resultIntent = new Intent(getApplicationContext(), DashboardActivity.class);
+                Intent resultIntent = new Intent(getApplicationContext(), SplashActivity.class);
                 showNotificationMessageWithBigImage(
                         getApplicationContext(),
                         pushNotificationObject.getTitle(),

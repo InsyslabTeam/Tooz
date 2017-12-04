@@ -1,6 +1,7 @@
 package com.insyslab.tooz.ui.activities;
 
 import android.annotation.SuppressLint;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -9,11 +10,14 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import com.insyslab.tooz.R;
+import com.insyslab.tooz.interfaces.OnRuntimePermissionsResultListener;
 import com.insyslab.tooz.utils.Util;
 
+import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
+import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 import static com.insyslab.tooz.utils.ConstantClass.SPLASH_TIME_OUT;
 
-public class SplashActivity extends BaseActivity {
+public class SplashActivity extends BaseActivity implements OnRuntimePermissionsResultListener {
 
     private static final boolean AUTO_HIDE = true;
     private static final int AUTO_HIDE_DELAY_MILLIS = 3000;
@@ -66,7 +70,7 @@ public class SplashActivity extends BaseActivity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                if (Util.isLoggedIn()) proceedToDashboard();
+                if (Util.isLoggedIn()) initProceedToDashboard();
                 else proceedToOnboarding();
             }
         }, SPLASH_TIME_OUT);
@@ -76,6 +80,14 @@ public class SplashActivity extends BaseActivity {
         Intent i = new Intent(this, OnboardingActivity.class);
         startActivity(i);
         finish();
+    }
+
+    private void initProceedToDashboard() {
+        if (Util.verifyPermission(this, ACCESS_FINE_LOCATION) && Util.verifyPermission(this, ACCESS_COARSE_LOCATION)) {
+            proceedToDashboard();
+        } else {
+            requestLocationPermissions();
+        }
     }
 
     private void proceedToDashboard() {
@@ -94,6 +106,8 @@ public class SplashActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
+
+        onRuntimePermissionsResultListener = this;
 
         mVisible = true;
         mContentView = findViewById(R.id.fullscreen_content);
@@ -141,4 +155,43 @@ public class SplashActivity extends BaseActivity {
         mHideHandler.postDelayed(mHideRunnable, delayMillis);
     }
 
+    @Override
+    public void onSmsPermissionsResult(boolean granted) {
+
+    }
+
+    @Override
+    public void onContactsPermissionsResult(boolean granted) {
+
+    }
+
+    @Override
+    public void onStoragePermissionsResult(boolean granted) {
+
+    }
+
+    @Override
+    public void onLocationPermissionsResult(boolean granted) {
+        if (granted) initProceedToDashboard();
+        else {
+            showConfirmationDialog(
+                    "Please enable location permissions to proceed!",
+                    getString(R.string.ok),
+                    null,
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            initProceedToDashboard();
+                        }
+                    },
+                    null
+            );
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        delayedHide(1);
+    }
 }

@@ -242,7 +242,7 @@ public class SyncContactsFragment extends BaseFragment implements OnSyncContactI
     }
 
     private void onSkipClick() {
-        ((OnboardingActivity) getActivity()).proceedToDashboard();
+        ((OnboardingActivity) getActivity()).initProceedToDashboard();
     }
 
     @Override
@@ -283,6 +283,11 @@ public class SyncContactsFragment extends BaseFragment implements OnSyncContactI
 
     @Override
     public void onStoragePermissionsResult(boolean granted) {
+
+    }
+
+    @Override
+    public void onLocationPermissionsResult(boolean granted) {
 
     }
 
@@ -329,7 +334,7 @@ public class SyncContactsFragment extends BaseFragment implements OnSyncContactI
     }
 
     private void openDashboardActivity(ContactSyncResponse success) {
-        ((OnboardingActivity) getActivity()).proceedToDashboard();
+        ((OnboardingActivity) getActivity()).initProceedToDashboard();
     }
 
     @Override

@@ -352,4 +352,9 @@ public class AddContactFragment extends BaseFragment implements OnRuntimePermiss
             );
         }
     }
+
+    @Override
+    public void onLocationPermissionsResult(boolean granted) {
+
+    }
 }

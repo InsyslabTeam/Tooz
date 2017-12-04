@@ -271,4 +271,9 @@ public class CreateProfileFragment extends BaseFragment implements BaseResponseI
             );
         }
     }
+
+    @Override
+    public void onLocationPermissionsResult(boolean granted) {
+
+    }
 }

@@ -14,6 +14,9 @@
     <uses-permission android:name="android.permission.RECEIVE_SMS" />
     <uses-permission android:name="android.permission.READ_SMS" />
 
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
     <application
         android:name=".utils.ToozApplication"
         android:allowBackup="true"
@@ -60,6 +63,18 @@
         <activity
             android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
             android:theme="@style/Base.Theme.AppCompat" />
+
+        <!--Services-->
+        <service
+            android:name=".services.LocationService"
+            android:enabled="true" />
+
+        <!--Broadcast Receivers-->
+        <receiver
+            android:name=".broadcastreceivers.LocationServiceRestartReceiver"
+            android:enabled="true"
+            android:exported="true"
+            android:label="RestartServiceWhenStopped" />
 
         <!-- FCM -->
         <service android:name=".fcm.MyFirebaseInstanceIDService">

@@ -1,5 +1,6 @@
 package com.insyslab.tooz.ui.activities;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -8,6 +9,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.insyslab.tooz.R;
+import com.insyslab.tooz.interfaces.OnRuntimePermissionsResultListener;
 import com.insyslab.tooz.models.FragmentState;
 import com.insyslab.tooz.ui.fragments.CreateProfileFragment;
 import com.insyslab.tooz.ui.fragments.MobileNumberFragment;
@@ -15,10 +17,12 @@ import com.insyslab.tooz.ui.fragments.OtpVerificationFragment;
 import com.insyslab.tooz.ui.fragments.SyncContactsFragment;
 import com.insyslab.tooz.utils.Util;
 
+import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
+import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 import static android.Manifest.permission.READ_CONTACTS;
 import static android.Manifest.permission.WRITE_CONTACTS;
 
-public class OnboardingActivity extends BaseActivity {
+public class OnboardingActivity extends BaseActivity implements OnRuntimePermissionsResultListener {
 
     private final String TAG = "Onboarding ==> ";
 
@@ -29,6 +33,8 @@ public class OnboardingActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_onboarding);
+
+        onRuntimePermissionsResultListener = this;
 
         doubleBackToExitPressedOnce = false;
         getFragmentStatus();
@@ -77,7 +83,15 @@ public class OnboardingActivity extends BaseActivity {
         }
     }
 
-    public void proceedToDashboard() {
+    public void initProceedToDashboard() {
+        if (Util.verifyPermission(this, ACCESS_FINE_LOCATION) || !Util.verifyPermission(this, ACCESS_COARSE_LOCATION)) {
+            proceedToDashboard();
+        } else {
+            requestLocationPermissions();
+        }
+    }
+
+    private void proceedToDashboard() {
         Intent intent = new Intent(this, DashboardActivity.class);
         startActivity(intent);
         finish();
@@ -113,6 +127,40 @@ public class OnboardingActivity extends BaseActivity {
                     doubleBackToExitPressedOnce = false;
                 }
             }, 2000);
+        }
+    }
+
+    @Override
+    public void onSmsPermissionsResult(boolean granted) {
+
+    }
+
+    @Override
+    public void onContactsPermissionsResult(boolean granted) {
+
+    }
+
+    @Override
+    public void onStoragePermissionsResult(boolean granted) {
+
+    }
+
+    @Override
+    public void onLocationPermissionsResult(boolean granted) {
+        if (granted) initProceedToDashboard();
+        else {
+            showConfirmationDialog(
+                    "Please enable location permissions to proceed!",
+                    getString(R.string.ok),
+                    null,
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            initProceedToDashboard();
+                        }
+                    },
+                    null
+            );
         }
     }
 }

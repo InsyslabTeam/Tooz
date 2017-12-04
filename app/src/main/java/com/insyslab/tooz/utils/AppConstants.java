@@ -24,6 +24,10 @@ public class AppConstants {
     public static final String KEY_OTP_NUMBER = "KEY_OTP_NUMBER";
     public static final String KEY_SMS_PDUS = "pdus";
 
+    public static final String KEY_LOCATION_UPDATE = "KEY_LOCATION_UPDATE";
+    public static final String KEY_LOCATION_LATITUDE = "KEY_LOCATION_LATITUDE";
+    public static final String KEY_LOCATION_LONGITUDE = "KEY_LOCATION_LONGITUDE";
+
     public static final String VAL_SET_PERSONAL_REMINDER = "VAL_SET_PERSONAL_REMINDER";
     public static final String VAL_SEND_REMINDER = "VAL_SEND_REMINDER";
 
