@@ -28,6 +28,7 @@ import com.insyslab.tooz.models.PhoneContact;
 import com.insyslab.tooz.models.responses.ContactSyncResponse;
 import com.insyslab.tooz.models.responses.Error;
 import com.insyslab.tooz.restclient.BaseResponseInterface;
+import com.insyslab.tooz.ui.activities.BaseActivity;
 import com.insyslab.tooz.ui.activities.OnboardingActivity;
 import com.insyslab.tooz.ui.adapters.SyncContactsAdapter;
 import com.insyslab.tooz.utils.UriDeserializer;
@@ -160,7 +161,7 @@ public class SyncContactsFragment extends BaseFragment implements OnSyncContactI
     }
 
     private void initRuntimePermissions() {
-        ((OnboardingActivity) getActivity()).requestContactsPermissions();
+        ((BaseActivity) getActivity()).requestContactsPermissions();
     }
 
     private void initView(View rootView) {
@@ -204,10 +205,30 @@ public class SyncContactsFragment extends BaseFragment implements OnSyncContactI
     }
 
     private void onSyncClick() {
-        initContactSyncRequest();
+        List<PhoneContact> selectedContacts = getListOfSelectedContacts();
+
+        if (selectedContacts != null && selectedContacts.size() == 0) {
+            showSnackbarMessage(content,
+                    "Please select some contacts to sync!",
+                    true,
+                    getString(R.string.ok),
+                    null,
+                    true);
+        } else {
+            initContactSyncRequest(selectedContacts);
+        }
+
     }
 
-    private void initContactSyncRequest() {
+    private List<PhoneContact> getListOfSelectedContacts() {
+        List<PhoneContact> list = new ArrayList<>();
+        for (int i = 0; i < phoneContacts.size(); i++) {
+            if (phoneContacts.get(i).getSelected()) list.add(phoneContacts.get(i));
+        }
+        return list;
+    }
+
+    private void initContactSyncRequest(List<PhoneContact> selectedContacts) {
         openDashboardActivity(new ContactSyncResponse());
 //        showProgressDialog(getString(R.string.loading));
 //
@@ -261,6 +282,11 @@ public class SyncContactsFragment extends BaseFragment implements OnSyncContactI
     }
 
     @Override
+    public void onStoragePermissionsResult(boolean granted) {
+
+    }
+
+    @Override
     public void onResponse(Object success, Object error, final int requestCode) {
         hideProgressDialog();
         if (error == null) {
@@ -283,7 +309,7 @@ public class SyncContactsFragment extends BaseFragment implements OnSyncContactI
                             public void onClick(View v) {
                                 switch (requestCode) {
                                     case REQUEST_TYPE_005:
-                                        initContactSyncRequest();
+                                        onSyncClick();
                                         break;
                                     default:
                                         showToastMessage(getString(R.string.error_unknown), false);

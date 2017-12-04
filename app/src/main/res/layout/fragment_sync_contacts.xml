@@ -80,15 +80,14 @@
                 android:id="@+id/fsc_select_all_sec"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/sync_contacts_select_all_height"
-                android:background="@color/fragment_background"
-                android:paddingLeft="@dimen/sync_contacts_select_all_padding"
-                android:paddingRight="@dimen/sync_contacts_select_all_padding">
+                android:background="@color/fragment_background">
 
                 <TextView
                     style="@style/SinglelineText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
+                    android:layout_marginLeft="@dimen/sync_contacts_select_all_padding"
                     android:text="@string/select_all"
                     android:textColor="@color/black"
                     android:textSize="@dimen/sync_contacts_select_all_text" />
@@ -99,7 +98,15 @@
                     android:layout_height="@dimen/sync_contacts_selector"
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
+                    android:layout_marginRight="@dimen/sync_contacts_select_all_padding"
                     android:button="@drawable/ic_sync_contacts_checkbox" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_below="@id/fsc_select_all"
+                    android:layout_marginBottom="@dimen/sync_contacts_select_all_separator_margin"
+                    android:background="@drawable/ic_gradient_divider" />
             </RelativeLayout>
 
             <android.support.v7.widget.RecyclerView

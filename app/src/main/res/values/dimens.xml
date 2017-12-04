@@ -40,6 +40,7 @@
     <dimen name="sync_contacts_footer_text">18sp</dimen>
     <dimen name="sync_contacts_select_all_height">36dp</dimen>
     <dimen name="sync_contacts_select_all_text">16sp</dimen>
+    <dimen name="sync_contacts_select_all_separator_margin">6dp</dimen>
     <dimen name="sync_contacts_select_all_padding">10dp</dimen>
     <dimen name="sync_contacts_selector">32dp</dimen>
     <dimen name="sync_contacts_item_margin">10dp</dimen>

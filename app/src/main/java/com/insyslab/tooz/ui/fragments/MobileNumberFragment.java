@@ -16,6 +16,7 @@ import com.insyslab.tooz.models.FragmentState;
 import com.insyslab.tooz.models.responses.Error;
 import com.insyslab.tooz.models.responses.SignInResponse;
 import com.insyslab.tooz.restclient.BaseResponseInterface;
+import com.insyslab.tooz.ui.activities.BaseActivity;
 import com.insyslab.tooz.ui.activities.OnboardingActivity;
 import com.insyslab.tooz.utils.Util;
 import com.insyslab.tooz.utils.Validator;
@@ -124,7 +125,7 @@ public class MobileNumberFragment extends BaseFragment implements BaseResponseIn
     }
 
     private void initRuntimePermissions() {
-        ((OnboardingActivity) getActivity()).requestSmsPermissions();
+        ((BaseActivity) getActivity()).requestSmsPermissions();
     }
 
     private void openOtpVerificationFragment(SignInResponse signInResponse) {
@@ -150,6 +151,11 @@ public class MobileNumberFragment extends BaseFragment implements BaseResponseIn
 
     @Override
     public void onContactsPermissionsResult(boolean granted) {
+
+    }
+
+    @Override
+    public void onStoragePermissionsResult(boolean granted) {
 
     }
 

@@ -5,6 +5,7 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.text.InputType;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -102,6 +103,11 @@ public abstract class BaseFragment extends Fragment {
     public void disableEdittext(EditText editText) {
         editText.setClickable(false);
         editText.setFocusable(false);
+        editText.setFocusableInTouchMode(false);
+    }
+
+    public void clickableEdittext(EditText editText) {
+        editText.setInputType(InputType.TYPE_NULL);
         editText.setFocusableInTouchMode(false);
     }
 }

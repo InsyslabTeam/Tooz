@@ -2,17 +2,11 @@ package com.insyslab.tooz.utils;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.content.pm.Signature;
 import android.content.res.TypedArray;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.support.v4.content.ContextCompat;
-import android.util.Base64;
-import android.util.DisplayMetrics;
-import android.util.Log;
-import android.util.TypedValue;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
@@ -22,8 +16,7 @@ import com.insyslab.tooz.R;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
+import java.text.DateFormatSymbols;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -35,7 +28,7 @@ import java.util.TimeZone;
 
 public class Util {
 
-    private static final String DEFAULT_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
+    public static final String DEFAULT_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
     private static final String REQUIRED_DATE_FORMAT = "dd-MM-yyyy";
 
     private static ConnectivityManager mCM;
@@ -92,29 +85,23 @@ public class Util {
         }
     }
 
-    public static String printKeyHash(Activity activity) {
-        PackageInfo packageInfo;
-        String key = null;
-        try {
-            String packageName = activity.getApplicationContext().getPackageName();
-            packageInfo = activity.getPackageManager().getPackageInfo(packageName, PackageManager.GET_SIGNATURES);
+    public static String getDayOfWeekFromIndex(Integer intDay) {
+        return new DateFormatSymbols().getWeekdays()[intDay - 1].substring(0, 3).toUpperCase();
+    }
 
-            for (Signature signature : packageInfo.signatures) {
-                MessageDigest md = MessageDigest.getInstance("SHA");
-                md.update(signature.toByteArray());
-                key = new String(Base64.encode(md.digest(), 0));
+    public static String getAmPmFromIndex(Integer intMeridian) {
+        return intMeridian == 0 ? "AM" : "PM";
+    }
 
-                Log.d("Facebook ==> ", "Key Hash: " + key);
-            }
-        } catch (PackageManager.NameNotFoundException e1) {
-            Log.e("Name not found", e1.toString());
-        } catch (NoSuchAlgorithmException e) {
-            Log.e("No such an algorithm", e.toString());
-        } catch (Exception e) {
-            Log.e("Exception", e.toString());
-        }
+    public static String getMonthFromIndex(Integer intMonth) {
+        return new DateFormatSymbols().getMonths()[intMonth - 1].substring(0, 3);
+    }
 
-        return key;
+    public static String getDateExtension(Integer intDate) {
+        String dateStr = intDate.toString();
+        if (dateStr.endsWith("1")) return "st";
+        else if (dateStr.endsWith("2")) return "nd";
+        else return "th";
     }
 
     public static boolean verifyPermission(Context context, String permission) {
@@ -122,24 +109,8 @@ public class Util {
         return result == PackageManager.PERMISSION_GRANTED;
     }
 
-    public static float dpToPx(Context context, float valueInDp) {
-        DisplayMetrics metrics = context.getResources().getDisplayMetrics();
-        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, valueInDp, metrics);
-    }
-
     public static String getDeviceId() {
         return FirebaseInstanceId.getInstance().getToken();
-    }
-
-    public static boolean isAppInstalled(Context context, String uri) {
-        PackageManager pm = context.getPackageManager();
-        try {
-            pm.getPackageInfo(uri, PackageManager.GET_ACTIVITIES);
-            return true;
-        } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
-        }
-        return false;
     }
 
     public static long getTimeInMilliSeconds(String timeStamp) {
@@ -168,6 +139,6 @@ public class Util {
     }
 
     public static Boolean isLoggedIn() {
-        return false;
+        return true;
     }
 }

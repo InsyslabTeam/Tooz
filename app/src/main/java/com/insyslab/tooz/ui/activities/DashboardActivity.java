@@ -1,8 +1,10 @@
 package com.insyslab.tooz.ui.activities;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.Toolbar;
@@ -23,7 +25,10 @@ import com.insyslab.tooz.ui.fragments.AllContactsFragment;
 import com.insyslab.tooz.ui.fragments.PastRemindersFragment;
 import com.insyslab.tooz.ui.fragments.SetReminderFragment;
 import com.insyslab.tooz.ui.fragments.UpcomingRemindersFragment;
+import com.theartofdev.edmodo.cropper.CropImage;
 
+import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
+import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 import static com.insyslab.tooz.utils.AppConstants.KEY_SET_REMINDER_TYPE;
 import static com.insyslab.tooz.utils.AppConstants.KEY_TO_ACTIONS;
 import static com.insyslab.tooz.utils.AppConstants.VAL_SEND_REMINDER;
@@ -32,6 +37,8 @@ import static com.insyslab.tooz.utils.AppConstants.VAL_SET_PERSONAL_REMINDER;
 public class DashboardActivity extends BaseActivity {
 
     private static final String TAG = "Dashboard ==> ";
+
+    private final int REQUEST_STORAGE_PERMISSION_CODE = 3;
 
     private Toolbar toolbar;
     private RelativeLayout upcomingTab, pastTab, allContactsTab;

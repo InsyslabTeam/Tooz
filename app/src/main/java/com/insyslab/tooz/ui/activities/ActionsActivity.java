@@ -11,6 +11,7 @@ import android.view.View;
 import com.insyslab.tooz.R;
 import com.insyslab.tooz.models.FragmentState;
 import com.insyslab.tooz.ui.fragments.AddContactFragment;
+import com.insyslab.tooz.ui.fragments.LocationSelectorFragment;
 import com.insyslab.tooz.ui.fragments.SetReminderFragment;
 
 import static com.insyslab.tooz.utils.AppConstants.KEY_SET_REMINDER_TYPE;
@@ -18,7 +19,7 @@ import static com.insyslab.tooz.utils.AppConstants.KEY_TO_ACTIONS;
 import static com.insyslab.tooz.utils.AppConstants.VAL_SEND_REMINDER;
 import static com.insyslab.tooz.utils.AppConstants.VAL_SET_PERSONAL_REMINDER;
 
-public class ActionsActivity extends BaseActivity {
+public class ActionsActivity extends BaseActivity implements LocationSelectorFragment.OnLocationSelectedListener {
 
     private static final String TAG = "Actions ==> ";
 
@@ -59,6 +60,11 @@ public class ActionsActivity extends BaseActivity {
             fragmentManager.beginTransaction()
                     .replace(R.id.aa_fragment_container, SetReminderFragment.newInstance((Bundle) bundle), fragmentTag)
                     .commit();
+        } else if (fragmentTag.equals(LocationSelectorFragment.TAG)) {
+            fragmentManager.beginTransaction()
+                    .add(R.id.aa_fragment_container, LocationSelectorFragment.newInstance((Bundle) bundle), fragmentTag)
+                    .addToBackStack(TAG)
+                    .commit();
         }
     }
 
@@ -90,6 +96,8 @@ public class ActionsActivity extends BaseActivity {
         } else if (fragmentState.getVisibleFragment().equals(SetReminderFragment.TAG)
                 && fragmentState.getFragmentDetailedName().equals(VAL_SEND_REMINDER)) {
             updateToolbar("Send Reminder");
+        } else if (fragmentState.getVisibleFragment().equals(LocationSelectorFragment.TAG)) {
+            updateToolbar("Select Location");
         }
     }
 
@@ -135,6 +143,16 @@ public class ActionsActivity extends BaseActivity {
                 SetReminderFragment fragment2 = (SetReminderFragment) getSupportFragmentManager().findFragmentById(R.id.aa_fragment_container);
                 fragment2.onSaveClick();
                 break;
+            case LocationSelectorFragment.TAG:
+                LocationSelectorFragment fragment3 = (LocationSelectorFragment) getSupportFragmentManager().findFragmentById(R.id.aa_fragment_container);
+                fragment3.onSaveClick();
+                break;
         }
+    }
+
+    @Override
+    public void onLocationSelected(int position) {
+        SetReminderFragment fragment = (SetReminderFragment) getSupportFragmentManager().findFragmentById(R.id.aa_fragment_container);
+        fragment.onLocationSet(position + " :)");
     }
 }

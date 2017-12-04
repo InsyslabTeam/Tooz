@@ -9,4 +9,6 @@ public interface OnRuntimePermissionsResultListener {
     void onSmsPermissionsResult(boolean granted);
 
     void onContactsPermissionsResult(boolean granted);
+
+    void onStoragePermissionsResult(boolean granted);
 }
