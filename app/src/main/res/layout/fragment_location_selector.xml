@@ -15,7 +15,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
-        android:background="@drawable/ic_rounded_white_rectangle">
+        android:background="@drawable/ic_rounded_white_rectangle"
+        android:elevation="@dimen/default_elevation">
 
         <AutoCompleteTextView
             android:id="@+id/fls_search_location"
