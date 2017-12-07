@@ -18,6 +18,7 @@ import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
 import com.insyslab.tooz.R;
 import com.insyslab.tooz.models.FragmentState;
+import com.insyslab.tooz.services.LocationService;
 import com.insyslab.tooz.ui.fragments.AddContactFragment;
 import com.insyslab.tooz.ui.fragments.AllContactsFragment;
 import com.insyslab.tooz.ui.fragments.PastRemindersFragment;
@@ -44,10 +45,14 @@ public class DashboardActivity extends BaseActivity {
     private String currentFragment = null;
     private boolean doubleBackToExitPressedOnce;
 
+    private Intent locationServiceIntent;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dashboard);
+
+        initLocationService();
 
         initView();
         setUpToolbar();
@@ -56,6 +61,14 @@ public class DashboardActivity extends BaseActivity {
         doubleBackToExitPressedOnce = false;
         getFragmentStatus();
         openThisFragment(UpcomingRemindersFragment.TAG, null);
+    }
+
+    private void initLocationService() {
+        LocationService locationService = new LocationService();
+        locationServiceIntent = new Intent(this, locationService.getClass());
+        if (!isMyServiceRunning(locationService.getClass())) {
+            startService(locationServiceIntent);
+        }
     }
 
     public void openThisFragment(String fragmentTag, Object bundle) {
@@ -266,5 +279,13 @@ public class DashboardActivity extends BaseActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onDestroy() {
+        stopService(locationServiceIntent);
+        Log.i(TAG, "onDestroy!");
+        super.onDestroy();
+
     }
 }

@@ -3,6 +3,7 @@ package com.insyslab.tooz.utils;
 
 import android.app.Application;
 import android.content.Context;
+import android.location.Location;
 import android.text.TextUtils;
 
 import com.android.volley.Request;
@@ -23,6 +24,8 @@ public class ToozApplication extends Application {
     public static synchronized ToozApplication getInstance() {
         return toozApplication;
     }
+
+    private Location mLastLocation;
 
     @Override
     protected void attachBaseContext(Context base) {
@@ -55,5 +58,13 @@ public class ToozApplication extends Application {
     public <T> void addToRequestQueue(Request<T> req) {
         req.setTag(TAG);
         getRequestQueue().add(req);
+    }
+
+    public Location getLastLocation() {
+        return mLastLocation;
+    }
+
+    public void setLastLocation(Location mLastLocation) {
+        this.mLastLocation = mLastLocation;
     }
 }

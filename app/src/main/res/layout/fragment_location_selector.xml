@@ -23,10 +23,18 @@
             style="@style/DefaultEdittext"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginRight="48dp"
             android:background="@color/transparent"
             android:hint="@string/search_here"
             android:imeOptions="actionDone"
             android:inputType="text"
             android:padding="12dp" />
+
+        <ImageView
+            android:id="@+id/fls_clear"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_alignParentRight="true"
+            android:src="@drawable/ic_close" />
     </RelativeLayout>
 </RelativeLayout>

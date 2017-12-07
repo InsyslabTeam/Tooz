@@ -14,6 +14,7 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.insyslab.tooz.utils.ToozApplication;
 
 /**
  * Created by TaNMay on 04/12/17.
@@ -92,6 +93,7 @@ public class LocationService extends Service implements LocationListener,
     @Override
     public void onLocationChanged(Location location) {
         mCurrentLocation = location;
+        ToozApplication.getInstance().setLastLocation(mCurrentLocation);
         Log.d(TAG, "onLocationChanged: " + (mCurrentLocation != null ? mCurrentLocation.getLatitude() + ", " + mCurrentLocation.getLongitude() : "null"));
     }
 
@@ -116,6 +118,7 @@ public class LocationService extends Service implements LocationListener,
     @Override
     public void onConnected(@Nullable Bundle bundle) {
         mCurrentLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+        ToozApplication.getInstance().setLastLocation(mCurrentLocation);
         Log.d(TAG, "onLocationChanged: " + (mCurrentLocation != null ? mCurrentLocation.getLatitude() + ", " + mCurrentLocation.getLongitude() : "null"));
     }
 

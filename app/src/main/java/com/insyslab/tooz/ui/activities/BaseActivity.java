@@ -47,8 +47,6 @@ public abstract class BaseActivity extends AppCompatActivity {
     private final int REQUEST_STORAGE_PERMISSION_CODE = 3;
     private final int REQUEST_LOCATION_PERMISSION_CODE = 4;
 
-    public Intent locationServiceIntent;
-
     protected ProgressDialog mProgressDialog = null;
 
     @Override

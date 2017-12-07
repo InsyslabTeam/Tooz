@@ -8,6 +8,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.insyslab.tooz.R;
 import com.insyslab.tooz.models.FragmentState;
 import com.insyslab.tooz.ui.fragments.AddContactFragment;
@@ -151,8 +152,8 @@ public class ActionsActivity extends BaseActivity implements LocationSelectorFra
     }
 
     @Override
-    public void onLocationSelected(int position) {
+    public void onLocationSelected(LatLng latLng, String address) {
         SetReminderFragment fragment = (SetReminderFragment) getSupportFragmentManager().findFragmentById(R.id.aa_fragment_container);
-        fragment.onLocationSet(position + " :)");
+        fragment.onLocationSet(address);
     }
 }
