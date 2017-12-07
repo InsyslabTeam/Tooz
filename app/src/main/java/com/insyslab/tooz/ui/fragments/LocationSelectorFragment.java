@@ -25,6 +25,7 @@ import com.insyslab.tooz.models.FragmentState;
 import com.insyslab.tooz.ui.adapters.PlacesAutoCompleteAdapter;
 import com.insyslab.tooz.utils.PlaceAPI;
 import com.insyslab.tooz.utils.ToozApplication;
+import com.insyslab.tooz.utils.Util;
 
 import java.io.IOException;
 import java.util.List;
@@ -97,7 +98,7 @@ public class LocationSelectorFragment extends BaseFragment implements OnMapReady
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
                 String clickedItem = (String) adapterView.getItemAtPosition(position);
                 Log.d(TAG, "clickedItem: " + clickedItem);
-
+                Util.hideSoftKeyboard(getActivity());
                 onPlaceAutocompleteSelected(clickedItem);
             }
         });

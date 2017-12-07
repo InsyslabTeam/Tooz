@@ -1,8 +1,11 @@
 package com.insyslab.tooz.ui.fragments;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.TextInputEditText;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,15 +13,25 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import com.insyslab.tooz.R;
+import com.insyslab.tooz.interfaces.OnRuntimePermissionsResultListener;
 import com.insyslab.tooz.models.FragmentState;
+import com.insyslab.tooz.ui.activities.BaseActivity;
 import com.insyslab.tooz.ui.activities.SettingsActivity;
+import com.insyslab.tooz.ui.customui.CircleTransform;
+import com.insyslab.tooz.utils.Util;
 import com.insyslab.tooz.utils.Validator;
+import com.squareup.picasso.Picasso;
+import com.theartofdev.edmodo.cropper.CropImage;
+
+import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
+import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
+import static android.app.Activity.RESULT_OK;
 
 /**
  * Created by TaNMay on 26/09/16.
  */
 
-public class UpdateProfileFragment extends BaseFragment {
+public class UpdateProfileFragment extends BaseFragment implements OnRuntimePermissionsResultListener {
 
     public static final String TAG = "UpdateProfileFrag ==> ";
 
@@ -46,6 +59,7 @@ public class UpdateProfileFragment extends BaseFragment {
         if (getArguments() != null) {
             Bundle bundle = getArguments().getBundle(ARG_PARAM1);
         }
+        SettingsActivity.onRuntimePermissionsResultListener = this;
     }
 
     @Override
@@ -85,7 +99,28 @@ public class UpdateProfileFragment extends BaseFragment {
     }
 
     private void onProfilePictureClick() {
+        if (!verifyStoragePermissions()) {
+            initRuntimeStoragePermissions();
+        } else {
+            initImageSelector();
+        }
+    }
 
+    private boolean verifyStoragePermissions() {
+        if (Util.verifyPermission(getContext(), READ_EXTERNAL_STORAGE)
+                && Util.verifyPermission(getContext(), WRITE_EXTERNAL_STORAGE))
+            return true;
+        else return false;
+    }
+
+    private void initRuntimeStoragePermissions() {
+        ((BaseActivity) getActivity()).requestStoragePermissions();
+    }
+
+    private void initImageSelector() {
+        CropImage.activity()
+                .setAspectRatio(1, 1)
+                .start(getContext(), this);
     }
 
     public void onSaveClick() {
@@ -122,4 +157,65 @@ public class UpdateProfileFragment extends BaseFragment {
         updateFragment(new FragmentState(SettingsFragment.TAG));
         super.onDetach();
     }
+
+    @Override
+    public void onSmsPermissionsResult(boolean granted) {
+
+    }
+
+    @Override
+    public void onContactsPermissionsResult(boolean granted) {
+
+    }
+
+    @Override
+    public void onStoragePermissionsResult(boolean granted) {
+        if (granted) {
+            initImageSelector();
+        } else {
+            showSnackbarMessage(
+                    content,
+                    "Please enable storage permissions to add a picture!",
+                    true,
+                    getString(R.string.ok), new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            onProfilePictureClick();
+                        }
+                    },
+                    false
+            );
+        }
+    }
+
+    @Override
+    public void onLocationPermissionsResult(boolean granted) {
+
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
+            CropImage.ActivityResult result = CropImage.getActivityResult(data);
+            if (resultCode == RESULT_OK) {
+                Uri resultUri = result.getUri();
+                setImageInImageView(resultUri);
+            } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
+                Exception error = result.getError();
+                Log.d(TAG, "Error occurred: " + error.getMessage());
+            }
+        }
+    }
+
+    private void setImageInImageView(Uri resultUri) {
+        Picasso.with(getContext())
+                .load(resultUri)
+                .placeholder(R.drawable.ic_default_user)
+                .error(R.drawable.ic_default_user)
+                .resizeDimen(R.dimen.create_profile_picture, R.dimen.create_profile_picture)
+                .centerCrop()
+                .transform(new CircleTransform())
+                .into(ivProfilePicture);
+    }
+
 }

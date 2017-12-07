@@ -154,6 +154,6 @@ public class ActionsActivity extends BaseActivity implements LocationSelectorFra
     @Override
     public void onLocationSelected(LatLng latLng, String address) {
         SetReminderFragment fragment = (SetReminderFragment) getSupportFragmentManager().findFragmentById(R.id.aa_fragment_container);
-        fragment.onLocationSet(address);
+        fragment.onLocationSet(latLng, address);
     }
 }

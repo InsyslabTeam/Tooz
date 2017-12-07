@@ -15,6 +15,7 @@ import android.widget.DatePicker;
 import android.widget.LinearLayout;
 import android.widget.TimePicker;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.insyslab.tooz.R;
 import com.insyslab.tooz.models.FragmentState;
 import com.insyslab.tooz.ui.activities.ActionsActivity;
@@ -48,7 +49,8 @@ public class SetReminderFragment extends BaseFragment {
     private TextInputLayout tilTask, tilTime, tilLocation, tilContact;
 
     private String fragmentType = null;
-    private String timeSelected = null, locationSelected = null;
+    private String timeSelected = null, addressSelected = null;
+    private LatLng latLngSelected = null;
 
     private SimpleDateFormat simpleDateFormat;
 
@@ -272,7 +274,10 @@ public class SetReminderFragment extends BaseFragment {
         clickableEdittext(tietContact);
     }
 
-    public void onLocationSet(String locationSelected) {
+    public void onLocationSet(LatLng latLng, String locationSelected) {
+        latLngSelected = latLng;
+        addressSelected = locationSelected;
+
         tietLocation.setText(locationSelected);
     }
 
@@ -285,7 +290,7 @@ public class SetReminderFragment extends BaseFragment {
 
         if (task != null && task.isEmpty()) {
             tietTask.setError(getString(R.string.error_empty_field));
-        } else if (timeSelected == null) {
+        } else if (timeSelected == null && latLngSelected == null) {
             showToastMessage("Please select either a time or a location for the reminder!", true);
         } else if (fragmentType.equals(VAL_SEND_REMINDER) && contacts != null && contacts.isEmpty()) {
             tietContact.setError(getString(R.string.error_empty_field));
