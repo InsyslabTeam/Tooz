@@ -20,6 +20,8 @@ import android.widget.Toast;
 
 import com.insyslab.tooz.R;
 import com.insyslab.tooz.interfaces.OnRuntimePermissionsResultListener;
+import com.insyslab.tooz.rpl.AppDatabase;
+import com.insyslab.tooz.rpl.DatabaseInitializer;
 
 import de.greenrobot.event.EventBus;
 
@@ -51,6 +53,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+        DatabaseInitializer.populateAsync(AppDatabase.getAppDatabase(this));
         super.onCreate(savedInstanceState);
     }
 
@@ -112,6 +115,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         EventBus.getDefault().unregister(this);
+        AppDatabase.destroyInstance();
         super.onDestroy();
     }
 
