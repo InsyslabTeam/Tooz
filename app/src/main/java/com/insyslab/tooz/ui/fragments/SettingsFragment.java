@@ -1,13 +1,17 @@
 package com.insyslab.tooz.ui.fragments;
 
 import android.content.Context;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.insyslab.tooz.R;
 import com.insyslab.tooz.interfaces.OnSettingItemClickListener;
@@ -30,6 +34,7 @@ public class SettingsFragment extends BaseFragment implements OnSettingItemClick
     private static final String ARG_PARAM1 = "ARG_PARAM1";
 
     private RelativeLayout content;
+    private TextView tvVersionInfo;
     private RecyclerView settingsRv;
 
     public SettingsFragment() {
@@ -60,9 +65,20 @@ public class SettingsFragment extends BaseFragment implements OnSettingItemClick
         initView(layout);
         setUpActions();
 
+        setUpVersionInfo();
         setUpSettingsRv();
 
         return layout;
+    }
+
+    private void setUpVersionInfo() {
+        try {
+            PackageInfo pInfo = getActivity().getPackageManager().getPackageInfo(getContext().getPackageName(), 0);
+            String version = pInfo.versionName;
+            tvVersionInfo.setText("Tooz - v" + version);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
     private void setUpSettingsRv() {
@@ -74,6 +90,7 @@ public class SettingsFragment extends BaseFragment implements OnSettingItemClick
 
     private void initView(View rootView) {
         content = rootView.findViewById(R.id.fs_content);
+        tvVersionInfo = rootView.findViewById(R.id.fs_version_info);
         settingsRv = rootView.findViewById(R.id.fs_settings_rv);
     }
 
@@ -104,6 +121,18 @@ public class SettingsFragment extends BaseFragment implements OnSettingItemClick
         return settings;
     }
 
+    /**
+     * 0. Blocked Contacts
+     * 1. Preferences
+     * 2. Update Profile
+     * 3. Privacy Settings
+     * 4. Tell a Friend
+     * 5. Notifications
+     * 6. Feedback
+     * 7. Terms and Privacy Policy
+     * 8. Help
+     */
+
     @Override
     public void onSettingItemClick(View view) {
         int position = settingsRv.getChildAdapterPosition(view);
@@ -118,14 +147,31 @@ public class SettingsFragment extends BaseFragment implements OnSettingItemClick
                 redirectToThisFragment(UpdateProfileFragment.TAG);
                 break;
             case 3:
-                redirectToThisFragment(PrivacyFragment.TAG);
+                redirectToThisFragment(PrivacySettingsFragment.TAG);
                 break;
             case 4:
+                initAppReferal();
+                break;
+            case 5:
+                redirectToThisFragment(NotificationSettingsFragment.TAG);
+                break;
+            case 6:
+                redirectToThisFragment(FeedbackFragment.TAG);
+                break;
+            case 7:
+                redirectToThisFragment(TermsPrivPolicyFragment.TAG);
+                break;
+            case 8:
                 redirectToThisFragment(HelpFragment.TAG);
                 break;
             default:
+                Log.d(TAG, "Some fragment error!");
                 break;
         }
+    }
+
+    private void initAppReferal() {
+
     }
 
     private void redirectToThisFragment(String tag) {

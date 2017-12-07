@@ -14,20 +14,20 @@ import com.insyslab.tooz.models.FragmentState;
  * Created by TaNMay on 26/09/16.
  */
 
-public class PrivacyFragment extends BaseFragment {
+public class PrivacySettingsFragment extends BaseFragment {
 
-    public static final String TAG = "PrivacyFrag ==> ";
+    public static final String TAG = "PrivacySettFrag ==> ";
 
     private static final String ARG_PARAM1 = "ARG_PARAM1";
 
     private RelativeLayout content;
 
-    public PrivacyFragment() {
+    public PrivacySettingsFragment() {
 
     }
 
-    public static PrivacyFragment newInstance(Bundle bundle) {
-        PrivacyFragment fragment = new PrivacyFragment();
+    public static PrivacySettingsFragment newInstance(Bundle bundle) {
+        PrivacySettingsFragment fragment = new PrivacySettingsFragment();
         Bundle args = new Bundle();
         args.putBundle(ARG_PARAM1, bundle);
         fragment.setArguments(args);
@@ -44,7 +44,7 @@ public class PrivacyFragment extends BaseFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View layout = inflater.inflate(R.layout.fragment_privacy, container, false);
+        View layout = inflater.inflate(R.layout.fragment_privacy_settings, container, false);
 
         updateFragment(new FragmentState(TAG));
         initView(layout);
@@ -54,7 +54,7 @@ public class PrivacyFragment extends BaseFragment {
     }
 
     private void initView(View rootView) {
-        content = rootView.findViewById(R.id.fprv_content);
+        content = rootView.findViewById(R.id.fps_content);
     }
 
     private void setUpActions() {

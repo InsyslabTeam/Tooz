@@ -5,9 +5,19 @@
     android:layout_height="match_parent"
     android:background="@color/fragment_background">
 
+    <TextView
+        android:id="@+id/fs_version_info"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="2dp"
+        android:textSize="8sp" />
+
     <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_above="@id/fs_version_info">
 
         <LinearLayout
             android:layout_width="match_parent"

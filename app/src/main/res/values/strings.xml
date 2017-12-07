@@ -37,8 +37,12 @@
         <item>Blocked Contacts</item>
         <item>Preferences</item>
         <item>Update Profile</item>
-        <item>Privacy</item>
-        <item>Help</item>
+        <item>Privacy Settings</item>               <!--My contacts, My contacts except, Only share with, Delete Account-->
+        <item>Tell a Friend</item>
+        <item>Notifications</item>
+        <item>Feedback</item>
+        <item>Terms and Privacy Policy</item>
+        <item>Help</item>                           <!--FAQ, Contact Us-->
     </string-array>
     <string name="unblock">Unblock</string>
     <string name="location_bounds">Location Bounds</string>

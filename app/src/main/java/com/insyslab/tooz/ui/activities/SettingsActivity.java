@@ -11,10 +11,13 @@ import android.view.View;
 import com.insyslab.tooz.R;
 import com.insyslab.tooz.models.FragmentState;
 import com.insyslab.tooz.ui.fragments.BlockedContactsFragment;
+import com.insyslab.tooz.ui.fragments.FeedbackFragment;
 import com.insyslab.tooz.ui.fragments.HelpFragment;
+import com.insyslab.tooz.ui.fragments.NotificationSettingsFragment;
 import com.insyslab.tooz.ui.fragments.PreferencesFragment;
-import com.insyslab.tooz.ui.fragments.PrivacyFragment;
+import com.insyslab.tooz.ui.fragments.PrivacySettingsFragment;
 import com.insyslab.tooz.ui.fragments.SettingsFragment;
+import com.insyslab.tooz.ui.fragments.TermsPrivPolicyFragment;
 import com.insyslab.tooz.ui.fragments.UpdateProfileFragment;
 import com.insyslab.tooz.utils.Util;
 
@@ -59,9 +62,9 @@ public class SettingsActivity extends BaseActivity {
                     .add(R.id.as_fragment_container, UpdateProfileFragment.newInstance((Bundle) bundle), fragmentTag)
                     .addToBackStack(TAG)
                     .commit();
-        } else if (fragmentTag.equals(PrivacyFragment.TAG)) {
+        } else if (fragmentTag.equals(PrivacySettingsFragment.TAG)) {
             fragmentManager.beginTransaction()
-                    .add(R.id.as_fragment_container, PrivacyFragment.newInstance((Bundle) bundle), fragmentTag)
+                    .add(R.id.as_fragment_container, PrivacySettingsFragment.newInstance((Bundle) bundle), fragmentTag)
                     .addToBackStack(TAG)
                     .commit();
         } else if (fragmentTag.equals(HelpFragment.TAG)) {
@@ -69,6 +72,23 @@ public class SettingsActivity extends BaseActivity {
                     .add(R.id.as_fragment_container, HelpFragment.newInstance((Bundle) bundle), fragmentTag)
                     .addToBackStack(TAG)
                     .commit();
+        } else if (fragmentTag.equals(TermsPrivPolicyFragment.TAG)) {
+            fragmentManager.beginTransaction()
+                    .add(R.id.as_fragment_container, TermsPrivPolicyFragment.newInstance((Bundle) bundle), fragmentTag)
+                    .addToBackStack(TAG)
+                    .commit();
+        } else if (fragmentTag.equals(NotificationSettingsFragment.TAG)) {
+            fragmentManager.beginTransaction()
+                    .add(R.id.as_fragment_container, NotificationSettingsFragment.newInstance((Bundle) bundle), fragmentTag)
+                    .addToBackStack(TAG)
+                    .commit();
+        } else if (fragmentTag.equals(FeedbackFragment.TAG)) {
+            fragmentManager.beginTransaction()
+                    .add(R.id.as_fragment_container, FeedbackFragment.newInstance((Bundle) bundle), fragmentTag)
+                    .addToBackStack(TAG)
+                    .commit();
+        } else {
+            showToastMessage("Some error occurred!", false);
         }
     }
 
@@ -98,10 +118,16 @@ public class SettingsActivity extends BaseActivity {
             updateToolbar("Preferences");
         } else if (fragmentState.getVisibleFragment().equals(UpdateProfileFragment.TAG)) {
             updateToolbar("Update Profile");
-        } else if (fragmentState.getVisibleFragment().equals(PrivacyFragment.TAG)) {
-            updateToolbar("Privacy");
+        } else if (fragmentState.getVisibleFragment().equals(PrivacySettingsFragment.TAG)) {
+            updateToolbar("Privacy Settings");
         } else if (fragmentState.getVisibleFragment().equals(HelpFragment.TAG)) {
             updateToolbar("Help");
+        } else if (fragmentState.getVisibleFragment().equals(NotificationSettingsFragment.TAG)) {
+            updateToolbar("Notifications");
+        } else if (fragmentState.getVisibleFragment().equals(TermsPrivPolicyFragment.TAG)) {
+            updateToolbar("Terms and Privacy Policy");
+        } else if (fragmentState.getVisibleFragment().equals(FeedbackFragment.TAG)) {
+            updateToolbar("Share your Feedback");
         }
     }
 
@@ -117,7 +143,8 @@ public class SettingsActivity extends BaseActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         if (!currentFragment.equals(SettingsFragment.TAG)
-                && !currentFragment.equals(PrivacyFragment.TAG)
+                && !currentFragment.equals(TermsPrivPolicyFragment.TAG)
+                && !currentFragment.equals(FeedbackFragment.TAG)
                 && !currentFragment.equals(HelpFragment.TAG))
             getMenuInflater().inflate(R.menu.menu_actions, menu);
         return true;
