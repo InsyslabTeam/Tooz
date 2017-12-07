@@ -139,6 +139,6 @@ public class Util {
     }
 
     public static Boolean isLoggedIn() {
-        return true;
+        return false;
     }
 }

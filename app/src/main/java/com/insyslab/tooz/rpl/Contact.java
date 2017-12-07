@@ -23,9 +23,6 @@ public class Contact {
     @ColumnInfo(name = "name")
     public String name;
 
-    @ColumnInfo(name = "createdDate")
-    public Date createdDate;
-
     public long getId() {
         return id;
     }
@@ -48,13 +45,5 @@ public class Contact {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public Date getCreatedDate() {
-        return createdDate;
-    }
-
-    public void setCreatedDate(Date createdDate) {
-        this.createdDate = createdDate;
     }
 }

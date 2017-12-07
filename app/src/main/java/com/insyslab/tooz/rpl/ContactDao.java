@@ -26,7 +26,7 @@ public interface ContactDao {
     @Delete
     void deleteUsers(Contact... contacts);
 
-    @Query("delete from contact where user_id=:id")
+    @Query("delete from contact where id=:id")
     int deleteContact(int id);
 
     @Query("SELECT * FROM contact")
