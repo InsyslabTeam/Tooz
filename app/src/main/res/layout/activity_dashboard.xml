@@ -78,6 +78,16 @@
             app:fab_size="normal" />
 
         <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/fab_create_group"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_add_contact"
+            app:fab_colorNormal="@color/colorAccent"
+            app:fab_colorPressed="@color/colorAccentLight"
+            app:fab_label="@string/create_a_group"
+            app:fab_size="normal" />
+
+        <com.github.clans.fab.FloatingActionButton
             android:id="@+id/fab_add_contact"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

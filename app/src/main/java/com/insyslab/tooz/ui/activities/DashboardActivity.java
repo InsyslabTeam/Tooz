@@ -21,6 +21,7 @@ import com.insyslab.tooz.models.FragmentState;
 import com.insyslab.tooz.services.LocationService;
 import com.insyslab.tooz.ui.fragments.AddContactFragment;
 import com.insyslab.tooz.ui.fragments.AllContactsFragment;
+import com.insyslab.tooz.ui.fragments.CreateGroupFragment;
 import com.insyslab.tooz.ui.fragments.PastRemindersFragment;
 import com.insyslab.tooz.ui.fragments.SetReminderFragment;
 import com.insyslab.tooz.ui.fragments.UpcomingRemindersFragment;
@@ -34,12 +35,10 @@ public class DashboardActivity extends BaseActivity {
 
     private static final String TAG = "Dashboard ==> ";
 
-    private final int REQUEST_STORAGE_PERMISSION_CODE = 3;
-
     private Toolbar toolbar;
     private RelativeLayout upcomingTab, pastTab, allContactsTab;
     private TextView tvUpcoming, tvPast, tvAllContacts;
-    private FloatingActionButton fabAddContact, fabPersonalReminder, fabSendReminder;
+    private FloatingActionButton fabAddContact, fabCreateGroup, fabPersonalReminder, fabSendReminder;
     private FloatingActionMenu floatingActionMenu;
 
     private String currentFragment = null;
@@ -125,6 +124,13 @@ public class DashboardActivity extends BaseActivity {
             }
         });
 
+        fabCreateGroup.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onCreateGroupClick();
+            }
+        });
+
         fabPersonalReminder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -138,6 +144,11 @@ public class DashboardActivity extends BaseActivity {
                 onSendReminderClick();
             }
         });
+    }
+
+    private void onCreateGroupClick() {
+        floatingActionMenu.close(true);
+        openActionsActivity(CreateGroupFragment.TAG, null);
     }
 
     private void onSendReminderClick() {
@@ -239,6 +250,7 @@ public class DashboardActivity extends BaseActivity {
 
         floatingActionMenu = findViewById(R.id.fam);
         fabAddContact = findViewById(R.id.fab_add_contact);
+        fabCreateGroup = findViewById(R.id.fab_create_group);
         fabPersonalReminder = findViewById(R.id.fab_personal_reminder);
         fabSendReminder = findViewById(R.id.fab_send_reminder);
     }

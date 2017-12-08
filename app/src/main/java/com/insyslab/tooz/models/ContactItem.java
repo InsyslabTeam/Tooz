@@ -10,7 +10,11 @@ public class ContactItem {
 
     private String number;
 
+    private String image;
+
     private Boolean isBlocked = false;
+
+    private Boolean isSelected = false;
 
     public String getName() {
         return name;
@@ -34,5 +38,21 @@ public class ContactItem {
 
     public void setBlocked(Boolean blocked) {
         isBlocked = blocked;
+    }
+
+    public Boolean isSelected() {
+        return isSelected;
+    }
+
+    public void setSelected(Boolean selected) {
+        isSelected = selected;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
     }
 }

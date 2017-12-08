@@ -52,7 +52,7 @@ public class UpcomingRemindersAdapter extends RecyclerView.Adapter<UpcomingRemin
         holder.date.setText("88 Nov (Wed), 2088");
         holder.time.setText("88:88 AM");
         holder.remainingTime.setText("After 88 mins");
-        holder.setter.setText("Sent by Rohit");
+        holder.setter.setText("Sent by Developer");
 
         if (position == reminders.size() - 1) holder.divider.setVisibility(View.GONE);
         else holder.divider.setVisibility(View.VISIBLE);

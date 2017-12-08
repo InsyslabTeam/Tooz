@@ -10,17 +10,24 @@ import android.view.View;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.insyslab.tooz.R;
+import com.insyslab.tooz.models.ContactItem;
 import com.insyslab.tooz.models.FragmentState;
 import com.insyslab.tooz.ui.fragments.AddContactFragment;
+import com.insyslab.tooz.ui.fragments.CreateGroupFragment;
 import com.insyslab.tooz.ui.fragments.LocationSelectorFragment;
+import com.insyslab.tooz.ui.fragments.SelectContactsFragment;
 import com.insyslab.tooz.ui.fragments.SetReminderFragment;
+
+import java.util.List;
 
 import static com.insyslab.tooz.utils.AppConstants.KEY_SET_REMINDER_TYPE;
 import static com.insyslab.tooz.utils.AppConstants.KEY_TO_ACTIONS;
 import static com.insyslab.tooz.utils.AppConstants.VAL_SEND_REMINDER;
 import static com.insyslab.tooz.utils.AppConstants.VAL_SET_PERSONAL_REMINDER;
 
-public class ActionsActivity extends BaseActivity implements LocationSelectorFragment.OnLocationSelectedListener {
+public class ActionsActivity extends BaseActivity
+        implements LocationSelectorFragment.OnLocationSelectedListener,
+        SelectContactsFragment.OnContactsSelectedListener {
 
     private static final String TAG = "Actions ==> ";
 
@@ -57,6 +64,10 @@ public class ActionsActivity extends BaseActivity implements LocationSelectorFra
             fragmentManager.beginTransaction()
                     .replace(R.id.aa_fragment_container, AddContactFragment.newInstance((Bundle) bundle), fragmentTag)
                     .commit();
+        } else if (fragmentTag.equals(CreateGroupFragment.TAG)) {
+            fragmentManager.beginTransaction()
+                    .replace(R.id.aa_fragment_container, CreateGroupFragment.newInstance((Bundle) bundle), fragmentTag)
+                    .commit();
         } else if (fragmentTag.equals(SetReminderFragment.TAG)) {
             fragmentManager.beginTransaction()
                     .replace(R.id.aa_fragment_container, SetReminderFragment.newInstance((Bundle) bundle), fragmentTag)
@@ -64,6 +75,11 @@ public class ActionsActivity extends BaseActivity implements LocationSelectorFra
         } else if (fragmentTag.equals(LocationSelectorFragment.TAG)) {
             fragmentManager.beginTransaction()
                     .add(R.id.aa_fragment_container, LocationSelectorFragment.newInstance((Bundle) bundle), fragmentTag)
+                    .addToBackStack(TAG)
+                    .commit();
+        } else if (fragmentTag.equals(SelectContactsFragment.TAG)) {
+            fragmentManager.beginTransaction()
+                    .add(R.id.aa_fragment_container, SelectContactsFragment.newInstance((Bundle) bundle), fragmentTag)
                     .addToBackStack(TAG)
                     .commit();
         }
@@ -91,6 +107,8 @@ public class ActionsActivity extends BaseActivity implements LocationSelectorFra
 
         if (fragmentState.getVisibleFragment().equals(AddContactFragment.TAG)) {
             updateToolbar("Add Contact");
+        } else if (fragmentState.getVisibleFragment().equals(CreateGroupFragment.TAG)) {
+            updateToolbar("Create a Group");
         } else if (fragmentState.getVisibleFragment().equals(SetReminderFragment.TAG)
                 && fragmentState.getFragmentDetailedName().equals(VAL_SET_PERSONAL_REMINDER)) {
             updateToolbar("Set Personal Reminder");
@@ -99,6 +117,8 @@ public class ActionsActivity extends BaseActivity implements LocationSelectorFra
             updateToolbar("Send Reminder");
         } else if (fragmentState.getVisibleFragment().equals(LocationSelectorFragment.TAG)) {
             updateToolbar("Select Location");
+        } else if (fragmentState.getVisibleFragment().equals(SelectContactsFragment.TAG)) {
+            updateToolbar("Select Contacts");
         }
     }
 
@@ -148,6 +168,14 @@ public class ActionsActivity extends BaseActivity implements LocationSelectorFra
                 LocationSelectorFragment fragment3 = (LocationSelectorFragment) getSupportFragmentManager().findFragmentById(R.id.aa_fragment_container);
                 fragment3.onSaveClick();
                 break;
+            case CreateGroupFragment.TAG:
+                CreateGroupFragment fragment4 = (CreateGroupFragment) getSupportFragmentManager().findFragmentById(R.id.aa_fragment_container);
+                fragment4.onSaveClick();
+                break;
+            case SelectContactsFragment.TAG:
+                SelectContactsFragment fragment5 = (SelectContactsFragment) getSupportFragmentManager().findFragmentById(R.id.aa_fragment_container);
+                fragment5.onSaveClick();
+                break;
         }
     }
 
@@ -155,5 +183,11 @@ public class ActionsActivity extends BaseActivity implements LocationSelectorFra
     public void onLocationSelected(LatLng latLng, String address) {
         SetReminderFragment fragment = (SetReminderFragment) getSupportFragmentManager().findFragmentById(R.id.aa_fragment_container);
         fragment.onLocationSet(latLng, address);
+    }
+
+    @Override
+    public void onContactsSelected(List<ContactItem> contactItemList) {
+        CreateGroupFragment fragment = (CreateGroupFragment) getSupportFragmentManager().findFragmentById(R.id.aa_fragment_container);
+        fragment.onMembersSelected(contactItemList);
     }
 }
