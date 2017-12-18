@@ -11,8 +11,8 @@ public class AppConstants {
     public static final String KEY_USER_SHARED_PREFERENCE = "UserSharedPrefs";
     public static final String KEY_TOOZ_SHARED_PREFERENCE = "TOOZSharedPrefs";
 
-    public static final String KEY_SHARED_PREFS_TOKEN = "TOKEN";
     public static final String KEY_SHARED_PREFS_USER = "USER";
+    public static final String KEY_SHARED_PREFS_FIRST_LOGIN = "FIRST_LOGIN";
 
     public static final String KEY_TO_ONBOARDING = "KEY_TO_ONBOARDING";
     public static final String KEY_TO_ACTIONS = "KEY_TO_ACTIONS";

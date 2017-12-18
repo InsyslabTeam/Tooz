@@ -70,7 +70,7 @@ public class SplashActivity extends BaseActivity implements OnRuntimePermissions
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                if (Util.isLoggedIn()) initProceedToDashboard();
+                if (Util.isLoggedIn(SplashActivity.this)) initProceedToDashboard();
                 else proceedToOnboarding();
             }
         }, SPLASH_TIME_OUT);

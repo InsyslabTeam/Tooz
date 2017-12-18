@@ -1,6 +1,7 @@
 package com.insyslab.tooz.ui.fragments;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -17,8 +18,10 @@ import com.insyslab.tooz.R;
 import com.insyslab.tooz.interfaces.OnSettingItemClickListener;
 import com.insyslab.tooz.models.FragmentState;
 import com.insyslab.tooz.models.SettingsItem;
+import com.insyslab.tooz.ui.activities.OnboardingActivity;
 import com.insyslab.tooz.ui.activities.SettingsActivity;
 import com.insyslab.tooz.ui.adapters.SettingsAdapter;
+import com.insyslab.tooz.utils.LocalStorage;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -131,6 +134,7 @@ public class SettingsFragment extends BaseFragment implements OnSettingItemClick
      * 6. Feedback
      * 7. Terms and Privacy Policy
      * 8. Help
+     * 9. Logout
      */
 
     @Override
@@ -164,10 +168,20 @@ public class SettingsFragment extends BaseFragment implements OnSettingItemClick
             case 8:
                 redirectToThisFragment(HelpFragment.TAG);
                 break;
+            case 9:
+                proceedToLogout();
+                break;
             default:
                 Log.d(TAG, "Some fragment error!");
                 break;
         }
+    }
+
+    private void proceedToLogout() {
+        LocalStorage.getInstance(getContext()).clearUserSharedPreferences();
+        Intent i = new Intent(getContext(), OnboardingActivity.class);
+        startActivity(i);
+        getActivity().finish();
     }
 
     private void initAppReferal() {

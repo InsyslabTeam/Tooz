@@ -84,7 +84,7 @@ public class OnboardingActivity extends BaseActivity implements OnRuntimePermiss
     }
 
     public void initProceedToDashboard() {
-        if (Util.verifyPermission(this, ACCESS_FINE_LOCATION) || !Util.verifyPermission(this, ACCESS_COARSE_LOCATION)) {
+        if (Util.verifyPermission(this, ACCESS_FINE_LOCATION) && Util.verifyPermission(this, ACCESS_COARSE_LOCATION)) {
             proceedToDashboard();
         } else {
             requestLocationPermissions();

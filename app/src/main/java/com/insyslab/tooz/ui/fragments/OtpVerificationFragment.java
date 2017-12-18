@@ -23,8 +23,6 @@ import com.insyslab.tooz.R;
 import com.insyslab.tooz.models.FragmentState;
 import com.insyslab.tooz.models.User;
 import com.insyslab.tooz.models.responses.Error;
-import com.insyslab.tooz.models.responses.ResendOtpResponse;
-import com.insyslab.tooz.models.responses.VerifyOtpResponse;
 import com.insyslab.tooz.restclient.BaseResponseInterface;
 import com.insyslab.tooz.restclient.GenericDataHandler;
 import com.insyslab.tooz.restclient.RequestBuilder;
@@ -158,7 +156,7 @@ public class OtpVerificationFragment extends BaseFragment implements BaseRespons
 
         if (requestObject != null) {
             GenericDataHandler req1GenericDataHandler = new GenericDataHandler(this, getContext(), REQUEST_TYPE_002);
-            req1GenericDataHandler.jsonObjectRequest(requestObject, requestUrl, Request.Method.POST, VerifyOtpResponse.class);
+            req1GenericDataHandler.jsonObjectRequest(requestObject, requestUrl, Request.Method.POST, User.class);
         }
     }
 
@@ -207,7 +205,7 @@ public class OtpVerificationFragment extends BaseFragment implements BaseRespons
 
         if (requestObject != null) {
             GenericDataHandler req1GenericDataHandler = new GenericDataHandler(this, getContext(), REQUEST_TYPE_003);
-            req1GenericDataHandler.jsonObjectRequest(requestObject, requestUrl, Request.Method.POST, ResendOtpResponse.class);
+            req1GenericDataHandler.jsonObjectRequest(requestObject, requestUrl, Request.Method.POST, User.class);
         }
     }
 

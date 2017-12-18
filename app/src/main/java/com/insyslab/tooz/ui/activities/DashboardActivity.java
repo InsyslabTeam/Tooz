@@ -14,10 +14,15 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
 import com.insyslab.tooz.R;
 import com.insyslab.tooz.models.FragmentState;
+import com.insyslab.tooz.models.responses.Error;
+import com.insyslab.tooz.models.responses.GetContactsResponse;
+import com.insyslab.tooz.restclient.BaseResponseInterface;
+import com.insyslab.tooz.restclient.GenericDataHandler;
 import com.insyslab.tooz.services.LocationService;
 import com.insyslab.tooz.ui.fragments.AddContactFragment;
 import com.insyslab.tooz.ui.fragments.AllContactsFragment;
@@ -25,13 +30,16 @@ import com.insyslab.tooz.ui.fragments.CreateGroupFragment;
 import com.insyslab.tooz.ui.fragments.PastRemindersFragment;
 import com.insyslab.tooz.ui.fragments.SetReminderFragment;
 import com.insyslab.tooz.ui.fragments.UpcomingRemindersFragment;
+import com.insyslab.tooz.utils.LocalStorage;
 
 import static com.insyslab.tooz.utils.AppConstants.KEY_SET_REMINDER_TYPE;
 import static com.insyslab.tooz.utils.AppConstants.KEY_TO_ACTIONS;
 import static com.insyslab.tooz.utils.AppConstants.VAL_SEND_REMINDER;
 import static com.insyslab.tooz.utils.AppConstants.VAL_SET_PERSONAL_REMINDER;
+import static com.insyslab.tooz.utils.ConstantClass.GET_CONTACTS_REQUEST_URL;
+import static com.insyslab.tooz.utils.ConstantClass.REQUEST_TYPE_006;
 
-public class DashboardActivity extends BaseActivity {
+public class DashboardActivity extends BaseActivity implements BaseResponseInterface {
 
     private static final String TAG = "Dashboard ==> ";
 
@@ -59,7 +67,25 @@ public class DashboardActivity extends BaseActivity {
 
         doubleBackToExitPressedOnce = false;
         getFragmentStatus();
-        openThisFragment(UpcomingRemindersFragment.TAG, null);
+
+        if (LocalStorage.getInstance(this).isFirstLogin()) {
+            initializeUserData();
+        } else {
+            openThisFragment(UpcomingRemindersFragment.TAG, null);
+        }
+    }
+
+    private void initializeUserData() {
+        showProgressDialog(getString(R.string.loading));
+
+        initGetContactsRequest();
+    }
+
+    private void initGetContactsRequest() {
+        String requestUrl = GET_CONTACTS_REQUEST_URL;
+
+        GenericDataHandler req1GenericDataHandler = new GenericDataHandler(this, this, REQUEST_TYPE_006);
+        req1GenericDataHandler.jsonObjectRequest(null, requestUrl, Request.Method.GET, GetContactsResponse.class);
     }
 
     private void initLocationService() {
@@ -299,5 +325,51 @@ public class DashboardActivity extends BaseActivity {
         Log.i(TAG, "onDestroy!");
         super.onDestroy();
 
+    }
+
+    @Override
+    public void onResponse(Object success, Object error, final int requestCode) {
+        if (error == null) {
+            switch (requestCode) {
+                case REQUEST_TYPE_006:
+                    onGetContactsResponse((GetContactsResponse) success);
+                    break;
+                default:
+                    showToastMessage("ERROR " + requestCode + "!", false);
+                    break;
+            }
+        } else {
+            Error customError = (Error) error;
+            Log.d(TAG, "Error: " + customError.getMessage() + " -- " + customError.getStatus() + " -- ");
+            if (customError.getStatus() == 000) {
+                hideProgressDialog();
+                showNetworkErrorSnackbar(findViewById(R.id.ad_container), getString(R.string.error_no_internet), getString(R.string.retry),
+                        new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                switch (requestCode) {
+                                    case REQUEST_TYPE_006:
+                                        initGetContactsRequest();
+                                        break;
+                                    default:
+                                        showToastMessage(getString(R.string.error_unknown), false);
+                                }
+                            }
+                        });
+            } else {
+                showSnackbarMessage(findViewById(R.id.ad_container), customError.getMessage(), true, getString(R.string.ok), null, true);
+            }
+        }
+    }
+
+    private void onGetContactsResponse(GetContactsResponse success) {
+
+        hideProgressDialog();
+        resumeNormalApp();
+    }
+
+    private void resumeNormalApp() {
+        LocalStorage.getInstance(this).firstLoginCompleted();
+        openThisFragment(UpcomingRemindersFragment.TAG, null);
     }
 }

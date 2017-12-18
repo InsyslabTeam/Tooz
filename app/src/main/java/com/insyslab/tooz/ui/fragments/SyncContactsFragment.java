@@ -236,8 +236,9 @@ public class SyncContactsFragment extends BaseFragment implements OnSyncContactI
             if (phoneContacts.get(i).getSelected()) {
                 Contact_ contact = new Contact_();
                 contact.setName(phoneContacts.get(i).getName());
-                contact.setMobile(Util.getCompactMobileNumber(phoneContacts.get(i).getPhoneNumber()));
-                list.add(contact);
+                String cmpMobNum = Util.getCompactMobileNumber(phoneContacts.get(i).getPhoneNumber());
+                contact.setMobile(cmpMobNum);
+                if (cmpMobNum != null) list.add(contact);
             }
         }
 

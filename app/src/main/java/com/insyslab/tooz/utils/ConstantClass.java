@@ -34,5 +34,5 @@ public class ConstantClass {
     public static final String CONTACTS_SYNC_REQUEST_URL = "user/contactsync";
 
     public static final int REQUEST_TYPE_006 = 1006;
-    public static final String GET_CONTACTS_REQUEST_URL = "user/contactsync";
+    public static final String GET_CONTACTS_REQUEST_URL = "user/getContacts";
 }

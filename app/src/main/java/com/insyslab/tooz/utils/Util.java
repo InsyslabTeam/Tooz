@@ -127,21 +127,39 @@ public class Util {
         return formattedAmount;
     }
 
-    public static Boolean isLoggedIn() {
-        return false;
+    public static long getTimeInMilliSeconds(String timeStamp) {
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        try {
+            Date date = format.parse(timeStamp);
+            return date.getTime();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    public static Boolean isLoggedIn(Context context) {
+        return LocalStorage.getInstance(context).getToken() != null && !LocalStorage.getInstance(context).isFirstLogin();
     }
 
     public static String getFormattedMobileNumber(String mobile) {
-        String formattedNumber = "+91";
+        String formattedNumber = "+91 ";
         formattedNumber += mobile.substring(0, 5);
+        formattedNumber += " ";
         formattedNumber += mobile.substring(5);
         return formattedNumber;
     }
 
     public static String getCompactMobileNumber(String contactNumber) {
-        contactNumber.replaceAll("\\s", "");
-        if (contactNumber.substring(0, 3).equals("+91"))
-            return contactNumber.substring(3);
-        return contactNumber;
+//        contactNumber = contactNumber.replaceAll("\\D", "");
+        if (contactNumber.length() >= 10) {
+            if (contactNumber.startsWith("+91")) {
+                return contactNumber.substring(3).replaceAll("\\D", "");
+            } else {
+                return contactNumber.replaceAll("\\D", "");
+            }
+        } else {
+            return null;
+        }
     }
 }

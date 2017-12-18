@@ -51,6 +51,7 @@ public class HttpRequestHandler {
             Log.d(TAG, "Make  JSON Object Request -");
             Log.d(TAG, "Request URL: " + url);
             Log.d(TAG, "Request Object: " + getObjectInStringFormat(jsonObject));
+            Log.d(TAG, "Token: " + token);
 
             JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
                     method,
@@ -100,7 +101,7 @@ public class HttpRequestHandler {
                 public java.util.Map<String, String> getHeaders()
                         throws AuthFailureError {
                     HashMap<String, String> headers = new HashMap<String, String>();
-                    headers.put("Authorization", token);
+                    headers.put("token", token);
                     headers.put("apikey", API_KEY);
                     headers.put("Content-Type", "application/json");
                     return headers;
@@ -170,7 +171,7 @@ public class HttpRequestHandler {
                 public java.util.Map<String, String> getHeaders()
                         throws AuthFailureError {
                     HashMap<String, String> headers = new HashMap<String, String>();
-                    headers.put("Authorization", token);
+                    headers.put("token", token);
                     headers.put("apikey", API_KEY);
                     headers.put("Content-Type", "application/json");
                     return headers;
@@ -243,7 +244,7 @@ public class HttpRequestHandler {
                 public java.util.Map<String, String> getHeaders()
                         throws com.android.volley.AuthFailureError {
                     HashMap<String, String> headers = new HashMap<String, String>();
-                    headers.put("Authorization", token);
+                    headers.put("token", token);
                     headers.put("apikey", API_KEY);
                     headers.put("Content-Type", "application/json");
                     return headers;
@@ -314,7 +315,7 @@ public class HttpRequestHandler {
                 public java.util.Map<String, String> getHeaders()
                         throws AuthFailureError {
                     HashMap<String, String> headers = new HashMap<String, String>();
-                    headers.put("Authorization", token);
+                    headers.put("token", token);
                     headers.put("apikey", API_KEY);
                     return headers;
                 }
@@ -420,8 +421,9 @@ public class HttpRequestHandler {
      */
 
     private static String getErrorMessage(String jsonStr) {
-        ErrorFromServer error = new Gson().fromJson(jsonStr, ErrorFromServer.class);
-        return error.getMessage();
+//        ErrorFromServer error = new Gson().fromJson(jsonStr, ErrorFromServer.class);
+//        return error.getMessage();
+        return jsonStr;
     }
 
     private static String getObjectInStringFormat(JSONObject jObject) {
