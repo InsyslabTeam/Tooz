@@ -6,7 +6,6 @@ import android.content.SharedPreferences;
 import com.google.gson.Gson;
 import com.insyslab.tooz.models.User;
 
-import static com.insyslab.tooz.utils.AppConstants.KEY_SHARED_PREFS_TOKEN;
 import static com.insyslab.tooz.utils.AppConstants.KEY_SHARED_PREFS_USER;
 import static com.insyslab.tooz.utils.AppConstants.KEY_TOOZ_SHARED_PREFERENCE;
 import static com.insyslab.tooz.utils.AppConstants.KEY_USER_SHARED_PREFERENCE;
@@ -19,11 +18,11 @@ public class LocalStorage {
 
     private static LocalStorage instance = null;
     SharedPreferences userSharedPreferences;
-    SharedPreferences sellfashSharedPreferences;
+    SharedPreferences toozSharedPreferences;
 
     public LocalStorage(Context context) {
         userSharedPreferences = context.getSharedPreferences(KEY_USER_SHARED_PREFERENCE, 0);
-        sellfashSharedPreferences = context.getSharedPreferences(KEY_TOOZ_SHARED_PREFERENCE, 0);
+        toozSharedPreferences = context.getSharedPreferences(KEY_TOOZ_SHARED_PREFERENCE, 0);
     }
 
     public static LocalStorage getInstance(Context context) {
@@ -44,21 +43,15 @@ public class LocalStorage {
     }
 
     public void clearToozSharedPreferences() {
-        SharedPreferences.Editor editor = sellfashSharedPreferences.edit();
+        SharedPreferences.Editor editor = toozSharedPreferences.edit();
         editor.clear();
         editor.apply();
     }
 
     public String getToken() {
-        if (userSharedPreferences.contains(KEY_SHARED_PREFS_TOKEN))
-            return userSharedPreferences.getString(KEY_SHARED_PREFS_TOKEN, null);
+        User user = getUser();
+        if (user != null && user.getToken() != null) return user.getToken().getAccessToken();
         else return null;
-    }
-
-    public void setToken(String token) {
-        SharedPreferences.Editor editor = userSharedPreferences.edit();
-        editor.putString(KEY_SHARED_PREFS_TOKEN, token);
-        editor.commit();
     }
 
     public User getUser() {

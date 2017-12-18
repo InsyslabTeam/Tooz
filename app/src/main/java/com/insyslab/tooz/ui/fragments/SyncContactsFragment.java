@@ -18,6 +18,7 @@ import android.widget.CompoundButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.android.volley.Request;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.insyslab.tooz.R;
@@ -25,20 +26,27 @@ import com.insyslab.tooz.interfaces.OnRuntimePermissionsResultListener;
 import com.insyslab.tooz.interfaces.OnSyncContactItemClickListener;
 import com.insyslab.tooz.models.FragmentState;
 import com.insyslab.tooz.models.PhoneContact;
+import com.insyslab.tooz.models.requests.ContactSyncRequest;
+import com.insyslab.tooz.models.requests.Contact_;
 import com.insyslab.tooz.models.responses.ContactSyncResponse;
 import com.insyslab.tooz.models.responses.Error;
 import com.insyslab.tooz.restclient.BaseResponseInterface;
+import com.insyslab.tooz.restclient.GenericDataHandler;
+import com.insyslab.tooz.restclient.RequestBuilder;
 import com.insyslab.tooz.ui.activities.BaseActivity;
 import com.insyslab.tooz.ui.activities.OnboardingActivity;
 import com.insyslab.tooz.ui.adapters.SyncContactsAdapter;
 import com.insyslab.tooz.utils.UriDeserializer;
 import com.insyslab.tooz.utils.Util;
 
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import static android.Manifest.permission.READ_CONTACTS;
 import static android.Manifest.permission.WRITE_CONTACTS;
+import static com.insyslab.tooz.utils.ConstantClass.CONTACTS_SYNC_REQUEST_URL;
 import static com.insyslab.tooz.utils.ConstantClass.REQUEST_TYPE_005;
 
 /**
@@ -138,7 +146,6 @@ public class SyncContactsFragment extends BaseFragment implements OnSyncContactI
                     }
                     pCur.close();
                 }
-
             } while (cursor.moveToNext());
         }
 
@@ -205,9 +212,10 @@ public class SyncContactsFragment extends BaseFragment implements OnSyncContactI
     }
 
     private void onSyncClick() {
-        List<PhoneContact> selectedContacts = getListOfSelectedContacts();
+        ContactSyncRequest contactSyncRequest = getListOfSelectedContacts();
 
-        if (selectedContacts != null && selectedContacts.size() == 0) {
+        if (contactSyncRequest != null && contactSyncRequest.getContacts() != null
+                && contactSyncRequest.getContacts().size() == 0) {
             showSnackbarMessage(content,
                     "Please select some contacts to sync!",
                     true,
@@ -215,30 +223,39 @@ public class SyncContactsFragment extends BaseFragment implements OnSyncContactI
                     null,
                     true);
         } else {
-            initContactSyncRequest(selectedContacts);
+            initContactSyncRequest(contactSyncRequest);
         }
 
     }
 
-    private List<PhoneContact> getListOfSelectedContacts() {
-        List<PhoneContact> list = new ArrayList<>();
+    private ContactSyncRequest getListOfSelectedContacts() {
+        ContactSyncRequest contactSyncRequest = new ContactSyncRequest();
+
+        List<Contact_> list = new ArrayList<>();
         for (int i = 0; i < phoneContacts.size(); i++) {
-            if (phoneContacts.get(i).getSelected()) list.add(phoneContacts.get(i));
+            if (phoneContacts.get(i).getSelected()) {
+                Contact_ contact = new Contact_();
+                contact.setName(phoneContacts.get(i).getName());
+                contact.setMobile(Util.getCompactMobileNumber(phoneContacts.get(i).getPhoneNumber()));
+                list.add(contact);
+            }
         }
-        return list;
+
+        contactSyncRequest.setContacts(list);
+
+        return contactSyncRequest;
     }
 
-    private void initContactSyncRequest(List<PhoneContact> selectedContacts) {
-        openDashboardActivity(new ContactSyncResponse());
-//        showProgressDialog(getString(R.string.loading));
-//
-//        String requestUrl = CONTACTS_SYNC_REQUEST_URL;
-//        JSONObject requestObject = new RequestBuilder().getContactSyncRequest();
-//
-//        if (requestObject != null) {
-//            GenericDataHandler reqGenericDataHandler = new GenericDataHandler(this, getContext(), REQUEST_TYPE_005);
-//            reqGenericDataHandler.jsonObjectRequest(requestObject, requestUrl, Request.Method.POST, ContactSyncResponse.class);
-//        }
+    private void initContactSyncRequest(ContactSyncRequest contactSyncRequest) {
+        showProgressDialog(getString(R.string.loading));
+
+        String requestUrl = CONTACTS_SYNC_REQUEST_URL;
+        JSONObject requestObject = new RequestBuilder().getContactSyncRequest(contactSyncRequest);
+
+        if (requestObject != null) {
+            GenericDataHandler reqGenericDataHandler = new GenericDataHandler(this, getContext(), REQUEST_TYPE_005);
+            reqGenericDataHandler.jsonObjectRequest(requestObject, requestUrl, Request.Method.POST, ContactSyncResponse.class);
+        }
     }
 
     private void onSkipClick() {
@@ -330,10 +347,14 @@ public class SyncContactsFragment extends BaseFragment implements OnSyncContactI
     }
 
     private void onContactSyncResponse(ContactSyncResponse success) {
-        openDashboardActivity(success);
+        if (success.getStatus() == 200)
+            openDashboardActivity();
+        else
+            showSnackbarMessage(content, success.getMessage(), true, getString(R.string.ok), null, true);
+
     }
 
-    private void openDashboardActivity(ContactSyncResponse success) {
+    private void openDashboardActivity() {
         ((OnboardingActivity) getActivity()).initProceedToDashboard();
     }
 

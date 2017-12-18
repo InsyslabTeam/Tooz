@@ -32,6 +32,8 @@ import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.insyslab.tooz.utils.ConstantClass.API_KEY;
+
 /**
  * Created by TaNMay on 06/10/17.
  */
@@ -99,6 +101,7 @@ public class HttpRequestHandler {
                         throws AuthFailureError {
                     HashMap<String, String> headers = new HashMap<String, String>();
                     headers.put("Authorization", token);
+                    headers.put("apikey", API_KEY);
                     headers.put("Content-Type", "application/json");
                     return headers;
                 }
@@ -168,6 +171,7 @@ public class HttpRequestHandler {
                         throws AuthFailureError {
                     HashMap<String, String> headers = new HashMap<String, String>();
                     headers.put("Authorization", token);
+                    headers.put("apikey", API_KEY);
                     headers.put("Content-Type", "application/json");
                     return headers;
                 }
@@ -240,6 +244,7 @@ public class HttpRequestHandler {
                         throws com.android.volley.AuthFailureError {
                     HashMap<String, String> headers = new HashMap<String, String>();
                     headers.put("Authorization", token);
+                    headers.put("apikey", API_KEY);
                     headers.put("Content-Type", "application/json");
                     return headers;
                 }
@@ -310,6 +315,7 @@ public class HttpRequestHandler {
                         throws AuthFailureError {
                     HashMap<String, String> headers = new HashMap<String, String>();
                     headers.put("Authorization", token);
+                    headers.put("apikey", API_KEY);
                     return headers;
                 }
             };

@@ -113,17 +113,6 @@ public class Util {
         return FirebaseInstanceId.getInstance().getToken();
     }
 
-    public static long getTimeInMilliSeconds(String timeStamp) {
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        try {
-            Date date = format.parse(timeStamp);
-            return date.getTime();
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        return 0;
-    }
-
     public static JSONObject getJsonObjectFromString(String objectString) {
         try {
             return new JSONObject(objectString);
@@ -139,6 +128,20 @@ public class Util {
     }
 
     public static Boolean isLoggedIn() {
-        return true;
+        return false;
+    }
+
+    public static String getFormattedMobileNumber(String mobile) {
+        String formattedNumber = "+91";
+        formattedNumber += mobile.substring(0, 5);
+        formattedNumber += mobile.substring(5);
+        return formattedNumber;
+    }
+
+    public static String getCompactMobileNumber(String contactNumber) {
+        contactNumber.replaceAll("\\s", "");
+        if (contactNumber.substring(0, 3).equals("+91"))
+            return contactNumber.substring(3);
+        return contactNumber;
     }
 }

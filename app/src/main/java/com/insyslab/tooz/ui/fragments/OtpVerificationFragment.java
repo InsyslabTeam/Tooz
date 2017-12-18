@@ -18,21 +18,30 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.android.volley.Request;
 import com.insyslab.tooz.R;
 import com.insyslab.tooz.models.FragmentState;
+import com.insyslab.tooz.models.User;
 import com.insyslab.tooz.models.responses.Error;
 import com.insyslab.tooz.models.responses.ResendOtpResponse;
 import com.insyslab.tooz.models.responses.VerifyOtpResponse;
 import com.insyslab.tooz.restclient.BaseResponseInterface;
+import com.insyslab.tooz.restclient.GenericDataHandler;
+import com.insyslab.tooz.restclient.RequestBuilder;
 import com.insyslab.tooz.ui.activities.OnboardingActivity;
+import com.insyslab.tooz.utils.LocalStorage;
+import com.insyslab.tooz.utils.Util;
+
+import org.json.JSONObject;
 
 import static com.insyslab.tooz.utils.AppConstants.KEY_OTP_MESSAGE;
 import static com.insyslab.tooz.utils.AppConstants.KEY_OTP_NUMBER;
 import static com.insyslab.tooz.utils.AppConstants.KEY_OTP_SMS;
-import static com.insyslab.tooz.utils.AppConstants.KEY_SIGN_IN_RESPONSE;
 import static com.insyslab.tooz.utils.AppConstants.VAL_OTP_NUMBER;
 import static com.insyslab.tooz.utils.ConstantClass.REQUEST_TYPE_002;
 import static com.insyslab.tooz.utils.ConstantClass.REQUEST_TYPE_003;
+import static com.insyslab.tooz.utils.ConstantClass.RESEND_OTP_REQUEST_URL;
+import static com.insyslab.tooz.utils.ConstantClass.VERIFY_OTP_REQUEST_URL;
 
 /**
  * Created by TaNMay on 26/09/16.
@@ -48,6 +57,8 @@ public class OtpVerificationFragment extends BaseFragment implements BaseRespons
     private TextView tvMobileNumber, tvResendOtp;
     private EditText etOtpOne, etOtpTwo, etOtpThree, etOtpFour;
     private ImageView ivProceed;
+
+    private User user;
 
     private BroadcastReceiver smsBroadcastReceiver = new BroadcastReceiver() {
         @Override
@@ -93,6 +104,8 @@ public class OtpVerificationFragment extends BaseFragment implements BaseRespons
         initView(layout);
         setUpActions();
 
+        user = LocalStorage.getInstance(getContext()).getUser();
+
         initAutoReadSms();
         setUpViewDetails();
 
@@ -100,7 +113,7 @@ public class OtpVerificationFragment extends BaseFragment implements BaseRespons
     }
 
     private void setUpViewDetails() {
-        tvMobileNumber.setText("+91 88888 88888");
+        tvMobileNumber.setText(Util.getFormattedMobileNumber(user.getMobile()));
     }
 
     private String getOtpFromMessage(String message) {
@@ -121,7 +134,7 @@ public class OtpVerificationFragment extends BaseFragment implements BaseRespons
     private void onProceedClick() {
         String otp = getInputOtp();
         if (otp.length() == 4) {
-            initVerifyOtpRequest();
+            initVerifyOtpRequest(otp);
         } else {
             showSnackbarMessage(content, "Please enter a valid OTP!", true, getString(R.string.ok), null, true);
         }
@@ -137,17 +150,16 @@ public class OtpVerificationFragment extends BaseFragment implements BaseRespons
         return otp;
     }
 
-    private void initVerifyOtpRequest() {
-        openCreateProfileFragment(new VerifyOtpResponse());
-//        showProgressDialog(getString(R.string.loading));
-//
-//        String requestUrl = VERIFY_OTP_REQUEST_URL;
-//        JSONObject requestObject = new RequestBuilder().getVerifyOtpRequestPayload();
-//
-//        if (requestObject != null) {
-//            GenericDataHandler req1GenericDataHandler = new GenericDataHandler(this, getContext(), REQUEST_TYPE_002);
-//            req1GenericDataHandler.jsonObjectRequest(requestObject, requestUrl, Request.Method.POST, VerifyOtpResponse.class);
-//        }
+    private void initVerifyOtpRequest(String otp) {
+        showProgressDialog(getString(R.string.loading));
+
+        String requestUrl = VERIFY_OTP_REQUEST_URL;
+        JSONObject requestObject = new RequestBuilder().getVerifyOtpRequestPayload(user.getMobile(), otp);
+
+        if (requestObject != null) {
+            GenericDataHandler req1GenericDataHandler = new GenericDataHandler(this, getContext(), REQUEST_TYPE_002);
+            req1GenericDataHandler.jsonObjectRequest(requestObject, requestUrl, Request.Method.POST, VerifyOtpResponse.class);
+        }
     }
 
     private void initAutoReadSms() {
@@ -188,15 +200,15 @@ public class OtpVerificationFragment extends BaseFragment implements BaseRespons
     }
 
     private void initResendOtpRequest() {
-//        showProgressDialog(getString(R.string.loading));
-//
-//        String requestUrl = RESEND_OTP_REQUEST_URL;
-//        JSONObject requestObject = new RequestBuilder().getResendOtpRequestPayload();
-//
-//        if (requestObject != null) {
-//            GenericDataHandler req1GenericDataHandler = new GenericDataHandler(this, getContext(), REQUEST_TYPE_003);
-//            req1GenericDataHandler.jsonObjectRequest(requestObject, requestUrl, Request.Method.POST, ResendOtpResponse.class);
-//        }
+        showProgressDialog(getString(R.string.loading));
+
+        String requestUrl = RESEND_OTP_REQUEST_URL;
+        JSONObject requestObject = new RequestBuilder().getResendOtpRequestPayload(user.getMobile());
+
+        if (requestObject != null) {
+            GenericDataHandler req1GenericDataHandler = new GenericDataHandler(this, getContext(), REQUEST_TYPE_003);
+            req1GenericDataHandler.jsonObjectRequest(requestObject, requestUrl, Request.Method.POST, ResendOtpResponse.class);
+        }
     }
 
     private void setUpOtpInputSection() {
@@ -263,10 +275,10 @@ public class OtpVerificationFragment extends BaseFragment implements BaseRespons
         if (error == null) {
             switch (requestCode) {
                 case REQUEST_TYPE_002:
-                    onVerifyOtpResponse((VerifyOtpResponse) success);
+                    onVerifyOtpResponse((User) success);
                     break;
                 case REQUEST_TYPE_003:
-                    onResendOtpResponse((ResendOtpResponse) success);
+                    onResendOtpResponse((User) success);
                     break;
                 default:
                     showToastMessage("ERROR " + requestCode + "!", false);
@@ -283,7 +295,7 @@ public class OtpVerificationFragment extends BaseFragment implements BaseRespons
                             public void onClick(View v) {
                                 switch (requestCode) {
                                     case REQUEST_TYPE_002:
-                                        initVerifyOtpRequest();
+                                        initVerifyOtpRequest(getInputOtp());
                                         break;
                                     case REQUEST_TYPE_003:
                                         initResendOtpRequest();
@@ -301,17 +313,17 @@ public class OtpVerificationFragment extends BaseFragment implements BaseRespons
 
     }
 
-    private void onResendOtpResponse(ResendOtpResponse success) {
-
+    private void onResendOtpResponse(User success) {
+        user = success;
+        LocalStorage.getInstance(getContext()).setUser(success);
     }
 
-    private void onVerifyOtpResponse(VerifyOtpResponse success) {
-        openCreateProfileFragment(success);
+    private void onVerifyOtpResponse(User success) {
+        LocalStorage.getInstance(getContext()).setUser(success);
+        openCreateProfileFragment();
     }
 
-    private void openCreateProfileFragment(VerifyOtpResponse verifyOtpResponse) {
-        Bundle bundle = new Bundle();
-        bundle.putSerializable(KEY_SIGN_IN_RESPONSE, verifyOtpResponse);
-        ((OnboardingActivity) getActivity()).openThisFragment(CreateProfileFragment.TAG, bundle);
+    private void openCreateProfileFragment() {
+        ((OnboardingActivity) getActivity()).openThisFragment(CreateProfileFragment.TAG, null);
     }
 }
