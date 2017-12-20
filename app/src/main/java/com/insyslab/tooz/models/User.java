@@ -9,6 +9,9 @@ public class User {
     @SerializedName("mobile")
     @Expose
     private String mobile;
+    @SerializedName("name")
+    @Expose
+    private String name;
     @SerializedName("role")
     @Expose
     private String role;
@@ -128,4 +131,11 @@ public class User {
         this.token = token;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 }

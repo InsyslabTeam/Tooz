@@ -28,11 +28,14 @@ public class ConstantClass {
     public static final String RESEND_OTP_REQUEST_URL = SIGN_IN_REQUEST_URL;
 
     public static final int REQUEST_TYPE_004 = 1004;
-    public static final String CREATE_PROFILE_REQUEST_URL = "";
+    public static final String CREATE_PROFILE_REQUEST_URL = "user/updateProfile";
 
     public static final int REQUEST_TYPE_005 = 1005;
     public static final String CONTACTS_SYNC_REQUEST_URL = "user/contactsync";
 
     public static final int REQUEST_TYPE_006 = 1006;
     public static final String GET_CONTACTS_REQUEST_URL = "user/getContacts";
+
+    public static final int REQUEST_TYPE_007 = 1007;
+    public static final String LOGOUT_REQUEST_URL = "user/logout";
 }

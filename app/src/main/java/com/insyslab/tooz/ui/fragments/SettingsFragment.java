@@ -14,10 +14,15 @@ import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.android.volley.Request;
 import com.insyslab.tooz.R;
 import com.insyslab.tooz.interfaces.OnSettingItemClickListener;
 import com.insyslab.tooz.models.FragmentState;
 import com.insyslab.tooz.models.SettingsItem;
+import com.insyslab.tooz.models.responses.Error;
+import com.insyslab.tooz.models.responses.LogoutResponse;
+import com.insyslab.tooz.restclient.BaseResponseInterface;
+import com.insyslab.tooz.restclient.GenericDataHandler;
 import com.insyslab.tooz.ui.activities.OnboardingActivity;
 import com.insyslab.tooz.ui.activities.SettingsActivity;
 import com.insyslab.tooz.ui.adapters.SettingsAdapter;
@@ -26,11 +31,14 @@ import com.insyslab.tooz.utils.LocalStorage;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.insyslab.tooz.utils.ConstantClass.LOGOUT_REQUEST_URL;
+import static com.insyslab.tooz.utils.ConstantClass.REQUEST_TYPE_007;
+
 /**
  * Created by TaNMay on 26/09/16.
  */
 
-public class SettingsFragment extends BaseFragment implements OnSettingItemClickListener {
+public class SettingsFragment extends BaseFragment implements OnSettingItemClickListener, BaseResponseInterface {
 
     public static final String TAG = "SettingsFrag ==> ";
 
@@ -169,13 +177,22 @@ public class SettingsFragment extends BaseFragment implements OnSettingItemClick
                 redirectToThisFragment(HelpFragment.TAG);
                 break;
             case 9:
-                proceedToLogout();
+                initLogoutRequest();
                 break;
             default:
                 Log.d(TAG, "Some fragment error!");
                 break;
         }
     }
+
+    private void initLogoutRequest() {
+        showProgressDialog(getString(R.string.loading));
+
+        String requestUrl = LOGOUT_REQUEST_URL;
+        GenericDataHandler req1GenericDataHandler = new GenericDataHandler(this, getContext(), REQUEST_TYPE_007);
+        req1GenericDataHandler.jsonObjectRequest(null, requestUrl, Request.Method.GET, LogoutResponse.class);
+    }
+
 
     private void proceedToLogout() {
         LocalStorage.getInstance(getContext()).clearUserSharedPreferences();
@@ -190,5 +207,48 @@ public class SettingsFragment extends BaseFragment implements OnSettingItemClick
 
     private void redirectToThisFragment(String tag) {
         ((SettingsActivity) getActivity()).openThisFragment(tag, null);
+    }
+
+    @Override
+    public void onResponse(Object success, Object error, final int requestCode) {
+        hideProgressDialog();
+        if (error == null) {
+            switch (requestCode) {
+                case REQUEST_TYPE_007:
+                    onLogoutResponse((LogoutResponse) success);
+                    break;
+                default:
+                    showToastMessage("ERROR " + requestCode + "!", false);
+                    break;
+            }
+        } else {
+            Error customError = (Error) error;
+            Log.d(TAG, "Error: " + customError.getMessage() + " -- " + customError.getStatus() + " -- ");
+            if (customError.getStatus() == 000) {
+                hideProgressDialog();
+                showNetworkErrorSnackbar(content, getString(R.string.error_no_internet), getString(R.string.retry),
+                        new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                switch (requestCode) {
+                                    case REQUEST_TYPE_007:
+                                        initLogoutRequest();
+                                        break;
+                                    default:
+                                        showToastMessage(getString(R.string.error_unknown), false);
+                                }
+                            }
+                        });
+            } else {
+                showSnackbarMessage(content, customError.getMessage(), true, getString(R.string.ok), null, true);
+            }
+
+        }
+
+    }
+
+    private void onLogoutResponse(LogoutResponse success) {
+        showToastMessage(success.getMsg(), false);
+        proceedToLogout();
     }
 }

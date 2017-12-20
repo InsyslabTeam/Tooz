@@ -1,6 +1,7 @@
 package com.insyslab.tooz.restclient;
 
 import com.google.gson.Gson;
+import com.insyslab.tooz.models.User;
 import com.insyslab.tooz.models.requests.ContactSyncRequest;
 
 import org.json.JSONException;
@@ -46,9 +47,9 @@ public class RequestBuilder {
         return getSignInRequestPayload(mobile);
     }
 
-    public JSONObject getCreateProfileRequestPayload(String name) {
-        JSONObject jsonObject = new JSONObject();
+    public JSONObject getCreateProfileRequestPayload(String name, User user) {
         try {
+            JSONObject jsonObject = new JSONObject(new Gson().toJson(user));
             jsonObject.put(key_name, name);
             return jsonObject;
         } catch (JSONException e) {

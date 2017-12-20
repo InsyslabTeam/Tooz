@@ -12,23 +12,30 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
+import com.android.volley.Request;
 import com.insyslab.tooz.R;
 import com.insyslab.tooz.interfaces.OnRuntimePermissionsResultListener;
 import com.insyslab.tooz.models.FragmentState;
-import com.insyslab.tooz.models.responses.CreateProfileResponse;
+import com.insyslab.tooz.models.User;
 import com.insyslab.tooz.models.responses.Error;
 import com.insyslab.tooz.restclient.BaseResponseInterface;
+import com.insyslab.tooz.restclient.GenericDataHandler;
+import com.insyslab.tooz.restclient.RequestBuilder;
 import com.insyslab.tooz.ui.activities.BaseActivity;
 import com.insyslab.tooz.ui.activities.OnboardingActivity;
 import com.insyslab.tooz.ui.customui.CircleTransform;
+import com.insyslab.tooz.utils.LocalStorage;
 import com.insyslab.tooz.utils.Util;
 import com.insyslab.tooz.utils.Validator;
 import com.squareup.picasso.Picasso;
 import com.theartofdev.edmodo.cropper.CropImage;
 
+import org.json.JSONObject;
+
 import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 import static android.app.Activity.RESULT_OK;
+import static com.insyslab.tooz.utils.ConstantClass.CREATE_PROFILE_REQUEST_URL;
 import static com.insyslab.tooz.utils.ConstantClass.REQUEST_TYPE_001;
 import static com.insyslab.tooz.utils.ConstantClass.REQUEST_TYPE_004;
 
@@ -46,6 +53,8 @@ public class CreateProfileFragment extends BaseFragment implements BaseResponseI
     private RelativeLayout content;
     private TextInputEditText tietName, tietMobileNumber;
     private ImageView ivProfilePicture, ivProceed;
+
+    private User user;
 
     public CreateProfileFragment() {
 
@@ -76,6 +85,8 @@ public class CreateProfileFragment extends BaseFragment implements BaseResponseI
         initView(layout);
         setUpActions();
 
+        user = LocalStorage.getInstance(getContext()).getUser();
+
         setUpViewDetails();
 
         return layout;
@@ -83,7 +94,11 @@ public class CreateProfileFragment extends BaseFragment implements BaseResponseI
 
     private void setUpViewDetails() {
         disableEdittext(tietMobileNumber);
-        tietMobileNumber.setText("8888888888");
+        tietMobileNumber.setText(user.getMobile());
+
+        if (user.getName() != null && !user.getName().isEmpty()) {
+            tietName.setText(user.getName());
+        }
     }
 
     private void onProceedClick() {
@@ -94,22 +109,23 @@ public class CreateProfileFragment extends BaseFragment implements BaseResponseI
             tietName.setError(getString(R.string.error_empty_field));
         } else if (!Validator.isValidName(name)) {
             tietName.setError(getString(R.string.error_invalid_name));
+        } else if (user.getName().equals(name)) {
+            openSyncContactsFragment();
         } else {
             initCreateProfileRequest();
         }
     }
 
     private void initCreateProfileRequest() {
-        openSyncContactsFragment();
-//        showProgressDialog(getString(R.string.loading));
-//
-//        String requestUrl = CREATE_PROFIL_REQUEST_URL;
-//        JSONObject requestObject = new RequestBuilder().getCreateProfileRequestPayload(tietName.getText().toString());
-//
-//        if (requestObject != null) {
-//            GenericDataHandler req1GenericDataHandler = new GenericDataHandler(this, getContext(), REQUEST_TYPE_004);
-//            req1GenericDataHandler.jsonObjectRequest(requestObject, requestUrl, Request.Method.POST, CreateProfileResponse.class);
-//        }
+        showProgressDialog(getString(R.string.loading));
+
+        String requestUrl = CREATE_PROFILE_REQUEST_URL;
+        JSONObject requestObject = new RequestBuilder().getCreateProfileRequestPayload(tietName.getText().toString(), user);
+
+        if (requestObject != null) {
+            GenericDataHandler req1GenericDataHandler = new GenericDataHandler(this, getContext(), REQUEST_TYPE_004);
+            req1GenericDataHandler.jsonObjectRequest(requestObject, requestUrl, Request.Method.POST, User.class);
+        }
     }
 
     private void openSyncContactsFragment() {
@@ -183,7 +199,7 @@ public class CreateProfileFragment extends BaseFragment implements BaseResponseI
         if (error == null) {
             switch (requestCode) {
                 case REQUEST_TYPE_004:
-                    onCreateProfileResponse((CreateProfileResponse) success);
+                    onCreateProfileResponse((User) success);
                     break;
                 default:
                     showToastMessage("ERROR " + requestCode + "!", false);
@@ -213,7 +229,9 @@ public class CreateProfileFragment extends BaseFragment implements BaseResponseI
         }
     }
 
-    private void onCreateProfileResponse(CreateProfileResponse success) {
+    private void onCreateProfileResponse(User success) {
+        user = success;
+        LocalStorage.getInstance(getContext()).setUser(success);
         openSyncContactsFragment();
     }
 
