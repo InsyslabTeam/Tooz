@@ -110,7 +110,7 @@ public class SplashActivity extends BaseActivity implements OnRuntimePermissions
         onRuntimePermissionsResultListener = this;
 
         mVisible = true;
-        mContentView = findViewById(R.id.fullscreen_content);
+        mContentView = findViewById(R.id.aspl_logo);
         mContentView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

@@ -109,7 +109,7 @@ public class CreateProfileFragment extends BaseFragment implements BaseResponseI
             tietName.setError(getString(R.string.error_empty_field));
         } else if (!Validator.isValidName(name)) {
             tietName.setError(getString(R.string.error_invalid_name));
-        } else if (user.getName().equals(name)) {
+        } else if (user.getName() != null && !user.getName().isEmpty() && user.getName().equals(name)) {
             openSyncContactsFragment();
         } else {
             initCreateProfileRequest();

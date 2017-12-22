@@ -13,6 +13,7 @@ import com.insyslab.tooz.models.FragmentState;
 import com.insyslab.tooz.ui.fragments.BlockedContactsFragment;
 import com.insyslab.tooz.ui.fragments.FeedbackFragment;
 import com.insyslab.tooz.ui.fragments.HelpFragment;
+import com.insyslab.tooz.ui.fragments.ManualContactSyncFragment;
 import com.insyslab.tooz.ui.fragments.NotificationSettingsFragment;
 import com.insyslab.tooz.ui.fragments.PreferencesFragment;
 import com.insyslab.tooz.ui.fragments.PrivacySettingsFragment;
@@ -87,6 +88,11 @@ public class SettingsActivity extends BaseActivity {
                     .add(R.id.as_fragment_container, FeedbackFragment.newInstance((Bundle) bundle), fragmentTag)
                     .addToBackStack(TAG)
                     .commit();
+        } else if (fragmentTag.equals(ManualContactSyncFragment.TAG)) {
+            fragmentManager.beginTransaction()
+                    .add(R.id.as_fragment_container, ManualContactSyncFragment.newInstance((Bundle) bundle), fragmentTag)
+                    .addToBackStack(TAG)
+                    .commit();
         } else {
             showToastMessage("Some error occurred!", false);
         }
@@ -128,6 +134,8 @@ public class SettingsActivity extends BaseActivity {
             updateToolbar("Terms and Privacy Policy");
         } else if (fragmentState.getVisibleFragment().equals(FeedbackFragment.TAG)) {
             updateToolbar("Share your Feedback");
+        } else if (fragmentState.getVisibleFragment().equals(ManualContactSyncFragment.TAG)) {
+            updateToolbar("Sync your contacts");
         }
     }
 
@@ -142,11 +150,14 @@ public class SettingsActivity extends BaseActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        if (!currentFragment.equals(SettingsFragment.TAG)
+        if (currentFragment.equals(ManualContactSyncFragment.TAG)) {
+            getMenuInflater().inflate(R.menu.menu_sync, menu);
+        } else if (!currentFragment.equals(SettingsFragment.TAG)
                 && !currentFragment.equals(TermsPrivPolicyFragment.TAG)
                 && !currentFragment.equals(FeedbackFragment.TAG)
-                && !currentFragment.equals(HelpFragment.TAG))
+                && !currentFragment.equals(HelpFragment.TAG)) {
             getMenuInflater().inflate(R.menu.menu_actions, menu);
+        }
         return true;
     }
 
@@ -156,6 +167,11 @@ public class SettingsActivity extends BaseActivity {
 
         if (id == R.id.action_save) {
             onToolbarSaveClick();
+            return true;
+        }
+
+        if (id == R.id.action_sync) {
+            onToolbarSyncClick();
             return true;
         }
 
@@ -175,6 +191,18 @@ public class SettingsActivity extends BaseActivity {
             case UpdateProfileFragment.TAG:
                 UpdateProfileFragment fragment3 = (UpdateProfileFragment) getSupportFragmentManager().findFragmentById(R.id.as_fragment_container);
                 fragment3.onSaveClick();
+                break;
+            default:
+                showToastMessage("Some error occurred!", false);
+                break;
+        }
+    }
+
+    private void onToolbarSyncClick() {
+        switch (currentFragment) {
+            case ManualContactSyncFragment.TAG:
+                ManualContactSyncFragment fragment1 = (ManualContactSyncFragment) getSupportFragmentManager().findFragmentById(R.id.as_fragment_container);
+                fragment1.onSyncClick();
                 break;
             default:
                 showToastMessage("Some error occurred!", false);

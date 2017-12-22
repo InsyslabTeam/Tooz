@@ -9,9 +9,11 @@ public class User {
     @SerializedName("mobile")
     @Expose
     private String mobile;
+
     @SerializedName("name")
     @Expose
     private String name;
+
     @SerializedName("role")
     @Expose
     private String role;
@@ -33,12 +35,15 @@ public class User {
     @SerializedName("otp")
     @Expose
     private String otp;
+
     @SerializedName("id")
     @Expose
     private String id;
+
     @SerializedName("active")
     @Expose
     private Boolean active;
+
     @SerializedName("token")
     @Expose
     private Token token;

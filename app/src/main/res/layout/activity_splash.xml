@@ -13,7 +13,7 @@
         android:orientation="vertical">
 
         <ImageView
-            android:id="@+id/as_logo"
+            android:id="@+id/aspl_logo"
             android:layout_width="@dimen/splash_logo"
             android:layout_height="@dimen/splash_logo"
             android:keepScreenOn="true"

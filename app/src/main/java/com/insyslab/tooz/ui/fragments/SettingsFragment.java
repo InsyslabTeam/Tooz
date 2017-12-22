@@ -133,16 +133,17 @@ public class SettingsFragment extends BaseFragment implements OnSettingItemClick
     }
 
     /**
-     * 0. Blocked Contacts
-     * 1. Preferences
-     * 2. Update Profile
-     * 3. Privacy Settings
-     * 4. Tell a Friend
-     * 5. Notifications
-     * 6. Feedback
-     * 7. Terms and Privacy Policy
-     * 8. Help
-     * 9. Logout
+     * 0. Sync Contacts
+     * 1. Blocked Contacts
+     * 2. Preferences
+     * 3. Update Profile
+     * 4. Privacy Settings
+     * 5. Tell a Friend
+     * 6. Notifications
+     * 7. Feedback
+     * 8. Terms and Privacy Policy
+     * 9. Help
+     * 10. Logout
      */
 
     @Override
@@ -150,33 +151,36 @@ public class SettingsFragment extends BaseFragment implements OnSettingItemClick
         int position = settingsRv.getChildAdapterPosition(view);
         switch (position) {
             case 0:
-                redirectToThisFragment(BlockedContactsFragment.TAG);
+                redirectToThisFragment(ManualContactSyncFragment.TAG);
                 break;
             case 1:
-                redirectToThisFragment(PreferencesFragment.TAG);
+                redirectToThisFragment(BlockedContactsFragment.TAG);
                 break;
             case 2:
-                redirectToThisFragment(UpdateProfileFragment.TAG);
+                redirectToThisFragment(PreferencesFragment.TAG);
                 break;
             case 3:
-                redirectToThisFragment(PrivacySettingsFragment.TAG);
+                redirectToThisFragment(UpdateProfileFragment.TAG);
                 break;
             case 4:
-                initAppReferal();
+                redirectToThisFragment(PrivacySettingsFragment.TAG);
                 break;
             case 5:
-                redirectToThisFragment(NotificationSettingsFragment.TAG);
+                initAppReferal();
                 break;
             case 6:
-                redirectToThisFragment(FeedbackFragment.TAG);
+                redirectToThisFragment(NotificationSettingsFragment.TAG);
                 break;
             case 7:
-                redirectToThisFragment(TermsPrivPolicyFragment.TAG);
+                redirectToThisFragment(FeedbackFragment.TAG);
                 break;
             case 8:
-                redirectToThisFragment(HelpFragment.TAG);
+                redirectToThisFragment(TermsPrivPolicyFragment.TAG);
                 break;
             case 9:
+                redirectToThisFragment(HelpFragment.TAG);
+                break;
+            case 10:
                 initLogoutRequest();
                 break;
             default:

@@ -35,6 +35,7 @@
 
     <!--Settings-->
     <string-array name="settings_list">
+        <item>Sync Contacts</item>
         <item>Blocked Contacts</item>
         <item>Preferences</item>
         <item>Update Profile</item>

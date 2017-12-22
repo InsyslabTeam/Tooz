@@ -5,11 +5,13 @@ import android.arch.persistence.room.Room;
 import android.arch.persistence.room.RoomDatabase;
 import android.content.Context;
 
+import com.insyslab.tooz.models.User;
+
 /**
  * Created by TaNMay on 07/12/17.
  */
 
-@Database(version = 1, entities = {Contact.class}, exportSchema = false)
+@Database(version = 1, entities = {User.class}, exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
 
     public static final String DB_NAME = "tooz_db";

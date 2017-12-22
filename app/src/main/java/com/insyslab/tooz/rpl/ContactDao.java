@@ -8,6 +8,8 @@ import android.arch.persistence.room.OnConflictStrategy;
 import android.arch.persistence.room.Query;
 import android.arch.persistence.room.Update;
 
+import com.insyslab.tooz.models.User;
+
 import java.util.List;
 
 /**
@@ -18,18 +20,18 @@ import java.util.List;
 public interface ContactDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insertAll(Contact... contacts);
+    void insertAll(User... contacts);
 
     @Update
-    void updateUsers(Contact... contacts);
+    void updateUsers(User... contacts);
 
     @Delete
-    void deleteUsers(Contact... contacts);
+    void deleteUsers(User... contacts);
 
-    @Query("delete from contact where id=:id")
+    @Query("delete from user where id=:id")
     int deleteContact(int id);
 
-    @Query("SELECT * FROM contact")
-    List<Contact> getAllContacts();
+    @Query("SELECT * FROM user")
+    List<User> getAllContacts();
 
 }

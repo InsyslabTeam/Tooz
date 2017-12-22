@@ -18,6 +18,7 @@ import com.android.volley.Request;
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
 import com.insyslab.tooz.R;
+import com.insyslab.tooz.models.DashboardUpdate;
 import com.insyslab.tooz.models.FragmentState;
 import com.insyslab.tooz.models.responses.Error;
 import com.insyslab.tooz.models.responses.GetContactsResponse;
@@ -39,7 +40,7 @@ import static com.insyslab.tooz.utils.AppConstants.VAL_SET_PERSONAL_REMINDER;
 import static com.insyslab.tooz.utils.ConstantClass.GET_CONTACTS_REQUEST_URL;
 import static com.insyslab.tooz.utils.ConstantClass.REQUEST_TYPE_006;
 
-public class DashboardActivity extends BaseActivity implements BaseResponseInterface {
+public class DashboardActivity extends BaseActivity implements BaseResponseInterface{
 
     private static final String TAG = "Dashboard ==> ";
 
@@ -73,6 +74,12 @@ public class DashboardActivity extends BaseActivity implements BaseResponseInter
         } else {
             openThisFragment(UpcomingRemindersFragment.TAG, null);
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
     }
 
     private void initializeUserData() {
@@ -225,6 +232,14 @@ public class DashboardActivity extends BaseActivity implements BaseResponseInter
         }
     }
 
+    public void onEvent(DashboardUpdate dashboardUpdate) {
+        Log.d(TAG, "Contact Update: " + dashboardUpdate.isContactUpdate());
+
+        if (dashboardUpdate.isContactUpdate()) {
+            initGetContactsRequest();
+        }
+    }
+
     private void updateFooter(int selectedTab) {
         switch (selectedTab) {
             case 0:
@@ -363,13 +378,20 @@ public class DashboardActivity extends BaseActivity implements BaseResponseInter
     }
 
     private void onGetContactsResponse(GetContactsResponse success) {
-
+        initLocalDbUpdate();
         hideProgressDialog();
         resumeNormalApp();
     }
 
-    private void resumeNormalApp() {
-        LocalStorage.getInstance(this).firstLoginCompleted();
-        openThisFragment(UpcomingRemindersFragment.TAG, null);
+    private void initLocalDbUpdate() {
+
     }
+
+    private void resumeNormalApp() {
+        if (LocalStorage.getInstance(this).isFirstLogin()) {
+            openThisFragment(UpcomingRemindersFragment.TAG, null);
+        }
+        LocalStorage.getInstance(this).firstLoginCompleted();
+    }
+
 }
