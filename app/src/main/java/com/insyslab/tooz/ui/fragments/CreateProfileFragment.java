@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.android.volley.Request;
 import com.insyslab.tooz.R;
@@ -61,6 +62,7 @@ public class CreateProfileFragment extends BaseFragment implements BaseResponseI
 
     private RelativeLayout content;
     private TextInputEditText tietName, tietMobileNumber;
+    private TextView tvProfilePicHint;
     private ImageView ivProfilePicture, ivProceed;
 
     private User user;
@@ -105,8 +107,14 @@ public class CreateProfileFragment extends BaseFragment implements BaseResponseI
         disableEdittext(tietMobileNumber);
         tietMobileNumber.setText(user.getMobile());
 
-        if (user.getName() != null && !user.getName().isEmpty()) {
+        if (user.getName() != null && !user.getName().isEmpty())
             tietName.setText(user.getName());
+
+        if (user.getProfileImage() != null && !user.getProfileImage().isEmpty()) {
+            setImageInImageView(user.getProfileImage());
+            tvProfilePicHint.setText("");
+        } else {
+            tvProfilePicHint.setText(getString(R.string.select_a_profile_picture));
         }
     }
 
@@ -147,6 +155,7 @@ public class CreateProfileFragment extends BaseFragment implements BaseResponseI
         tietMobileNumber = rootView.findViewById(R.id.fcp_mobile_number);
         tietName = rootView.findViewById(R.id.fcp_name);
         ivProceed = rootView.findViewById(R.id.fcp_proceed);
+        tvProfilePicHint = rootView.findViewById(R.id.fcp_profile_picture_hint);
 
         tietName.requestFocus();
     }
@@ -285,6 +294,18 @@ public class CreateProfileFragment extends BaseFragment implements BaseResponseI
 
         initUploadProfilePicture(resultUri);
     }
+
+    private void setImageInImageView(String url) {
+        Picasso.with(getContext())
+                .load(url)
+                .placeholder(R.drawable.ic_user)
+                .error(R.drawable.ic_default_user)
+                .resizeDimen(R.dimen.create_profile_picture, R.dimen.create_profile_picture)
+                .centerCrop()
+                .transform(new CircleTransform())
+                .into(ivProfilePicture);
+    }
+
 
     private void initUploadProfilePicture(Uri uri) {
         showProgressDialog(getString(R.string.loading));
