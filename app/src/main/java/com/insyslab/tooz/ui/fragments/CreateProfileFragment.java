@@ -120,7 +120,7 @@ public class CreateProfileFragment extends BaseFragment implements BaseResponseI
 
     private void onProceedClick() {
         tietName.setError(null);
-        String name = tietName.getText().toString();
+        String name = tietName.getText().toString().trim();
 
         if (name == null && name.isEmpty()) {
             tietName.setError(getString(R.string.error_empty_field));

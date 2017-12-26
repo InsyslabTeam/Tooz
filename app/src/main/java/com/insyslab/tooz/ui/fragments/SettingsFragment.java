@@ -23,7 +23,6 @@ import com.insyslab.tooz.models.responses.Error;
 import com.insyslab.tooz.models.responses.LogoutResponse;
 import com.insyslab.tooz.restclient.BaseResponseInterface;
 import com.insyslab.tooz.restclient.GenericDataHandler;
-import com.insyslab.tooz.ui.activities.DashboardActivity;
 import com.insyslab.tooz.ui.activities.OnboardingActivity;
 import com.insyslab.tooz.ui.activities.SettingsActivity;
 import com.insyslab.tooz.ui.adapters.SettingsAdapter;
@@ -202,7 +201,7 @@ public class SettingsFragment extends BaseFragment implements OnSettingItemClick
     private void proceedToLogout() {
         LocalStorage.getInstance(getContext()).clearUserSharedPreferences();
         Intent i = new Intent(getContext(), OnboardingActivity.class);
-        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(i);
         getActivity().finish();
     }
