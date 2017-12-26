@@ -306,7 +306,7 @@ public class SyncContactsFragment extends BaseFragment implements OnSyncContactI
 
     @Override
     public void onLocationPermissionsResult(boolean granted) {
-
+        Log.d(TAG, "onLocationPermissionsResult");
     }
 
     @Override

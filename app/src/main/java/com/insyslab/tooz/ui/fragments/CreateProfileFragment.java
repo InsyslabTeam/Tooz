@@ -21,6 +21,7 @@ import com.insyslab.tooz.models.responses.Error;
 import com.insyslab.tooz.restclient.BaseResponseInterface;
 import com.insyslab.tooz.restclient.GenericDataHandler;
 import com.insyslab.tooz.restclient.RequestBuilder;
+import com.insyslab.tooz.restclient.VolleyMultipartRequest;
 import com.insyslab.tooz.ui.activities.BaseActivity;
 import com.insyslab.tooz.ui.activities.OnboardingActivity;
 import com.insyslab.tooz.ui.customui.CircleTransform;
@@ -32,12 +33,20 @@ import com.theartofdev.edmodo.cropper.CropImage;
 
 import org.json.JSONObject;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
+
 import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 import static android.app.Activity.RESULT_OK;
 import static com.insyslab.tooz.utils.ConstantClass.CREATE_PROFILE_REQUEST_URL;
-import static com.insyslab.tooz.utils.ConstantClass.REQUEST_TYPE_001;
 import static com.insyslab.tooz.utils.ConstantClass.REQUEST_TYPE_004;
+import static com.insyslab.tooz.utils.ConstantClass.REQUEST_TYPE_008;
+import static com.insyslab.tooz.utils.ConstantClass.UPDATE_PROFILE_PICTURE_REQUEST_URL;
+import static com.insyslab.tooz.utils.MultipartFileHelper.convertStreamToByteArray;
 
 /**
  * Created by TaNMay on 26/09/16.
@@ -201,6 +210,9 @@ public class CreateProfileFragment extends BaseFragment implements BaseResponseI
                 case REQUEST_TYPE_004:
                     onCreateProfileResponse((User) success);
                     break;
+                case REQUEST_TYPE_008:
+                    onUpdateProfilePictureResponse((String) success);
+                    break;
                 default:
                     showToastMessage("ERROR " + requestCode + "!", false);
                     break;
@@ -215,8 +227,11 @@ public class CreateProfileFragment extends BaseFragment implements BaseResponseI
                             @Override
                             public void onClick(View v) {
                                 switch (requestCode) {
-                                    case REQUEST_TYPE_001:
+                                    case REQUEST_TYPE_004:
                                         initCreateProfileRequest();
+                                        break;
+                                    case REQUEST_TYPE_008:
+                                        initImageSelector();
                                         break;
                                     default:
                                         showToastMessage(getString(R.string.error_unknown), false);
@@ -227,6 +242,15 @@ public class CreateProfileFragment extends BaseFragment implements BaseResponseI
                 showSnackbarMessage(content, customError.getMessage(), true, getString(R.string.ok), null, true);
             }
         }
+    }
+
+    private void onUpdateProfilePictureResponse(String success) {
+        Log.d(TAG, "onUpdateProfilePictureResponse: " + success);
+    }
+
+    private void onUpdateProfilePictureResponse(User success) {
+        user = success;
+        LocalStorage.getInstance(getContext()).setUser(success);
     }
 
     private void onCreateProfileResponse(User success) {
@@ -258,6 +282,36 @@ public class CreateProfileFragment extends BaseFragment implements BaseResponseI
                 .centerCrop()
                 .transform(new CircleTransform())
                 .into(ivProfilePicture);
+
+        initUploadProfilePicture(resultUri);
+    }
+
+    private void initUploadProfilePicture(Uri uri) {
+        showProgressDialog(getString(R.string.loading));
+
+        String requestUrl = UPDATE_PROFILE_PICTURE_REQUEST_URL;
+        Map<String, VolleyMultipartRequest.DataPart> partMap = getByteDataParams(uri);
+        Map<String, String> paramsMap = null;
+
+        GenericDataHandler req1GenericDataHandler = new GenericDataHandler(this, getContext(), REQUEST_TYPE_008);
+        req1GenericDataHandler.multipartRequest(requestUrl, Request.Method.POST, partMap, paramsMap, User.class);
+    }
+
+    private Map<String, VolleyMultipartRequest.DataPart> getByteDataParams(Uri uri) {
+        Map<String, VolleyMultipartRequest.DataPart> params = new HashMap<>();
+        InputStream inputStream = null;
+        String imageName = user.getMobile() + "_" + System.currentTimeMillis() + ".jpg";
+
+        try {
+            inputStream = getContext().getContentResolver().openInputStream(uri);
+            byte[] byteFile = convertStreamToByteArray(inputStream);
+            params.put("media", new VolleyMultipartRequest.DataPart(imageName, byteFile, "image/jpeg"));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return params;
     }
 
     @Override
@@ -292,6 +346,6 @@ public class CreateProfileFragment extends BaseFragment implements BaseResponseI
 
     @Override
     public void onLocationPermissionsResult(boolean granted) {
-
+        Log.d(TAG, "onLocationPermissionsResult");
     }
 }

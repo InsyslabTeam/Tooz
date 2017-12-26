@@ -20,6 +20,7 @@ import com.github.clans.fab.FloatingActionMenu;
 import com.insyslab.tooz.R;
 import com.insyslab.tooz.models.DashboardUpdate;
 import com.insyslab.tooz.models.FragmentState;
+import com.insyslab.tooz.models.User;
 import com.insyslab.tooz.models.responses.Error;
 import com.insyslab.tooz.models.responses.GetContactsResponse;
 import com.insyslab.tooz.restclient.BaseResponseInterface;
@@ -59,6 +60,8 @@ public class DashboardActivity extends BaseActivity implements BaseResponseInter
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dashboard);
+
+//        User user = LocalStorage.getInstance(this).getUser();
 
         initLocationService();
 

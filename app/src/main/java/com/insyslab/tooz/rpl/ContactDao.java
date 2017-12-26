@@ -1,14 +1,11 @@
 package com.insyslab.tooz.rpl;
 
-import android.arch.lifecycle.LiveData;
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Delete;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.OnConflictStrategy;
 import android.arch.persistence.room.Query;
 import android.arch.persistence.room.Update;
-
-import com.insyslab.tooz.models.User;
 
 import java.util.List;
 
@@ -20,18 +17,18 @@ import java.util.List;
 public interface ContactDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insertAll(User... contacts);
+    void insertAll(Contact... contacts);
 
     @Update
-    void updateUsers(User... contacts);
+    void updateContacts(Contact... contacts);
 
     @Delete
-    void deleteUsers(User... contacts);
+    void deleteContacts(Contact... contacts);
 
-    @Query("delete from user where id=:id")
+    @Query("delete from contact where id=:id")
     int deleteContact(int id);
 
-    @Query("SELECT * FROM user")
-    List<User> getAllContacts();
+    @Query("SELECT * FROM contact")
+    List<Contact> getAllContacts();
 
 }

@@ -38,4 +38,7 @@ public class ConstantClass {
 
     public static final int REQUEST_TYPE_007 = 1007;
     public static final String LOGOUT_REQUEST_URL = "user/logout";
+
+    public static final int REQUEST_TYPE_008 = 1008;
+    public static final String UPDATE_PROFILE_PICTURE_REQUEST_URL = "user/imageProfile";
 }

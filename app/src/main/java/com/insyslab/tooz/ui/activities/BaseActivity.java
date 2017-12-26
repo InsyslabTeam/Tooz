@@ -297,10 +297,10 @@ public abstract class BaseActivity extends AppCompatActivity {
                                         null
                                 );
                             } else {
-                                onRuntimePermissionsResultListener.onStoragePermissionsResult(locationPermissions);
+                                onRuntimePermissionsResultListener.onLocationPermissionsResult(locationPermissions);
                             }
                         } else {
-                            onRuntimePermissionsResultListener.onStoragePermissionsResult(locationPermissions);
+                            onRuntimePermissionsResultListener.onLocationPermissionsResult(locationPermissions);
                         }
                     }
                 }

@@ -5,8 +5,6 @@ import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
-import com.insyslab.tooz.models.User;
-
 import java.util.List;
 
 public class DatabaseInitializer {
@@ -22,18 +20,18 @@ public class DatabaseInitializer {
         populateWithTestData(db);
     }
 
-    private static User addContact(final AppDatabase db, User contact) {
+    private static Contact addContact(final AppDatabase db, Contact contact) {
         db.contactDao().insertAll(contact);
         return contact;
     }
 
     private static void populateWithTestData(AppDatabase db) {
-        User contact = new User();
+        Contact contact = new Contact();
         contact.setName("Name");
         contact.setId("id");
         addContact(db, contact);
 
-        List<User> contactList = db.contactDao().getAllContacts();
+        List<Contact> contactList = db.contactDao().getAllContacts();
         Log.d(DatabaseInitializer.TAG, "Rows Count: " + contactList.size());
     }
 

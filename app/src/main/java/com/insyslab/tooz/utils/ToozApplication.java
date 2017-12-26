@@ -9,6 +9,7 @@ import android.text.TextUtils;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
+import com.insyslab.tooz.rpl.AppDatabase;
 
 /**
  * Created by TaNMay on 31-08-2016.
@@ -37,6 +38,7 @@ public class ToozApplication extends Application {
     public void onCreate() {
         super.onCreate();
         toozApplication = this;
+        deleteDatabase(AppDatabase.DB_NAME);
 
 //        MultiDex.install(this);
     }

@@ -87,6 +87,7 @@ public class OnboardingActivity extends BaseActivity implements OnRuntimePermiss
         if (Util.verifyPermission(this, ACCESS_FINE_LOCATION) && Util.verifyPermission(this, ACCESS_COARSE_LOCATION)) {
             proceedToDashboard();
         } else {
+            onRuntimePermissionsResultListener = this;
             requestLocationPermissions();
         }
     }
@@ -147,7 +148,8 @@ public class OnboardingActivity extends BaseActivity implements OnRuntimePermiss
 
     @Override
     public void onLocationPermissionsResult(boolean granted) {
-        if (granted) initProceedToDashboard();
+        if (granted)
+            initProceedToDashboard();
         else {
             showConfirmationDialog(
                     "Please enable location permissions to proceed!",

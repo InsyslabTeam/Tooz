@@ -164,7 +164,7 @@ public class MobileNumberFragment extends BaseFragment implements BaseResponseIn
 
     @Override
     public void onLocationPermissionsResult(boolean granted) {
-
+        Log.d(TAG, "onLocationPermissionsResult");
     }
 
     @Override

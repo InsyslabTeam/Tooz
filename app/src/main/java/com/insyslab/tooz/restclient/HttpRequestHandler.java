@@ -332,15 +332,15 @@ public class HttpRequestHandler {
         }
     }
 
-    public static void makeMultipartRequest(String url, int method, final SuccessListener listener,
+    public static void makeMultipartRequest(String url, final String token, int method, final SuccessListener listener,
                                             final Map<String, VolleyMultipartRequest.DataPart> partMap,
                                             final Map<String, String> paramsMap, final Type responseType,
                                             Context context) {
         if (hasInternetAccess(context)) {
             Log.d(TAG, "Make Multipart Request -");
             Log.d(TAG, "Request URL: " + url);
-            Log.d(TAG, "Request Map: " + partMap.toString());
-            Log.d(TAG, "Request Fields: " + paramsMap.toString());
+//            Log.d(TAG, "Request Map: " + partMap.toString());
+//            Log.d(TAG, "Request Fields: " + paramsMap.toString());
 
             VolleyMultipartRequest multipartRequest = new VolleyMultipartRequest(
                     method,
@@ -397,6 +397,15 @@ public class HttpRequestHandler {
                             listener.onError(customError);
                         }
                     }) {
+
+                public java.util.Map<String, String> getHeaders()
+                        throws com.android.volley.AuthFailureError {
+                    HashMap<String, String> headers = new HashMap<String, String>();
+                    headers.put("token", token);
+                    headers.put("apikey", API_KEY);
+                    return headers;
+                }
+
                 @Override
                 protected Map<String, String> getParams() {
                     return paramsMap;
@@ -421,9 +430,8 @@ public class HttpRequestHandler {
      */
 
     private static String getErrorMessage(String jsonStr) {
-//        ErrorFromServer error = new Gson().fromJson(jsonStr, ErrorFromServer.class);
-//        return error.getMessage();
-        return jsonStr;
+        ErrorFromServer error = new Gson().fromJson(jsonStr, ErrorFromServer.class);
+        return error.getMessage();
     }
 
     private static String getObjectInStringFormat(JSONObject jObject) {

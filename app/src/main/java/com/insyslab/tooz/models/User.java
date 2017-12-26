@@ -32,9 +32,14 @@ public class User {
     @SerializedName("updatedAt")
     @Expose
     private String updatedAt;
+
     @SerializedName("otp")
     @Expose
     private String otp;
+
+    @SerializedName("profileImage")
+    @Expose
+    private String profileImage;
 
     @SerializedName("id")
     @Expose
@@ -142,5 +147,13 @@ public class User {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getProfileImage() {
+        return profileImage;
+    }
+
+    public void setProfileImage(String profileImage) {
+        this.profileImage = profileImage;
     }
 }
