@@ -38,7 +38,7 @@ public class ToozApplication extends Application {
     public void onCreate() {
         super.onCreate();
         toozApplication = this;
-        deleteDatabase(AppDatabase.DB_NAME);
+//        deleteDatabase(AppDatabase.DB_NAME);
 
 //        MultiDex.install(this);
     }

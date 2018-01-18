@@ -11,12 +11,11 @@ import android.widget.RelativeLayout;
 
 import com.insyslab.tooz.R;
 import com.insyslab.tooz.interfaces.OnAllContactClickListener;
-import com.insyslab.tooz.interfaces.OnUpcomingReminderClickListener;
-import com.insyslab.tooz.models.ContactItem;
 import com.insyslab.tooz.models.FragmentState;
+import com.insyslab.tooz.models.User;
+import com.insyslab.tooz.ui.activities.DashboardActivity;
 import com.insyslab.tooz.ui.adapters.AllContactsAdapter;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -34,7 +33,7 @@ public class AllContactsFragment extends BaseFragment implements OnAllContactCli
 
     private RecyclerView.Adapter allContactsAdapter;
 
-    private List<ContactItem> allContactsList;
+    private List<User> allContactsList;
 
     public AllContactsFragment() {
 
@@ -64,20 +63,10 @@ public class AllContactsFragment extends BaseFragment implements OnAllContactCli
         initView(layout);
         setUpActions();
 
-        createDummyContactList();
+        allContactsList = ((DashboardActivity) getActivity()).getContactList();
         setUpAllContactsRv();
 
         return layout;
-    }
-
-    private void createDummyContactList() {
-        allContactsList = new ArrayList<>();
-        for (int i = 0 ; i  < 10;i++) {
-            ContactItem contactItem = new ContactItem();
-            contactItem.setName("Developer Airtel");
-            contactItem.setNumber("+91 88888 88888");
-            allContactsList.add(contactItem);
-        }
     }
 
     private void setUpAllContactsRv() {
@@ -108,5 +97,10 @@ public class AllContactsFragment extends BaseFragment implements OnAllContactCli
     @Override
     public void onContactClick(View view) {
         int position = allContactsRv.getChildAdapterPosition(view);
+    }
+
+    public void updateContactsRv(List<User> list) {
+        allContactsList = list;
+        if (allContactsAdapter != null) allContactsAdapter.notifyDataSetChanged();
     }
 }

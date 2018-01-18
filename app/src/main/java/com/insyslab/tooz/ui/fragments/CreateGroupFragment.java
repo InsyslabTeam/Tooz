@@ -32,6 +32,7 @@ import java.util.List;
 import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 import static android.app.Activity.RESULT_OK;
+import static com.insyslab.tooz.utils.AppConstants.KEY_FROM_FRAGMENT;
 
 /**
  * Created by TaNMay on 26/09/16.
@@ -108,7 +109,9 @@ public class CreateGroupFragment extends BaseFragment implements OnRuntimePermis
     }
 
     private void onSelectGroupMembersClick() {
-
+        Bundle bundle = new Bundle();
+        bundle.putString(KEY_FROM_FRAGMENT, TAG);
+        ((ActionsActivity) getActivity()).openThisFragment(SelectContactsFragment.TAG, bundle);
     }
 
     private void onProfilePictureClick() {
@@ -140,7 +143,7 @@ public class CreateGroupFragment extends BaseFragment implements OnRuntimePermis
         tietName.setError(null);
         tietMembers.setError(null);
 
-        String name = tietName.getText().toString();
+        String name = tietName.getText().toString().trim();
 
         if (name != null && name.isEmpty()) {
             tietName.setError(getString(R.string.error_empty_field));
@@ -239,5 +242,12 @@ public class CreateGroupFragment extends BaseFragment implements OnRuntimePermis
 
     public void onMembersSelected(List<ContactItem> contactItemList) {
         selectedMembers = contactItemList;
+        String memberListStr = "";
+        for (int i = 0; i < selectedMembers.size(); i++) {
+            memberListStr += selectedMembers.get(i).getName();
+            if (i != selectedMembers.size() - 1) memberListStr += ", ";
+        }
+
+        tietMembers.setText(memberListStr);
     }
 }

@@ -86,15 +86,20 @@ public class Util {
     }
 
     public static String getDayOfWeekFromIndex(Integer intDay) {
-        return new DateFormatSymbols().getWeekdays()[intDay - 1].substring(0, 3).toUpperCase();
+        return new DateFormatSymbols().getWeekdays()[intDay].substring(0, 3).toUpperCase();
     }
 
     public static String getAmPmFromIndex(Integer intMeridian) {
         return intMeridian == 0 ? "AM" : "PM";
     }
 
+    public static String getFormattedHourOrMinute(Integer intValue) {
+        if (intValue < 10) return "0" + intValue;
+        else return intValue + "";
+    }
+
     public static String getMonthFromIndex(Integer intMonth) {
-        return new DateFormatSymbols().getMonths()[intMonth - 1].substring(0, 3);
+        return new DateFormatSymbols().getMonths()[intMonth].substring(0, 3);
     }
 
     public static String getDateExtension(Integer intDate) {

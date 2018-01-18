@@ -1,3 +1,18 @@
+Next in Line
+> change date format
+> app users, non app users in contacts
+> update db and lists on adding a reminder
+> separate upcoming and past reminders based on created date and time
+> send reminder functionality, apis etc
+
+> test with lots of contacts
+
+> add contact, list update
+> sync contacts, show synced contacts
+
+
+
+
 Delete option and other options in reminders
 
 Location based and time based - filters in reminders

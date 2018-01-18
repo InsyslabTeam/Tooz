@@ -18,6 +18,10 @@ public class ConstantClass {
 
     public static final String API_KEY = "$2a$10$.CPkZU3.R3bRE3bDI5epUuuHrUe63EbqW7HhhOriSj5beFwTdT16W";
 
+    public static final String DEFAULT_APP_SHARE_TEXT = "Tooz is your personal assistant, to remind " +
+            "you about anything and everything, anywhere and everywhere, anytime and everytime....from people you like!";
+    public static final String APP_URL = "https://play.google.com/store/apps/details?id=com.insyslab.tooz";
+
     public static final int REQUEST_TYPE_001 = 1001;
     public static final String SIGN_IN_REQUEST_URL = "user/signup";
 
@@ -41,4 +45,13 @@ public class ConstantClass {
 
     public static final int REQUEST_TYPE_008 = 1008;
     public static final String UPDATE_PROFILE_PICTURE_REQUEST_URL = "user/imageProfile";
+
+    public static final int REQUEST_TYPE_009 = 1009;
+    public static final String CREATE_REMINDER_REQUEST_URL = "reminder/addReminder";
+
+    public static final int REQUEST_TYPE_010 = 1010;
+    public static final String UPDATE_REMINDER_REQUEST_URL = "reminder/updateReminder";
+
+    public static final int REQUEST_TYPE_011 = 1011;
+    public static final String GET_ALL_REMINDERS_REQUEST_URL = "reminder/getAllReminders";
 }

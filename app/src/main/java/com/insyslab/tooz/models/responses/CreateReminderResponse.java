@@ -1,61 +1,36 @@
-package com.insyslab.tooz.models;
-
-import android.arch.persistence.room.ColumnInfo;
-import android.arch.persistence.room.Embedded;
-import android.arch.persistence.room.Entity;
-import android.arch.persistence.room.Ignore;
-import android.arch.persistence.room.Index;
-import android.arch.persistence.room.PrimaryKey;
+package com.insyslab.tooz.models.responses;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import com.insyslab.tooz.models.User;
 
 import java.util.List;
 
-@Entity(indices = {@Index(value = "id", unique = true)})
-public class Reminder {
-    @PrimaryKey(autoGenerate = true)
-    @ColumnInfo(name = "p_id")
-    public long pId;
-
-    @Ignore
+public class CreateReminderResponse {
     @SerializedName("contacts")
     @Expose
     private List<User> contacts = null;
-
-    @Embedded
     @SerializedName("user")
     @Expose
-    private User_ user;
-
-    @ColumnInfo(name = "task")
+    private String user;
     @SerializedName("task")
     @Expose
     private String task;
-
-    @ColumnInfo(name = "date")
     @SerializedName("date")
     @Expose
     private String date;
-
-    @ColumnInfo(name = "longitude")
     @SerializedName("longitude")
     @Expose
     private String longitude;
-
-    @ColumnInfo(name = "latitude")
     @SerializedName("latitude")
     @Expose
     private String latitude;
-
     @SerializedName("createdAt")
     @Expose
     private String createdAt;
     @SerializedName("updatedAt")
     @Expose
     private String updatedAt;
-
-    @ColumnInfo(name = "id")
     @SerializedName("id")
     @Expose
     private String id;
@@ -78,11 +53,11 @@ public class Reminder {
         this.contacts = contacts;
     }
 
-    public User_ getUser() {
+    public String getUser() {
         return user;
     }
 
-    public void setUser(User_ user) {
+    public void setUser(String user) {
         this.user = user;
     }
 

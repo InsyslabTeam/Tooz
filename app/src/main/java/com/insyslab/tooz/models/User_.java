@@ -10,12 +10,8 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.insyslab.tooz.models.responses.Token;
 
-@Entity(indices = {@Index(value = "id", unique = true)})
-public class User {
-
-    @PrimaryKey(autoGenerate = true)
-    @ColumnInfo(name = "p_id")
-    public long pId;
+@Entity
+public class User_ {
 
     @ColumnInfo(name = "mobile")
     @SerializedName("mobile")
@@ -40,10 +36,12 @@ public class User {
     @Expose
     private Boolean contactsSync;
 
-
+    @Ignore
     @SerializedName("createdAt")
     @Expose
     private String createdAt;
+
+    @Ignore
     @SerializedName("updatedAt")
     @Expose
     private String updatedAt;
@@ -57,7 +55,7 @@ public class User {
     @Expose
     private String profileImage;
 
-    @ColumnInfo(name = "id")
+    @ColumnInfo(name = "u_id")
     @SerializedName("id")
     @Expose
     private String id;

@@ -44,9 +44,11 @@ public class UpcomingRemindersAdapter extends RecyclerView.Adapter<UpcomingRemin
         Reminder reminder = reminders.get(position);
 
         if (reminder.isExpanded()) {
-            holder.task.setText(reminder.getTitle());
+            holder.task.setText(reminder.getTask());
         } else {
-            holder.task.setText(reminder.getTitle().substring(0, 20) + "...");
+            if (reminder.getTask().length() > 20)
+                holder.task.setText(reminder.getTask().substring(0, 20) + "...");
+            else holder.task.setText(reminder.getTask());
         }
 
         holder.date.setText("88 Nov (Wed), 2088");

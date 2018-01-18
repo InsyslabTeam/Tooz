@@ -49,9 +49,9 @@ public class HttpRequestHandler {
                                              final Type responseType, Context context) {
         if (hasInternetAccess(context)) {
             Log.d(TAG, "Make  JSON Object Request -");
+            Log.d(TAG, "Token: " + token);
             Log.d(TAG, "Request URL: " + url);
             Log.d(TAG, "Request Object: " + getObjectInStringFormat(jsonObject));
-            Log.d(TAG, "Token: " + token);
 
             JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
                     method,
@@ -123,6 +123,7 @@ public class HttpRequestHandler {
                                             final Type responseType, Context context) {
         if (hasInternetAccess(context)) {
             Log.d(TAG, "Make JSON Array Request -");
+            Log.d(TAG, "Token: " + token);
             Log.d(TAG, "Request URL: " + url);
 
             JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
@@ -193,6 +194,7 @@ public class HttpRequestHandler {
                                          final SuccessListener listener, final Type responseType, Context context) {
         if (hasInternetAccess(context)) {
             Log.d(TAG, "Make Custom Request -");
+            Log.d(TAG, "Token: " + token);
             Log.d(TAG, "Request Object: " + getObjectInStringFormat(jObject));
             Log.d(TAG, "Request URL: " + url);
 
@@ -266,6 +268,7 @@ public class HttpRequestHandler {
                                          Context context) {
         if (hasInternetAccess(context)) {
             Log.d(TAG, "Make String Request -");
+            Log.d(TAG, "Token: " + token);
             Log.d(TAG, "Request URL: " + url);
 
             StringRequest stringRequest = new StringRequest(
@@ -338,6 +341,7 @@ public class HttpRequestHandler {
                                             Context context) {
         if (hasInternetAccess(context)) {
             Log.d(TAG, "Make Multipart Request -");
+            Log.d(TAG, "Token: " + token);
             Log.d(TAG, "Request URL: " + url);
 //            Log.d(TAG, "Request Map: " + partMap.toString());
 //            Log.d(TAG, "Request Fields: " + paramsMap.toString());

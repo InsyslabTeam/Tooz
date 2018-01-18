@@ -9,7 +9,7 @@ import android.widget.TextView;
 
 import com.insyslab.tooz.R;
 import com.insyslab.tooz.interfaces.OnAllContactClickListener;
-import com.insyslab.tooz.models.ContactItem;
+import com.insyslab.tooz.models.User;
 import com.insyslab.tooz.ui.customui.CircleTransform;
 import com.squareup.picasso.Picasso;
 
@@ -22,9 +22,9 @@ import java.util.List;
 public class AllContactsAdapter extends RecyclerView.Adapter<AllContactsAdapter.ViewHolder> {
 
     private OnAllContactClickListener onAllContactClickListener;
-    private List<ContactItem> contactItems;
+    private List<User> contactItems;
 
-    public AllContactsAdapter(OnAllContactClickListener onAllContactClickListener, List<ContactItem> contactItems) {
+    public AllContactsAdapter(OnAllContactClickListener onAllContactClickListener, List<User> contactItems) {
         this.onAllContactClickListener = onAllContactClickListener;
         this.contactItems = contactItems;
     }
@@ -44,7 +44,7 @@ public class AllContactsAdapter extends RecyclerView.Adapter<AllContactsAdapter.
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
-        ContactItem contactItem = contactItems.get(position);
+        User contactItem = contactItems.get(position);
 
         Picasso.with(holder.image.getContext())
                 .load("abcdefghijklmnopqrstuvwxyz")

@@ -306,7 +306,6 @@ public class CreateProfileFragment extends BaseFragment implements BaseResponseI
                 .into(ivProfilePicture);
     }
 
-
     private void initUploadProfilePicture(Uri uri) {
         showProgressDialog(getString(R.string.loading));
 

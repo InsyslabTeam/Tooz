@@ -1,8 +1,10 @@
 package com.insyslab.tooz.ui.activities;
 
+import android.arch.lifecycle.Observer;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.Toolbar;
@@ -17,9 +19,11 @@ import android.widget.Toast;
 import com.android.volley.Request;
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
+import com.google.gson.reflect.TypeToken;
 import com.insyslab.tooz.R;
 import com.insyslab.tooz.models.DashboardUpdate;
 import com.insyslab.tooz.models.FragmentState;
+import com.insyslab.tooz.models.Reminder;
 import com.insyslab.tooz.models.User;
 import com.insyslab.tooz.models.responses.Error;
 import com.insyslab.tooz.models.responses.GetContactsResponse;
@@ -34,14 +38,20 @@ import com.insyslab.tooz.ui.fragments.SetReminderFragment;
 import com.insyslab.tooz.ui.fragments.UpcomingRemindersFragment;
 import com.insyslab.tooz.utils.LocalStorage;
 
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
+
 import static com.insyslab.tooz.utils.AppConstants.KEY_SET_REMINDER_TYPE;
 import static com.insyslab.tooz.utils.AppConstants.KEY_TO_ACTIONS;
 import static com.insyslab.tooz.utils.AppConstants.VAL_SEND_REMINDER;
 import static com.insyslab.tooz.utils.AppConstants.VAL_SET_PERSONAL_REMINDER;
+import static com.insyslab.tooz.utils.ConstantClass.GET_ALL_REMINDERS_REQUEST_URL;
 import static com.insyslab.tooz.utils.ConstantClass.GET_CONTACTS_REQUEST_URL;
 import static com.insyslab.tooz.utils.ConstantClass.REQUEST_TYPE_006;
+import static com.insyslab.tooz.utils.ConstantClass.REQUEST_TYPE_011;
 
-public class DashboardActivity extends BaseActivity implements BaseResponseInterface{
+public class DashboardActivity extends BaseActivity implements BaseResponseInterface {
 
     private static final String TAG = "Dashboard ==> ";
 
@@ -53,6 +63,9 @@ public class DashboardActivity extends BaseActivity implements BaseResponseInter
 
     private String currentFragment = null;
     private boolean doubleBackToExitPressedOnce;
+    private List<User> userList;
+    private List<Reminder> remindersList;
+    private Integer responseCount = 0;
 
     private Intent locationServiceIntent;
 
@@ -61,12 +74,16 @@ public class DashboardActivity extends BaseActivity implements BaseResponseInter
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dashboard);
 
-//        User user = LocalStorage.getInstance(this).getUser();
+        responseCount = 0;
 
         initLocationService();
 
         initView();
         setUpToolbar();
+
+        fetchAllRemindersFromDb();
+        fetchAllContactsFromDb();
+
         setUpActions();
 
         doubleBackToExitPressedOnce = false;
@@ -89,6 +106,16 @@ public class DashboardActivity extends BaseActivity implements BaseResponseInter
         showProgressDialog(getString(R.string.loading));
 
         initGetContactsRequest();
+        initGetAllRemindersRequest();
+    }
+
+    private void initGetAllRemindersRequest() {
+        String requestUrl = GET_ALL_REMINDERS_REQUEST_URL;
+        Type requestType = new TypeToken<List<Reminder>>() {
+        }.getType();
+
+        GenericDataHandler req2GenericDataHandler = new GenericDataHandler(this, this, REQUEST_TYPE_011);
+        req2GenericDataHandler.jsonArrayRequest(requestUrl, requestType);
     }
 
     private void initGetContactsRequest() {
@@ -270,14 +297,17 @@ public class DashboardActivity extends BaseActivity implements BaseResponseInter
     }
 
     private void onAllContactsTabClick() {
+        floatingActionMenu.close(true);
         openThisFragment(AllContactsFragment.TAG, null);
     }
 
     private void onPastTabClick() {
+        floatingActionMenu.close(true);
         openThisFragment(PastRemindersFragment.TAG, null);
     }
 
     private void onUpcomingTabClick() {
+        floatingActionMenu.close(true);
         openThisFragment(UpcomingRemindersFragment.TAG, null);
     }
 
@@ -301,9 +331,6 @@ public class DashboardActivity extends BaseActivity implements BaseResponseInter
 
     @Override
     public void onBackPressed() {
-//        if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
-//            getSupportFragmentManager().popBackStack();
-//        } else {
         if (doubleBackToExitPressedOnce) {
             super.onBackPressed();
             return;
@@ -316,7 +343,6 @@ public class DashboardActivity extends BaseActivity implements BaseResponseInter
                 doubleBackToExitPressedOnce = false;
             }
         }, 2000);
-//        }
     }
 
     @Override
@@ -347,10 +373,14 @@ public class DashboardActivity extends BaseActivity implements BaseResponseInter
 
     @Override
     public void onResponse(Object success, Object error, final int requestCode) {
+        ++responseCount;
         if (error == null) {
             switch (requestCode) {
                 case REQUEST_TYPE_006:
                     onGetContactsResponse((GetContactsResponse) success);
+                    break;
+                case REQUEST_TYPE_011:
+                    onGetAllRemindersResponse((List<Reminder>) success);
                     break;
                 default:
                     showToastMessage("ERROR " + requestCode + "!", false);
@@ -369,6 +399,9 @@ public class DashboardActivity extends BaseActivity implements BaseResponseInter
                                     case REQUEST_TYPE_006:
                                         initGetContactsRequest();
                                         break;
+                                    case REQUEST_TYPE_011:
+                                        initGetAllRemindersRequest();
+                                        break;
                                     default:
                                         showToastMessage(getString(R.string.error_unknown), false);
                                 }
@@ -380,21 +413,90 @@ public class DashboardActivity extends BaseActivity implements BaseResponseInter
         }
     }
 
-    private void onGetContactsResponse(GetContactsResponse success) {
-        initLocalDbUpdate();
-        hideProgressDialog();
-        resumeNormalApp();
+    private void onGetAllRemindersResponse(List<Reminder> success) {
+        initLocalDbRemindersUpdate(success);
+        if (responseCount > 1) resumeNormalApp();
     }
 
-    private void initLocalDbUpdate() {
+    private void initLocalDbRemindersUpdate(List<Reminder> reminderList) {
+        reminderRepository.insertReminders(reminderList);
+    }
 
+    private void onGetContactsResponse(GetContactsResponse success) {
+        initLocalDbContactsUpdate(success.getAppUser());
+        if (responseCount > 1) resumeNormalApp();
+    }
+
+    private void initLocalDbContactsUpdate(List<User> appUsers) {
+        userRepository.insertUsers(appUsers);
+    }
+
+    private void fetchAllRemindersFromDb() {
+        reminderRepository.getAllReminder().observe(this, new Observer<List<Reminder>>() {
+            @Override
+            public void onChanged(@Nullable List<Reminder> list) {
+                remindersList = list;
+                updateUpcomingReminders();
+                updatePastReminders();
+            }
+        });
+    }
+
+    public void fetchAllContactsFromDb() {
+        userList = new ArrayList<>();
+        userRepository.getAllUser().observe(this, new Observer<List<User>>() {
+            @Override
+            public void onChanged(@Nullable List<User> list) {
+                userList = list;
+                updateAllContacts();
+            }
+        });
+    }
+
+    private void updateUpcomingReminders() {
+        try {
+            UpcomingRemindersFragment fragment = (UpcomingRemindersFragment) getSupportFragmentManager().findFragmentById(R.id.ad_fragment_container);
+            if (fragment != null) fragment.updateRemindersRv(remindersList);
+        } catch (ClassCastException e) {
+            e.printStackTrace();
+            Log.d(TAG, "ERROR: updateUpcomingReminders - " + e.getMessage());
+        }
+    }
+
+    private void updatePastReminders() {
+        try {
+            PastRemindersFragment fragment = (PastRemindersFragment) getSupportFragmentManager().findFragmentById(R.id.ad_fragment_container);
+            if (fragment != null) fragment.updateRemindersRv(remindersList);
+        } catch (ClassCastException e) {
+            e.printStackTrace();
+            Log.d(TAG, "ERROR: updatePastReminders - " + e.getMessage());
+        }
+
+    }
+
+    private void updateAllContacts() {
+        try {
+            AllContactsFragment fragment = (AllContactsFragment) getSupportFragmentManager().findFragmentById(R.id.ad_fragment_container);
+            if (fragment != null) fragment.updateContactsRv(userList);
+        } catch (ClassCastException e) {
+            e.printStackTrace();
+            Log.d(TAG, "ERROR: updateAllContacts - " + e.getMessage());
+        }
+    }
+
+    public List<User> getContactList() {
+        return userList;
+    }
+
+    public List<Reminder> getRemindersList() {
+        return remindersList;
     }
 
     private void resumeNormalApp() {
+        hideProgressDialog();
         if (LocalStorage.getInstance(this).isFirstLogin()) {
             openThisFragment(UpcomingRemindersFragment.TAG, null);
         }
         LocalStorage.getInstance(this).firstLoginCompleted();
     }
-
 }

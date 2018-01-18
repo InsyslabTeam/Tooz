@@ -21,7 +21,9 @@ import android.widget.Toast;
 import com.insyslab.tooz.R;
 import com.insyslab.tooz.interfaces.OnRuntimePermissionsResultListener;
 import com.insyslab.tooz.rpl.AppDatabase;
-import com.insyslab.tooz.rpl.DatabaseInitializer;
+import com.insyslab.tooz.rpl.ReminderRepository;
+import com.insyslab.tooz.rpl.UserRepository;
+import com.insyslab.tooz.utils.ToozApplication;
 
 import de.greenrobot.event.EventBus;
 
@@ -51,9 +53,13 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     protected ProgressDialog mProgressDialog = null;
 
+    public UserRepository userRepository;
+    public ReminderRepository reminderRepository;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
-        DatabaseInitializer.populateAsync(AppDatabase.getAppDatabase(this));
+        userRepository = new UserRepository((ToozApplication) getApplicationContext());
+        reminderRepository = new ReminderRepository((ToozApplication) getApplicationContext());
         super.onCreate(savedInstanceState);
     }
 
@@ -115,7 +121,6 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         EventBus.getDefault().unregister(this);
-        AppDatabase.destroyInstance();
         super.onDestroy();
     }
 

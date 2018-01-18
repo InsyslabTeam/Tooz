@@ -186,8 +186,13 @@ public class ActionsActivity extends BaseActivity
     }
 
     @Override
-    public void onContactsSelected(List<ContactItem> contactItemList) {
-        CreateGroupFragment fragment = (CreateGroupFragment) getSupportFragmentManager().findFragmentById(R.id.aa_fragment_container);
-        fragment.onMembersSelected(contactItemList);
+    public void onContactsSelected(List<ContactItem> contactItemList, String from) {
+        if (from.equals(SetReminderFragment.TAG)) {
+            SetReminderFragment fragment = (SetReminderFragment) getSupportFragmentManager().findFragmentById(R.id.aa_fragment_container);
+            fragment.onMembersSelected(contactItemList);
+        } else if (from.equals(CreateGroupFragment.TAG)) {
+            CreateGroupFragment fragment = (CreateGroupFragment) getSupportFragmentManager().findFragmentById(R.id.aa_fragment_container);
+            fragment.onMembersSelected(contactItemList);
+        }
     }
 }

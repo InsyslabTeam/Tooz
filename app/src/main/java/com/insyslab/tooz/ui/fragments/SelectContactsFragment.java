@@ -21,6 +21,8 @@ import com.insyslab.tooz.ui.adapters.SelectContactsAdapter;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.insyslab.tooz.utils.AppConstants.KEY_FROM_FRAGMENT;
+
 /**
  * Created by TaNMay on 26/09/16.
  */
@@ -39,6 +41,7 @@ public class SelectContactsFragment extends BaseFragment implements OnSelectCont
 
     private List<ContactItem> contactItems;
     private List<ContactItem> selectedContacts = null;
+    private String fromFragment = null;
 
     private Gson gson;
 
@@ -61,6 +64,7 @@ public class SelectContactsFragment extends BaseFragment implements OnSelectCont
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             Bundle bundle = getArguments().getBundle(ARG_PARAM1);
+            fromFragment = bundle.getString(KEY_FROM_FRAGMENT);
         }
     }
 
@@ -127,8 +131,8 @@ public class SelectContactsFragment extends BaseFragment implements OnSelectCont
 
     @Override
     public void onDetach() {
-        updateFragment(new FragmentState(CreateGroupFragment.TAG));
-        onContactsSelectedListener.onContactsSelected(selectedContacts);
+        updateFragment(new FragmentState(fromFragment));
+        onContactsSelectedListener.onContactsSelected(selectedContacts, fromFragment);
         super.onDetach();
     }
 
@@ -168,7 +172,7 @@ public class SelectContactsFragment extends BaseFragment implements OnSelectCont
 
     public interface OnContactsSelectedListener {
 
-        void onContactsSelected(List<ContactItem> contactItemList);
+        void onContactsSelected(List<ContactItem> contactItemList, String from);
 
     }
 
