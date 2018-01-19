@@ -8,8 +8,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.insyslab.tooz.R;
-import com.insyslab.tooz.interfaces.OnAllContactClickListener;
-import com.insyslab.tooz.models.ContactItem;
+import com.insyslab.tooz.interfaces.OnUserContactClickListener;
+import com.insyslab.tooz.models.User;
 import com.insyslab.tooz.ui.customui.CircleTransform;
 import com.squareup.picasso.Picasso;
 
@@ -19,23 +19,23 @@ import java.util.List;
 /**
  * Created by TaNMay on 19/02/17.
  */
-public class AllContactsAdapter extends RecyclerView.Adapter<AllContactsAdapter.ViewHolder> {
+public class NonAppUserContactsAdapter extends RecyclerView.Adapter<NonAppUserContactsAdapter.ViewHolder> {
 
-    private OnAllContactClickListener onAllContactClickListener;
-    private List<ContactItem> contactItems;
+    private OnUserContactClickListener onAllContactClickListener;
+    private List<User> contactItems;
 
-    public AllContactsAdapter(OnAllContactClickListener onAllContactClickListener, List<ContactItem> contactItems) {
+    public NonAppUserContactsAdapter(OnUserContactClickListener onAllContactClickListener, List<User> contactItems) {
         this.onAllContactClickListener = onAllContactClickListener;
         this.contactItems = contactItems;
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        final View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_all_contact, parent, false);
+        final View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_non_app_user_contact, parent, false);
         v.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                onAllContactClickListener.onContactClick(view);
+                onAllContactClickListener.onNonAppUserContactClick(view);
             }
         });
         ViewHolder viewHolder = new ViewHolder(v);
@@ -44,7 +44,7 @@ public class AllContactsAdapter extends RecyclerView.Adapter<AllContactsAdapter.
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
-        ContactItem contactItem = contactItems.get(position);
+        User contactItem = contactItems.get(position);
 
         Picasso.with(holder.image.getContext())
                 .load("abcdefghijklmnopqrstuvwxyz")
@@ -56,10 +56,16 @@ public class AllContactsAdapter extends RecyclerView.Adapter<AllContactsAdapter.
                 .into(holder.image);
 
         holder.name.setText(contactItem.getName());
-        holder.status.setText("Sharing 8 reminders");
 
         if (position == contactItems.size() - 1) holder.divider.setVisibility(View.GONE);
         else holder.divider.setVisibility(View.VISIBLE);
+
+        holder.invite.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onAllContactClickListener.onNonAppUserInviteClick(position);
+            }
+        });
     }
 
     @Override
@@ -69,17 +75,17 @@ public class AllContactsAdapter extends RecyclerView.Adapter<AllContactsAdapter.
 
     class ViewHolder extends RecyclerView.ViewHolder {
 
-        public TextView name, status;
+        public TextView name, invite;
         public ImageView image;
         public View divider;
 
         public ViewHolder(View itemView) {
             super(itemView);
 
-            name = itemView.findViewById(R.id.iac_name);
-            status = itemView.findViewById(R.id.iac_status);
-            image = itemView.findViewById(R.id.iac_image);
-            divider = itemView.findViewById(R.id.iac_divider);
+            name = itemView.findViewById(R.id.inauc_name);
+            invite = itemView.findViewById(R.id.inauc_invite);
+            image = itemView.findViewById(R.id.inauc_image);
+            divider = itemView.findViewById(R.id.inauc_divider);
         }
     }
 }

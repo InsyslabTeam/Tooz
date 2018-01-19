@@ -120,7 +120,7 @@ public class CreateProfileFragment extends BaseFragment implements BaseResponseI
 
     private void onProceedClick() {
         tietName.setError(null);
-        String name = tietName.getText().toString();
+        String name = tietName.getText().toString().trim();
 
         if (name == null && name.isEmpty()) {
             tietName.setError(getString(R.string.error_empty_field));
@@ -305,7 +305,6 @@ public class CreateProfileFragment extends BaseFragment implements BaseResponseI
                 .transform(new CircleTransform())
                 .into(ivProfilePicture);
     }
-
 
     private void initUploadProfilePicture(Uri uri) {
         showProgressDialog(getString(R.string.loading));

@@ -11,27 +11,50 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
+import com.android.volley.Request;
 import com.insyslab.tooz.R;
 import com.insyslab.tooz.interfaces.OnRuntimePermissionsResultListener;
 import com.insyslab.tooz.models.FragmentState;
+import com.insyslab.tooz.models.User;
+import com.insyslab.tooz.models.responses.Error;
+import com.insyslab.tooz.restclient.BaseResponseInterface;
+import com.insyslab.tooz.restclient.GenericDataHandler;
+import com.insyslab.tooz.restclient.RequestBuilder;
+import com.insyslab.tooz.restclient.VolleyMultipartRequest;
 import com.insyslab.tooz.ui.activities.BaseActivity;
 import com.insyslab.tooz.ui.activities.SettingsActivity;
 import com.insyslab.tooz.ui.customui.CircleTransform;
+import com.insyslab.tooz.utils.LocalStorage;
 import com.insyslab.tooz.utils.Util;
 import com.insyslab.tooz.utils.Validator;
 import com.squareup.picasso.Picasso;
 import com.theartofdev.edmodo.cropper.CropImage;
 
+import org.json.JSONObject;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
+
 import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 import static android.app.Activity.RESULT_OK;
+import static com.insyslab.tooz.utils.ConstantClass.CREATE_PROFILE_REQUEST_URL;
+import static com.insyslab.tooz.utils.ConstantClass.REQUEST_TYPE_004;
+import static com.insyslab.tooz.utils.ConstantClass.REQUEST_TYPE_008;
+import static com.insyslab.tooz.utils.ConstantClass.UPDATE_PROFILE_PICTURE_REQUEST_URL;
+import static com.insyslab.tooz.utils.MultipartFileHelper.convertStreamToByteArray;
 
 /**
  * Created by TaNMay on 26/09/16.
  */
 
-public class UpdateProfileFragment extends BaseFragment implements OnRuntimePermissionsResultListener {
+public class UpdateProfileFragment extends BaseFragment implements BaseResponseInterface,
+        OnRuntimePermissionsResultListener {
 
     public static final String TAG = "UpdateProfileFrag ==> ";
 
@@ -40,6 +63,9 @@ public class UpdateProfileFragment extends BaseFragment implements OnRuntimePerm
     private RelativeLayout content;
     private ImageView ivProfilePicture;
     private TextInputEditText tietName, tietNumber;
+    private TextView tvProfilePicHint;
+
+    private User user;
 
     public UpdateProfileFragment() {
 
@@ -70,14 +96,26 @@ public class UpdateProfileFragment extends BaseFragment implements OnRuntimePerm
         initView(layout);
         setUpActions();
 
+        user = LocalStorage.getInstance(getContext()).getUser();
+
         setUpProfileDetails();
 
         return layout;
     }
 
     private void setUpProfileDetails() {
-        tietName.setText("Developer Name");
-        tietNumber.setText("8888888888");
+        disableEdittext(tietNumber);
+        tietNumber.setText(user.getMobile());
+
+        if (user.getName() != null && !user.getName().isEmpty())
+            tietName.setText(user.getName());
+
+        if (user.getProfileImage() != null && !user.getProfileImage().isEmpty()) {
+            setImageInImageView(user.getProfileImage());
+            tvProfilePicHint.setText("");
+        } else {
+            tvProfilePicHint.setText(getString(R.string.select_a_profile_picture));
+        }
     }
 
     private void initView(View rootView) {
@@ -85,8 +123,20 @@ public class UpdateProfileFragment extends BaseFragment implements OnRuntimePerm
         tietName = rootView.findViewById(R.id.fup_name);
         tietNumber = rootView.findViewById(R.id.fup_mobile_number);
         ivProfilePicture = rootView.findViewById(R.id.fup_profile_picture);
+        tvProfilePicHint = rootView.findViewById(R.id.fup_profile_picture_hint);
 
         disableEdittext(tietNumber);
+    }
+
+    private void setImageInImageView(String url) {
+        Picasso.with(getContext())
+                .load(url)
+                .placeholder(R.drawable.ic_user)
+                .error(R.drawable.ic_default_user)
+                .resizeDimen(R.dimen.create_profile_picture, R.dimen.create_profile_picture)
+                .centerCrop()
+                .transform(new CircleTransform())
+                .into(ivProfilePicture);
     }
 
     private void setUpActions() {
@@ -139,7 +189,7 @@ public class UpdateProfileFragment extends BaseFragment implements OnRuntimePerm
         } else if (!Validator.isValidMobileNumber(number)) {
             tietNumber.setError(getString(R.string.error_invalid_mobile_number));
         } else {
-            closeThisFragment();
+            initUpdateProfileRequest();
         }
     }
 
@@ -216,6 +266,105 @@ public class UpdateProfileFragment extends BaseFragment implements OnRuntimePerm
                 .centerCrop()
                 .transform(new CircleTransform())
                 .into(ivProfilePicture);
+
+        initUploadProfilePicture(resultUri);
+    }
+
+    private void initUploadProfilePicture(Uri uri) {
+        showProgressDialog(getString(R.string.loading));
+
+        String requestUrl = UPDATE_PROFILE_PICTURE_REQUEST_URL;
+        Map<String, VolleyMultipartRequest.DataPart> partMap = getByteDataParams(uri);
+        Map<String, String> paramsMap = null;
+
+        GenericDataHandler req1GenericDataHandler = new GenericDataHandler(this, getContext(), REQUEST_TYPE_008);
+        req1GenericDataHandler.multipartRequest(requestUrl, Request.Method.POST, partMap, paramsMap, User.class);
+    }
+
+    private Map<String, VolleyMultipartRequest.DataPart> getByteDataParams(Uri uri) {
+        Map<String, VolleyMultipartRequest.DataPart> params = new HashMap<>();
+        InputStream inputStream = null;
+        String imageName = user.getMobile() + "_" + System.currentTimeMillis() + ".jpg";
+
+        try {
+            inputStream = getContext().getContentResolver().openInputStream(uri);
+            byte[] byteFile = convertStreamToByteArray(inputStream);
+            params.put("media", new VolleyMultipartRequest.DataPart(imageName, byteFile, "image/jpeg"));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return params;
+    }
+
+    @Override
+    public void onResponse(Object success, Object error, final int requestCode) {
+        hideProgressDialog();
+        if (error == null) {
+            switch (requestCode) {
+                case REQUEST_TYPE_004:
+                    onUpdateProfileResponse((User) success);
+                    break;
+                case REQUEST_TYPE_008:
+                    onUpdateProfilePictureResponse((String) success);
+                    break;
+                default:
+                    showToastMessage("ERROR " + requestCode + "!", false);
+                    break;
+            }
+        } else {
+            Error customError = (Error) error;
+            Log.d(TAG, "Error: " + customError.getMessage() + " -- " + customError.getStatus() + " -- ");
+            if (customError.getStatus() == 000) {
+                hideProgressDialog();
+                showNetworkErrorSnackbar(content, getString(R.string.error_no_internet), getString(R.string.retry),
+                        new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                switch (requestCode) {
+                                    case REQUEST_TYPE_004:
+                                        initUpdateProfileRequest();
+                                        break;
+                                    case REQUEST_TYPE_008:
+                                        initImageSelector();
+                                        break;
+                                    default:
+                                        showToastMessage(getString(R.string.error_unknown), false);
+                                }
+                            }
+                        });
+            } else {
+                showSnackbarMessage(content, customError.getMessage(), true, getString(R.string.ok), null, true);
+            }
+        }
+    }
+
+    private void onUpdateProfilePictureResponse(String success) {
+        Log.d(TAG, "onUpdateProfilePictureResponse: " + success);
+    }
+
+    private void onUpdateProfilePictureResponse(User success) {
+        user = success;
+        LocalStorage.getInstance(getContext()).setUser(success);
+    }
+
+    private void onUpdateProfileResponse(User success) {
+        user = success;
+        LocalStorage.getInstance(getContext()).setUser(success);
+        closeThisFragment();
+    }
+
+    private void initUpdateProfileRequest() {
+        showProgressDialog(getString(R.string.loading));
+
+        String requestUrl = CREATE_PROFILE_REQUEST_URL;
+        JSONObject requestObject = new RequestBuilder().getCreateProfileRequestPayload(tietName.getText().toString(), user);
+
+        if (requestObject != null) {
+            GenericDataHandler req1GenericDataHandler = new GenericDataHandler(this, getContext(), REQUEST_TYPE_004);
+            req1GenericDataHandler.jsonObjectRequest(requestObject, requestUrl, Request.Method.POST, User.class);
+        }
     }
 
 }

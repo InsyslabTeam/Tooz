@@ -14,9 +14,9 @@ import com.insyslab.tooz.R;
 import com.insyslab.tooz.interfaces.OnUpcomingReminderClickListener;
 import com.insyslab.tooz.models.FragmentState;
 import com.insyslab.tooz.models.Reminder;
+import com.insyslab.tooz.ui.activities.DashboardActivity;
 import com.insyslab.tooz.ui.adapters.UpcomingRemindersAdapter;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -65,19 +65,10 @@ public class UpcomingRemindersFragment extends BaseFragment implements OnUpcomin
         initView(layout);
         setUpActions();
 
-        createDummyList();
+        upcomingReminderList = ((DashboardActivity) getActivity()).getUpcomingRemindersList();
         setUpUpcomingRv();
 
         return layout;
-    }
-
-    private void createDummyList() {
-        upcomingReminderList = new ArrayList<>();
-        for (int i = 0; i < 10; i++) {
-            Reminder reminder = new Reminder();
-            reminder.setTitle("This is some upcoming testing reminder!");
-            upcomingReminderList.add(reminder);
-        }
     }
 
     private void setUpUpcomingRv() {
@@ -122,5 +113,11 @@ public class UpcomingRemindersFragment extends BaseFragment implements OnUpcomin
         int position = upcomingRv.getChildAdapterPosition(view);
         upcomingReminderList.get(position).setExpanded(!upcomingReminderList.get(position).isExpanded());
         upcomingAdapter.notifyItemChanged(position);
+    }
+
+    public void updateRemindersRv(List<Reminder> list) {
+        upcomingReminderList = list;
+        if (upcomingAdapter != null) upcomingAdapter.notifyDataSetChanged();
+        else setUpUpcomingRv();
     }
 }

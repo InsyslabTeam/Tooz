@@ -1,71 +1,36 @@
-package com.insyslab.tooz.models;
-
-import android.arch.persistence.room.ColumnInfo;
-import android.arch.persistence.room.Embedded;
-import android.arch.persistence.room.Entity;
-import android.arch.persistence.room.Ignore;
-import android.arch.persistence.room.Index;
-import android.arch.persistence.room.PrimaryKey;
-import android.arch.persistence.room.TypeConverters;
+package com.insyslab.tooz.models.responses;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
-import com.insyslab.tooz.rpl.TimestampConverter;
+import com.insyslab.tooz.models.User;
 
-import java.util.Date;
 import java.util.List;
 
-@Entity(indices = {@Index(value = "id", unique = true)})
-@TypeConverters(TimestampConverter.class)
-public class Reminder {
-    @PrimaryKey(autoGenerate = true)
-    @ColumnInfo(name = "p_id")
-    public long pId;
-
-    @Ignore
+public class CreateReminderResponse {
     @SerializedName("contacts")
     @Expose
     private List<User> contacts = null;
-
-    @Embedded
     @SerializedName("user")
     @Expose
-    private User_ user;
-
-    @ColumnInfo(name = "task")
+    private String user;
     @SerializedName("task")
     @Expose
     private String task;
-
-    @ColumnInfo(name = "date")
-    @TypeConverters({TimestampConverter.class})
     @SerializedName("date")
     @Expose
-    private Date date;
-
-    @ColumnInfo(name = "longitude")
+    private String date;
     @SerializedName("longitude")
     @Expose
     private String longitude;
-
-    @ColumnInfo(name = "latitude")
     @SerializedName("latitude")
     @Expose
     private String latitude;
-
-    @ColumnInfo(name = "createdAt")
-    @TypeConverters({TimestampConverter.class})
     @SerializedName("createdAt")
     @Expose
-    private Date createdAt;
-
-    @ColumnInfo(name = "updatedAt")
-    @TypeConverters({TimestampConverter.class})
+    private String createdAt;
     @SerializedName("updatedAt")
     @Expose
-    private Date updatedAt;
-
-    @ColumnInfo(name = "id")
+    private String updatedAt;
     @SerializedName("id")
     @Expose
     private String id;
@@ -88,11 +53,11 @@ public class Reminder {
         this.contacts = contacts;
     }
 
-    public User_ getUser() {
+    public String getUser() {
         return user;
     }
 
-    public void setUser(User_ user) {
+    public void setUser(String user) {
         this.user = user;
     }
 
@@ -104,11 +69,11 @@ public class Reminder {
         this.task = task;
     }
 
-    public Date getDate() {
+    public String getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(String date) {
         this.date = date;
     }
 
@@ -128,19 +93,19 @@ public class Reminder {
         this.latitude = latitude;
     }
 
-    public Date getCreatedAt() {
+    public String getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(Date createdAt) {
+    public void setCreatedAt(String createdAt) {
         this.createdAt = createdAt;
     }
 
-    public Date getUpdatedAt() {
+    public String getUpdatedAt() {
         return updatedAt;
     }
 
-    public void setUpdatedAt(Date updatedAt) {
+    public void setUpdatedAt(String updatedAt) {
         this.updatedAt = updatedAt;
     }
 

@@ -13,9 +13,9 @@ import com.insyslab.tooz.R;
 import com.insyslab.tooz.interfaces.OnPastReminderClickListener;
 import com.insyslab.tooz.models.FragmentState;
 import com.insyslab.tooz.models.Reminder;
+import com.insyslab.tooz.ui.activities.DashboardActivity;
 import com.insyslab.tooz.ui.adapters.PastRemindersAdapter;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -63,19 +63,10 @@ public class PastRemindersFragment extends BaseFragment implements OnPastReminde
         initView(layout);
         setUpActions();
 
-        createDummyList();
+        pastReminderList = ((DashboardActivity) getActivity()).getPastRemindersList();
         setUpPastRv();
 
         return layout;
-    }
-
-    private void createDummyList() {
-        pastReminderList = new ArrayList<>();
-        for (int i = 0; i < 10; i++) {
-            Reminder reminder = new Reminder();
-            reminder.setTitle("This is some random testing reminder for past!");
-            pastReminderList.add(reminder);
-        }
     }
 
     private void setUpPastRv() {
@@ -108,5 +99,10 @@ public class PastRemindersFragment extends BaseFragment implements OnPastReminde
         int position = pastRv.getChildAdapterPosition(view);
         pastReminderList.get(position).setExpanded(!pastReminderList.get(position).isExpanded());
         pastAdapter.notifyItemChanged(position);
+    }
+
+    public void updateRemindersRv(List<Reminder> list) {
+        pastReminderList = list;
+        if (pastAdapter != null) pastAdapter.notifyDataSetChanged();
     }
 }

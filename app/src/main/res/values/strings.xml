@@ -76,5 +76,7 @@
 
     <!--Google Maps-->
     <string name="google_maps_key">AIzaSyBThuuUqvnAMbMFCKFgQ70_X6Z8BTUPkoY</string>
+    <string name="invite_friends">Invite Friends</string>
+    <string name="invite">Invite</string>
 
 </resources>

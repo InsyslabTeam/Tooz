@@ -95,7 +95,7 @@ public class MobileNumberFragment extends BaseFragment implements BaseResponseIn
 
     private void onProceedClick() {
         tietMobileNumber.setError(null);
-        String mobileNumber = tietMobileNumber.getText().toString();
+        String mobileNumber = tietMobileNumber.getText().toString().trim();
 
         if (mobileNumber == null && mobileNumber.isEmpty()) {
             tietMobileNumber.setError(getString(R.string.error_empty_field));

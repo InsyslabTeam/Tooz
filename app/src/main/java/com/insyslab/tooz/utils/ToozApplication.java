@@ -4,6 +4,8 @@ package com.insyslab.tooz.utils;
 import android.app.Application;
 import android.content.Context;
 import android.location.Location;
+import android.support.multidex.MultiDex;
+import android.support.multidex.MultiDexApplication;
 import android.text.TextUtils;
 
 import com.android.volley.Request;
@@ -14,7 +16,7 @@ import com.insyslab.tooz.rpl.AppDatabase;
 /**
  * Created by TaNMay on 31-08-2016.
  */
-public class ToozApplication extends Application {
+public class ToozApplication extends MultiDexApplication {
 
     private static ToozApplication toozApplication = null;
 
@@ -31,16 +33,15 @@ public class ToozApplication extends Application {
     @Override
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
-//        MultiDex.install(this);
+        MultiDex.install(this);
     }
 
     @Override
     public void onCreate() {
         super.onCreate();
         toozApplication = this;
-        deleteDatabase(AppDatabase.DB_NAME);
+//        deleteDatabase(AppDatabase.DB_NAME);
 
-//        MultiDex.install(this);
     }
 
     public RequestQueue getRequestQueue() {

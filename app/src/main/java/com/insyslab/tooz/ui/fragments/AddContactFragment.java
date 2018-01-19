@@ -134,8 +134,8 @@ public class AddContactFragment extends BaseFragment implements OnRuntimePermiss
         tietName.setError(null);
         tietNumber.setError(null);
 
-        String name = tietName.getText().toString();
-        String number = tietNumber.getText().toString();
+        String name = tietName.getText().toString().trim();
+        String number = tietNumber.getText().toString().trim();
 
         if (name != null && name.isEmpty()) {
             tietName.setError(getString(R.string.error_empty_field));

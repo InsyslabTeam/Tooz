@@ -1,6 +1,7 @@
 package com.insyslab.tooz.ui.adapters;
 
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,8 +10,14 @@ import android.widget.TextView;
 import com.insyslab.tooz.R;
 import com.insyslab.tooz.interfaces.OnPastReminderClickListener;
 import com.insyslab.tooz.models.Reminder;
+import com.insyslab.tooz.utils.Util;
 
+import java.util.Calendar;
 import java.util.List;
+
+import static com.insyslab.tooz.utils.Util.getReminderFormatedDate;
+import static com.insyslab.tooz.utils.Util.getReminderFormatedTime;
+import static com.insyslab.tooz.utils.Util.getReminderRemainingTime;
 
 
 /**
@@ -20,10 +27,12 @@ public class PastRemindersAdapter extends RecyclerView.Adapter<PastRemindersAdap
 
     private OnPastReminderClickListener onPastReminderClickListener;
     private List<Reminder> reminders;
+    private Calendar currentTime;
 
     public PastRemindersAdapter(OnPastReminderClickListener onPastReminderClickListener, List<Reminder> reminders) {
         this.onPastReminderClickListener = onPastReminderClickListener;
         this.reminders = reminders;
+        currentTime = Calendar.getInstance();
     }
 
     @Override
@@ -44,15 +53,19 @@ public class PastRemindersAdapter extends RecyclerView.Adapter<PastRemindersAdap
         Reminder reminder = reminders.get(position);
 
         if (reminder.isExpanded()) {
-            holder.task.setText(reminder.getTitle());
+            holder.task.setText(reminder.getTask());
         } else {
-            holder.task.setText(reminder.getTitle().substring(0, 20) + "...");
+            if (reminder.getTask().length() > 20)
+                holder.task.setText(reminder.getTask().substring(0, 20) + "...");
+            else holder.task.setText(reminder.getTask());
         }
 
-        holder.date.setText("88 Nov (Wed), 2088");
-        holder.time.setText("88:88 AM");
-        holder.status.setText("After 88 mins");
-        holder.setter.setText("Sent by Developer");
+        Calendar cal = Util.getCalenderFormatDate(reminder.getDate());
+
+        holder.date.setText(getReminderFormatedDate(cal));
+        holder.time.setText(getReminderFormatedTime(cal));
+        holder.status.setText("Completed");
+        holder.setter.setText(Html.fromHtml("Sent by <B>" + reminder.getUser().getName() + "</B>"));
 
         if (position == reminders.size() - 1) holder.divider.setVisibility(View.GONE);
         else holder.divider.setVisibility(View.VISIBLE);

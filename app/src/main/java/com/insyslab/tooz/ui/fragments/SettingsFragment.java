@@ -23,15 +23,17 @@ import com.insyslab.tooz.models.responses.Error;
 import com.insyslab.tooz.models.responses.LogoutResponse;
 import com.insyslab.tooz.restclient.BaseResponseInterface;
 import com.insyslab.tooz.restclient.GenericDataHandler;
-import com.insyslab.tooz.ui.activities.DashboardActivity;
 import com.insyslab.tooz.ui.activities.OnboardingActivity;
 import com.insyslab.tooz.ui.activities.SettingsActivity;
 import com.insyslab.tooz.ui.adapters.SettingsAdapter;
+import com.insyslab.tooz.utils.CustomShareIntent;
 import com.insyslab.tooz.utils.LocalStorage;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.insyslab.tooz.utils.ConstantClass.APP_URL;
+import static com.insyslab.tooz.utils.ConstantClass.DEFAULT_APP_SHARE_TEXT;
 import static com.insyslab.tooz.utils.ConstantClass.LOGOUT_REQUEST_URL;
 import static com.insyslab.tooz.utils.ConstantClass.REQUEST_TYPE_007;
 
@@ -202,13 +204,14 @@ public class SettingsFragment extends BaseFragment implements OnSettingItemClick
     private void proceedToLogout() {
         LocalStorage.getInstance(getContext()).clearUserSharedPreferences();
         Intent i = new Intent(getContext(), OnboardingActivity.class);
-        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(i);
         getActivity().finish();
     }
 
     private void initAppReferal() {
-
+        String shareText = DEFAULT_APP_SHARE_TEXT + "\n\n" + APP_URL;
+        new CustomShareIntent(getContext(), shareText).shareToAllApps();
     }
 
     private void redirectToThisFragment(String tag) {

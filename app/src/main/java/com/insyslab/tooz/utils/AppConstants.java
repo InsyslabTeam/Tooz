@@ -40,4 +40,6 @@ public class AppConstants {
     public static final String KEY_PUSH_MESSAGE = "message";
 
     public static final String KEY_SIGN_IN_RESPONSE = "KEY_SIGN_IN_RESPONSE";
+
+    public static final String KEY_FROM_FRAGMENT = "KEY_FROM_FRAGMENT";
 }

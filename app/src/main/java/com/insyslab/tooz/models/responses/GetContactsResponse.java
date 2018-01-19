@@ -11,6 +11,7 @@ public class GetContactsResponse {
     @SerializedName("appUser")
     @Expose
     private List<User> appUser = null;
+
     @SerializedName("nonAppUser")
     @Expose
     private List<User> nonAppUser = null;

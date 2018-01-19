@@ -20,8 +20,12 @@ import android.widget.Toast;
 
 import com.insyslab.tooz.R;
 import com.insyslab.tooz.interfaces.OnRuntimePermissionsResultListener;
-import com.insyslab.tooz.rpl.AppDatabase;
-import com.insyslab.tooz.rpl.DatabaseInitializer;
+import com.insyslab.tooz.models.User;
+import com.insyslab.tooz.rpl.ReminderRepository;
+import com.insyslab.tooz.rpl.UserRepository;
+import com.insyslab.tooz.utils.ToozApplication;
+
+import java.util.List;
 
 import de.greenrobot.event.EventBus;
 
@@ -48,12 +52,15 @@ public abstract class BaseActivity extends AppCompatActivity {
     private final int REQUEST_CONTACTS_PERMISSION_CODE = 2;
     private final int REQUEST_STORAGE_PERMISSION_CODE = 3;
     private final int REQUEST_LOCATION_PERMISSION_CODE = 4;
-
+    public UserRepository userRepository;
+    public ReminderRepository reminderRepository;
     protected ProgressDialog mProgressDialog = null;
+    private List<User> appUserList, nonAppUserList;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
-        DatabaseInitializer.populateAsync(AppDatabase.getAppDatabase(this));
+        userRepository = new UserRepository((ToozApplication) getApplicationContext());
+        reminderRepository = new ReminderRepository((ToozApplication) getApplicationContext());
         super.onCreate(savedInstanceState);
     }
 
@@ -115,7 +122,6 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         EventBus.getDefault().unregister(this);
-        AppDatabase.destroyInstance();
         super.onDestroy();
     }
 
@@ -347,5 +353,21 @@ public abstract class BaseActivity extends AppCompatActivity {
         }
         Log.i(TAG, "isMyServiceRunning? " + false);
         return false;
+    }
+
+    public List<User> getAppUserList() {
+        return appUserList;
+    }
+
+    public void setAppUserList(List<User> list) {
+        appUserList = list;
+    }
+
+    public List<User> getNonAppUserList() {
+        return nonAppUserList;
+    }
+
+    public void setNonAppUserList(List<User> list) {
+        nonAppUserList = list;
     }
 }

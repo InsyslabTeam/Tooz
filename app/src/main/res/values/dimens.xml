@@ -64,6 +64,9 @@
     <dimen name="no_content_view_image_margin">32dp</dimen>
     <dimen name="no_content_view_image">144dp</dimen>
 
+    <dimen name="all_contacts_invite_friends">10dp</dimen>
+    <dimen name="all_contacts_invite_friends_text">20sp</dimen>
+
     <!--Settings-->
     <dimen name="settings_item_title_text">18sp</dimen>
     <dimen name="settings_item_margin">16dp</dimen>

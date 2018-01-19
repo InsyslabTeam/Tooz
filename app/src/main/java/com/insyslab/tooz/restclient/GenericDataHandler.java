@@ -3,6 +3,7 @@ package com.insyslab.tooz.restclient;
 import android.content.Context;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.insyslab.tooz.models.responses.Error;
 import com.insyslab.tooz.utils.LocalStorage;
 
@@ -13,6 +14,7 @@ import java.lang.reflect.Type;
 import java.util.Map;
 
 import static com.insyslab.tooz.utils.ConstantClass.BASE_URL;
+import static com.insyslab.tooz.utils.Util.DEFAULT_DATE_FORMAT;
 
 /**
  * Created by TaNMay on 06/10/17.
@@ -58,7 +60,8 @@ public class GenericDataHandler implements SuccessListener {
         if (responseObject == null && responseArray == null && responseString != null) {
             baseResponseInterface.onResponse(responseString, null, requestCode);
         } else if (responseObject == null && responseArray != null && responseString == null) {
-            Object response = new Gson().fromJson(responseArray.toString(), responseType);
+            Gson gson = new GsonBuilder().setDateFormat(DEFAULT_DATE_FORMAT).create();
+            Object response = gson.fromJson(responseArray.toString(), responseType);
             baseResponseInterface.onResponse(response, null, requestCode);
         } else if (responseObject != null && responseArray == null && responseString == null) {
             Object response = new Gson().fromJson(responseObject.toString(), responseType);

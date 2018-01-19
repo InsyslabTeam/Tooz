@@ -8,6 +8,7 @@ import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,30 +16,43 @@ import android.widget.DatePicker;
 import android.widget.LinearLayout;
 import android.widget.TimePicker;
 
+import com.android.volley.Request;
 import com.google.android.gms.maps.model.LatLng;
 import com.insyslab.tooz.R;
 import com.insyslab.tooz.models.FragmentState;
+import com.insyslab.tooz.models.User;
+import com.insyslab.tooz.models.responses.CreateReminderResponse;
+import com.insyslab.tooz.models.responses.Error;
+import com.insyslab.tooz.restclient.BaseResponseInterface;
+import com.insyslab.tooz.restclient.GenericDataHandler;
+import com.insyslab.tooz.restclient.RequestBuilder;
 import com.insyslab.tooz.ui.activities.ActionsActivity;
+import com.insyslab.tooz.utils.LocalStorage;
 import com.insyslab.tooz.utils.Util;
 
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Locale;
+import org.json.JSONObject;
 
+import java.util.Calendar;
+import java.util.List;
+
+import static com.insyslab.tooz.utils.AppConstants.KEY_FROM_FRAGMENT;
 import static com.insyslab.tooz.utils.AppConstants.KEY_SET_REMINDER_TYPE;
 import static com.insyslab.tooz.utils.AppConstants.VAL_SEND_REMINDER;
 import static com.insyslab.tooz.utils.AppConstants.VAL_SET_PERSONAL_REMINDER;
-import static com.insyslab.tooz.utils.Util.DEFAULT_DATE_FORMAT;
+import static com.insyslab.tooz.utils.ConstantClass.CREATE_REMINDER_REQUEST_URL;
+import static com.insyslab.tooz.utils.ConstantClass.REQUEST_TYPE_009;
 import static com.insyslab.tooz.utils.Util.getAmPmFromIndex;
 import static com.insyslab.tooz.utils.Util.getDateExtension;
+import static com.insyslab.tooz.utils.Util.getDateInDefaultDateFormat;
 import static com.insyslab.tooz.utils.Util.getDayOfWeekFromIndex;
+import static com.insyslab.tooz.utils.Util.getFormattedHourOrMinute;
 import static com.insyslab.tooz.utils.Util.getMonthFromIndex;
 
 /**
  * Created by TaNMay on 26/09/16.
  */
 
-public class SetReminderFragment extends BaseFragment {
+public class SetReminderFragment extends BaseFragment implements BaseResponseInterface {
 
     public static final String TAG = "SetReminderFrag ==> ";
 
@@ -52,7 +66,8 @@ public class SetReminderFragment extends BaseFragment {
     private String timeSelected = null, addressSelected = null;
     private LatLng latLngSelected = null;
 
-    private SimpleDateFormat simpleDateFormat;
+    private List<User> selectedMembers = null;
+    private User user;
 
     public SetReminderFragment() {
 
@@ -84,6 +99,8 @@ public class SetReminderFragment extends BaseFragment {
         updateFragment(fragmentState);
         initView(layout);
 
+        user = LocalStorage.getInstance(getContext()).getUser();
+
         if (fragmentType.equals(VAL_SET_PERSONAL_REMINDER)) {
             setUpPersonalReminderView();
         } else if (fragmentType.equals(VAL_SEND_REMINDER)) {
@@ -99,7 +116,7 @@ public class SetReminderFragment extends BaseFragment {
     }
 
     private void setUpActions() {
-        simpleDateFormat = new SimpleDateFormat(DEFAULT_DATE_FORMAT, Locale.getDefault());
+
 
         tietTime.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -124,7 +141,9 @@ public class SetReminderFragment extends BaseFragment {
     }
 
     private void onSelectContactsClick() {
-
+        Bundle bundle = new Bundle();
+        bundle.putString(KEY_FROM_FRAGMENT, TAG);
+        ((ActionsActivity) getActivity()).openThisFragment(SelectContactsFragment.TAG, bundle);
     }
 
     private void onLocationClick() {
@@ -162,11 +181,17 @@ public class SetReminderFragment extends BaseFragment {
                 calendar.get(Calendar.DAY_OF_MONTH)
         );
 
+        DatePicker datePicker = datePickerDialog.getDatePicker();
+        datePicker.setMinDate(System.currentTimeMillis());
+        calendar.add(Calendar.YEAR, +1);
+        datePicker.setMaxDate(calendar.getTimeInMillis());
+
         datePickerDialog.show();
     }
 
     private void showTimePicker(final int i, final int i1, final int i2) {
         Calendar calendar = Calendar.getInstance();
+        final long currTime = calendar.getTimeInMillis() + 1000;
 
         TimePickerDialog timePickerDialog = new TimePickerDialog(
                 getContext(),
@@ -175,9 +200,14 @@ public class SetReminderFragment extends BaseFragment {
                     public void onTimeSet(TimePicker timePicker, int i3, int i4) {
                         Calendar cal1 = Calendar.getInstance();
                         cal1.set(i, i1, i2, i3, i4);
-                        timeSelected = simpleDateFormat.format(cal1.getTime());
+                        long selectedTime = cal1.getTimeInMillis();
 
-                        setUpDateAndTime(cal1);
+                        if (selectedTime <= currTime) {
+                            showToastMessage("Please select a time in the future!", false);
+                        } else {
+                            timeSelected = getDateInDefaultDateFormat(cal1);
+                            setUpDateAndTime(cal1);
+                        }
                     }
                 },
                 calendar.get(Calendar.HOUR_OF_DAY),
@@ -193,11 +223,13 @@ public class SetReminderFragment extends BaseFragment {
         String month = getMonthFromIndex(cal.get(Calendar.MONTH));
         String day = getDayOfWeekFromIndex(cal.get(Calendar.DAY_OF_WEEK));
         String meridian = getAmPmFromIndex(cal.get(Calendar.AM_PM));
+        String hour = getFormattedHourOrMinute(cal.get(Calendar.HOUR));
+        String minute = getFormattedHourOrMinute(cal.get(Calendar.MINUTE));
 
         String dateTime = date + " " + month + " (" + day + "),"
                 + " " + cal.get(Calendar.YEAR)
-                + "  " + cal.get(Calendar.HOUR)
-                + ":" + cal.get(Calendar.MINUTE)
+                + "  " + hour
+                + ":" + minute
                 + " " + meridian;
 
         tietTime.setText(dateTime);
@@ -285,18 +317,50 @@ public class SetReminderFragment extends BaseFragment {
         tietTask.setError(null);
         tietContact.setError(null);
 
-        String task = tietTask.getText().toString();
-        String contacts = tietContact.getText().toString();
+        String task = tietTask.getText().toString().trim();
 
         if (task != null && task.isEmpty()) {
             tietTask.setError(getString(R.string.error_empty_field));
         } else if (timeSelected == null && latLngSelected == null) {
             showToastMessage("Please select either a time or a location for the reminder!", true);
-        } else if (fragmentType.equals(VAL_SEND_REMINDER) && contacts != null && contacts.isEmpty()) {
-            tietContact.setError(getString(R.string.error_empty_field));
+        } else if (fragmentType.equals(VAL_SEND_REMINDER) && selectedMembers == null) {
+            showToastMessage("Please select a contact to send the reminder!", false);
+        } else if (fragmentType.equals(VAL_SEND_REMINDER) && selectedMembers.size() == 0) {
+            showToastMessage("Please select a contact to send the reminder!", false);
         } else {
-            closeThisFragment();
+            initCreateReminderRequest();
         }
+    }
+
+    private void initCreateReminderRequest() {
+        showProgressDialog(getString(R.string.loading));
+
+        String requestUrl = CREATE_REMINDER_REQUEST_URL;
+        JSONObject requestObject = new RequestBuilder().getCreateReminderRequestPayload(
+                fragmentType, tietTask.getText().toString().trim(), timeSelected, latLngSelected,
+                user.getId(), selectedMembers
+        );
+
+        if (requestObject != null) {
+            GenericDataHandler req1GenericDataHandler = new GenericDataHandler(this, getContext(), REQUEST_TYPE_009);
+            req1GenericDataHandler.jsonObjectRequest(requestObject, requestUrl, Request.Method.POST, CreateReminderResponse.class);
+        }
+    }
+
+    private String getLatitudeFromInput() {
+        String locationInput = tietLocation.getText().toString().trim();
+        if (locationInput != null && !locationInput.isEmpty()) {
+            String[] coords = locationInput.split(",");
+            return coords[0].trim();
+        } else return null;
+    }
+
+    private String getLongitudeFromInput() {
+        String locationInput = tietLocation.getText().toString().trim();
+        if (locationInput != null && !locationInput.isEmpty()) {
+            String[] coords = locationInput.split(",");
+            return coords[1].trim();
+        } else return null;
     }
 
     private void closeThisFragment() {
@@ -311,5 +375,59 @@ public class SetReminderFragment extends BaseFragment {
     @Override
     public void onDetach() {
         super.onDetach();
+    }
+
+    public void onMembersSelected(List<User> contactItemList) {
+        selectedMembers = contactItemList;
+        String contactListStr = "";
+        for (int i = 0; i < selectedMembers.size(); i++) {
+            contactListStr += selectedMembers.get(i).getName();
+            if (i != selectedMembers.size() - 1) contactListStr += ", ";
+        }
+
+        tietContact.setText(contactListStr);
+    }
+
+    @Override
+    public void onResponse(Object success, Object error, final int requestCode) {
+        hideProgressDialog();
+        if (error == null) {
+            switch (requestCode) {
+                case REQUEST_TYPE_009:
+                    onCreateReminderResponse((CreateReminderResponse) success);
+                    break;
+                default:
+                    showToastMessage("ERROR " + requestCode + "!", false);
+                    break;
+            }
+        } else {
+            Error customError = (Error) error;
+            Log.d(TAG, "Error: " + customError.getMessage() + " -- " + customError.getStatus() + " -- ");
+            if (customError.getStatus() == 000) {
+                hideProgressDialog();
+                showNetworkErrorSnackbar(content, getString(R.string.error_no_internet), getString(R.string.retry),
+                        new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                switch (requestCode) {
+                                    case REQUEST_TYPE_009:
+                                        initCreateReminderRequest();
+                                        break;
+                                    default:
+                                        showToastMessage(getString(R.string.error_unknown), false);
+                                }
+                            }
+                        });
+            } else {
+                showSnackbarMessage(content, customError.getMessage(), true, getString(R.string.ok), null, true);
+            }
+        }
+    }
+
+    private void onCreateReminderResponse(CreateReminderResponse success) {
+        if (fragmentType.equals(VAL_SEND_REMINDER))
+            showToastMessage("Reminder sent to " + selectedMembers.size() + " contact(s)!", true);
+        else showToastMessage("Personal reminder created successfully!", true);
+        closeThisFragment();
     }
 }

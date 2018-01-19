@@ -236,7 +236,7 @@ public class ManualContactSyncFragment extends BaseFragment implements OnSyncCon
         showProgressDialog(getString(R.string.loading));
 
         String requestUrl = CONTACTS_SYNC_REQUEST_URL;
-        JSONObject requestObject = new RequestBuilder().getContactSyncRequest(contactSyncRequest);
+        JSONObject requestObject = new RequestBuilder().getContactSyncRequestPayload(contactSyncRequest);
 
         if (requestObject != null) {
             GenericDataHandler reqGenericDataHandler = new GenericDataHandler(this, getContext(), REQUEST_TYPE_005);
