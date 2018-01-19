@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.v7.widget.LinearLayoutManager;
@@ -114,43 +115,59 @@ public class SyncContactsFragment extends BaseFragment implements OnSyncContactI
     }
 
     private void fetchContactsFromDevice() {
+        showProgressDialog(getString(R.string.loading));
         phoneContacts = new ArrayList<>();
 
-        gson = new GsonBuilder()
-                .registerTypeAdapter(Uri.class, new UriDeserializer())
-                .create();
+        new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+            }
 
-        ContentResolver cr = getContext().getContentResolver();
-        Cursor cursor = cr.query(ContactsContract.Contacts.CONTENT_URI, null, null, null, null);
-        if (cursor.moveToFirst()) {
-            phoneContacts = new ArrayList<>();
-            do {
-                String id = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts._ID));
+            @Override
+            protected Void doInBackground(Void... voids) {
+                gson = new GsonBuilder()
+                        .registerTypeAdapter(Uri.class, new UriDeserializer())
+                        .create();
 
-                if (Integer.parseInt(cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER))) > 0) {
-                    Cursor pCur = cr.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?", new String[]{id}, null);
-                    while (pCur.moveToNext()) {
-                        String contactNumber = pCur.getString(pCur.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
-                        String contactName = pCur.getString(pCur.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
-                        String contactImage = pCur.getString(pCur.getColumnIndex(ContactsContract.CommonDataKinds.Phone.PHOTO_URI));
-                        Uri contactImageUri = null;
-                        if (contactImage != null) contactImageUri = Uri.parse(contactImage);
+                ContentResolver cr = getContext().getContentResolver();
+                Cursor cursor = cr.query(ContactsContract.Contacts.CONTENT_URI, null, null, null, null);
+                if (cursor.moveToFirst()) {
+                    phoneContacts = new ArrayList<>();
+                    do {
+                        String id = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts._ID));
 
-                        PhoneContact phoneContact = new PhoneContact();
-                        phoneContact.setName(contactName);
-                        phoneContact.setPhoneNumber(contactNumber);
-                        phoneContact.setContactImageUri(contactImageUri);
-                        phoneContacts.add(phoneContact);
+                        if (Integer.parseInt(cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER))) > 0) {
+                            Cursor pCur = cr.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?", new String[]{id}, null);
+                            while (pCur.moveToNext()) {
+                                String contactNumber = pCur.getString(pCur.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+                                String contactName = pCur.getString(pCur.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
+                                String contactImage = pCur.getString(pCur.getColumnIndex(ContactsContract.CommonDataKinds.Phone.PHOTO_URI));
+                                Uri contactImageUri = null;
+                                if (contactImage != null) contactImageUri = Uri.parse(contactImage);
 
-                        break;
-                    }
-                    pCur.close();
+                                PhoneContact phoneContact = new PhoneContact();
+                                phoneContact.setName(contactName);
+                                phoneContact.setPhoneNumber(contactNumber);
+                                phoneContact.setContactImageUri(contactImageUri);
+                                phoneContacts.add(phoneContact);
+
+                                break;
+                            }
+                            pCur.close();
+                        }
+                    } while (cursor.moveToNext());
                 }
-            } while (cursor.moveToNext());
-        }
+                return null;
+            }
 
-        Log.d(TAG, "Contacts Synced!");
-        setUpContactsRv();
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                super.onPostExecute(aVoid);
+                Log.d(TAG, "Contacts Synced!");
+                setUpContactsRv();
+            }
+        }.execute();
     }
 
     private void setUpContactsRv() {
@@ -158,6 +175,7 @@ public class SyncContactsFragment extends BaseFragment implements OnSyncContactI
         contactsAdapter = new SyncContactsAdapter(this, phoneContacts);
         rvContacts.setLayoutManager(layoutManager);
         rvContacts.setAdapter(contactsAdapter);
+        hideProgressDialog();
     }
 
     private boolean verifyContactsPermissions() {
