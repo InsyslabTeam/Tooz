@@ -10,11 +10,12 @@ import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
 import com.insyslab.tooz.R;
-import com.insyslab.tooz.interfaces.OnAllContactClickListener;
+import com.insyslab.tooz.interfaces.OnUserContactClickListener;
 import com.insyslab.tooz.models.FragmentState;
 import com.insyslab.tooz.models.User;
 import com.insyslab.tooz.ui.activities.DashboardActivity;
-import com.insyslab.tooz.ui.adapters.AllContactsAdapter;
+import com.insyslab.tooz.ui.adapters.AppUserContactsAdapter;
+import com.insyslab.tooz.ui.adapters.NonAppUserContactsAdapter;
 
 import java.util.List;
 
@@ -22,18 +23,18 @@ import java.util.List;
  * Created by TaNMay on 26/09/16.
  */
 
-public class AllContactsFragment extends BaseFragment implements OnAllContactClickListener {
+public class AllContactsFragment extends BaseFragment implements OnUserContactClickListener {
 
     public static final String TAG = "AllContactsFrag ==> ";
 
     private static final String ARG_PARAM1 = "ARG_PARAM1";
 
     private RelativeLayout content;
-    private RecyclerView allContactsRv;
+    private RecyclerView appUserContactsRv, nonAppUserContactsRv;
 
-    private RecyclerView.Adapter allContactsAdapter;
+    private RecyclerView.Adapter appUserContactsAdapter, nonAppUserContactsAdapter;
 
-    private List<User> allContactsList;
+    private List<User> appUserContactsList, nonAppUserContactsList;
 
     public AllContactsFragment() {
 
@@ -63,21 +64,31 @@ public class AllContactsFragment extends BaseFragment implements OnAllContactCli
         initView(layout);
         setUpActions();
 
-        allContactsList = ((DashboardActivity) getActivity()).getContactList();
-        setUpAllContactsRv();
+        appUserContactsList = ((DashboardActivity) getActivity()).getAppUserList();
+        nonAppUserContactsList = ((DashboardActivity) getActivity()).getNonAppUserList();
+        setUpAppUserContactsRv();
+        setUpNonAppUserContactsRv();
 
         return layout;
     }
 
-    private void setUpAllContactsRv() {
+    private void setUpAppUserContactsRv() {
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
-        allContactsAdapter = new AllContactsAdapter(this, allContactsList);
-        allContactsRv.setLayoutManager(layoutManager);
-        allContactsRv.setAdapter(allContactsAdapter);
+        appUserContactsAdapter = new AppUserContactsAdapter(this, appUserContactsList);
+        appUserContactsRv.setLayoutManager(layoutManager);
+        appUserContactsRv.setAdapter(appUserContactsAdapter);
+    }
+
+    private void setUpNonAppUserContactsRv() {
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
+        nonAppUserContactsAdapter = new NonAppUserContactsAdapter(this, nonAppUserContactsList);
+        nonAppUserContactsRv.setLayoutManager(layoutManager);
+        nonAppUserContactsRv.setAdapter(nonAppUserContactsAdapter);
     }
 
     private void initView(View rootView) {
-        allContactsRv = rootView.findViewById(R.id.fac_contacts_rv);
+        appUserContactsRv = rootView.findViewById(R.id.fac_app_user_contacts_rv);
+        nonAppUserContactsRv = rootView.findViewById(R.id.fac_non_app_user_contacts_rv);
     }
 
     private void setUpActions() {
@@ -94,13 +105,28 @@ public class AllContactsFragment extends BaseFragment implements OnAllContactCli
         super.onDetach();
     }
 
-    @Override
-    public void onContactClick(View view) {
-        int position = allContactsRv.getChildAdapterPosition(view);
+    public void updateAppUserContactsRv(List<User> list) {
+        appUserContactsList = list;
+        if (appUserContactsAdapter != null) appUserContactsAdapter.notifyDataSetChanged();
     }
 
-    public void updateContactsRv(List<User> list) {
-        allContactsList = list;
-        if (allContactsAdapter != null) allContactsAdapter.notifyDataSetChanged();
+    public void updateNonAppUserContactsRv(List<User> list) {
+        nonAppUserContactsList = list;
+        if (nonAppUserContactsAdapter != null) nonAppUserContactsAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onAppUserContactClick(View view) {
+        int position = appUserContactsRv.getChildAdapterPosition(view);
+    }
+
+    @Override
+    public void onNonAppUserContactClick(View view) {
+        int position = nonAppUserContactsRv.getChildAdapterPosition(view);
+    }
+
+    @Override
+    public void onNonAppUserInviteClick(int position) {
+
     }
 }

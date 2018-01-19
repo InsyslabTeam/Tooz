@@ -9,6 +9,7 @@ import android.support.annotation.Nullable;
 import com.insyslab.tooz.models.Reminder;
 import com.insyslab.tooz.utils.ToozApplication;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -24,7 +25,7 @@ public class ReminderRepository {
     }
 
     public void insertReminders(final List<Reminder> reminderList) {
-        final AsyncTask<Void, Void, Void> asyncTask = new AsyncTask<Void, Void, Void>() {
+        final AsyncTask<Void, Void, Void> asyncTaskIns = new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... voids) {
                 appDatabase.reminderDao().insertAll(reminderList);
@@ -36,9 +37,32 @@ public class ReminderRepository {
                 super.onPostExecute(aVoid);
             }
         }.execute();
+
+//        AsyncTask<Void, Void, Void> asyncTaskDel = new AsyncTask<Void, Void, Void>() {
+//            @Override
+//            protected Void doInBackground(Void... voids) {
+//                appDatabase.reminderDao().deleteAllReminders();
+//                return null;
+//            }
+//
+//            @Override
+//            protected void onPostExecute(Void aVoid) {
+//                super.onPostExecute(aVoid);
+//                asyncTaskIns.execute();
+//            }
+//        }.execute();
+
     }
 
     public LiveData<List<Reminder>> getAllReminder() {
         return appDatabase.reminderDao().fetchAllReminders();
+    }
+
+    public LiveData<List<Reminder>> getUpcomingReminders(Date date) {
+        return appDatabase.reminderDao().fetchUpcomingReminders(date);
+    }
+
+    public LiveData<List<Reminder>> getPastReminders(Date date) {
+        return appDatabase.reminderDao().fetchPastReminders(date);
     }
 }

@@ -32,4 +32,9 @@ public interface UserDao {
     @Query("select * from user")
     LiveData<List<User>> fetchAllUsers();
 
+    @Query("select * from user where id IS NOT NULL")
+    LiveData<List<User>> fetchAppUserContacts();
+
+    @Query("select * from user where id IS NULL")
+    LiveData<List<User>> fetchNonAppUserContacts();
 }

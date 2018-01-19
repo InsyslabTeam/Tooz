@@ -18,6 +18,7 @@ import com.insyslab.tooz.R;
 import com.insyslab.tooz.interfaces.OnRuntimePermissionsResultListener;
 import com.insyslab.tooz.models.ContactItem;
 import com.insyslab.tooz.models.FragmentState;
+import com.insyslab.tooz.models.User;
 import com.insyslab.tooz.ui.activities.ActionsActivity;
 import com.insyslab.tooz.ui.activities.BaseActivity;
 import com.insyslab.tooz.ui.customui.CircleTransform;
@@ -49,7 +50,7 @@ public class CreateGroupFragment extends BaseFragment implements OnRuntimePermis
     private TextInputEditText tietName, tietMembers;
 
     private Bitmap profilePictureSelected = null;
-    private List<ContactItem> selectedMembers = null;
+    private List<User> selectedMembers = null;
 
     public CreateGroupFragment() {
 
@@ -240,7 +241,7 @@ public class CreateGroupFragment extends BaseFragment implements OnRuntimePermis
 
     }
 
-    public void onMembersSelected(List<ContactItem> contactItemList) {
+    public void onMembersSelected(List<User> contactItemList) {
         selectedMembers = contactItemList;
         String memberListStr = "";
         for (int i = 0; i < selectedMembers.size(); i++) {

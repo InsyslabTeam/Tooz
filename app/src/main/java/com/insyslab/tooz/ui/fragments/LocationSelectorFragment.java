@@ -52,6 +52,7 @@ public class LocationSelectorFragment extends BaseFragment implements OnMapReady
 
     private String fragmentType = null;
     private List<String> strings = null;
+    private Boolean isSaved = false;
 
     private LatLng selectedLocation = null;
     private String selectedAddress = null;
@@ -143,6 +144,7 @@ public class LocationSelectorFragment extends BaseFragment implements OnMapReady
                     true
             );
         } else {
+            isSaved = true;
             closeThisFragment();
         }
     }
@@ -159,10 +161,12 @@ public class LocationSelectorFragment extends BaseFragment implements OnMapReady
 
     @Override
     public void onDetach() {
-        FragmentState fragmentState = new FragmentState(SetReminderFragment.TAG);
-        fragmentState.setFragmentDetailedName(fragmentType);
-        updateFragment(fragmentState);
-        onLocationSelectedListener.onLocationSelected(selectedLocation, selectedAddress);
+        if (isSaved) {
+            FragmentState fragmentState = new FragmentState(SetReminderFragment.TAG);
+            fragmentState.setFragmentDetailedName(fragmentType);
+            updateFragment(fragmentState);
+            onLocationSelectedListener.onLocationSelected(selectedLocation, selectedAddress);
+        }
         super.onDetach();
     }
 

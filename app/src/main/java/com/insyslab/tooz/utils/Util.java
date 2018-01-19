@@ -19,7 +19,9 @@ import org.json.JSONObject;
 import java.text.DateFormatSymbols;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 import java.util.TimeZone;
 
 /**
@@ -69,6 +71,17 @@ public class Util {
             mCM = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo netInfo = mCM.getActiveNetworkInfo();
         return netInfo != null && netInfo.isConnectedOrConnecting();
+    }
+
+    public static String getDateInDefaultDateFormat(Calendar calendar) {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(DEFAULT_DATE_FORMAT, Locale.getDefault());
+        return simpleDateFormat.format(calendar.getTime());
+    }
+
+    public static Calendar getCalenderFormatDate(Date date) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        return calendar;
     }
 
     public static String getDateFromGmtToIst(String gmtDate) {
@@ -166,5 +179,51 @@ public class Util {
         } else {
             return null;
         }
+    }
+
+    public static String getReminderRemainingTime(Calendar calReminderTime, Calendar currentTime) {
+        Long reminderTimeMillis = calReminderTime.getTimeInMillis();
+        Long currentTimeMillis = currentTime.getTimeInMillis();
+        Long timeDifference = reminderTimeMillis - currentTimeMillis;
+
+        Long timeDiffInSec = timeDifference / 1000;
+        if (timeDiffInSec >= 60) {
+            Long timeDiffInMin = timeDiffInSec / 60;
+            Long remSec = timeDiffInSec % 60;
+
+            if (timeDiffInMin >= 60) {
+                Long timeDiffInHour = timeDiffInMin / 60;
+                Long remMin = timeDiffInMin % 60;
+
+                if (timeDiffInHour >= 24) {
+                    Long timeDiffInDays = timeDiffInHour / 24;
+                    Long remHour = timeDiffInHour % 24;
+
+                    return timeDiffInDays + " day" + (timeDiffInDays > 1 ? "s " : " ");
+                } else {
+                    return timeDiffInHour + " hour" + (timeDiffInHour > 1 ? "s " : " ") + (remMin > 0 ? remMin + " min" : "");
+                }
+            } else {
+                return timeDiffInMin + " min " + (remSec > 0 ? remSec + " sec" : "");
+            }
+        } else {
+            return timeDiffInSec + " second" + (timeDiffInSec > 1 ? "s " : " ");
+        }
+    }
+
+    public static String getReminderFormatedDate(Calendar cal) {
+        String date = cal.get(Calendar.DAY_OF_MONTH) + getDateExtension(cal.get(Calendar.DAY_OF_MONTH));
+        String month = getMonthFromIndex(cal.get(Calendar.MONTH));
+        String day = getDayOfWeekFromIndex(cal.get(Calendar.DAY_OF_WEEK));
+
+        return date + " " + month + " (" + day + ")," + " " + cal.get(Calendar.YEAR);
+    }
+
+    public static String getReminderFormatedTime(Calendar cal) {
+        String meridian = getAmPmFromIndex(cal.get(Calendar.AM_PM));
+        String hour = getFormattedHourOrMinute(cal.get(Calendar.HOUR));
+        String minute = getFormattedHourOrMinute(cal.get(Calendar.MINUTE));
+
+        return hour + ":" + minute + " " + meridian;
     }
 }

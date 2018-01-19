@@ -11,9 +11,7 @@ import android.widget.TextView;
 
 import com.insyslab.tooz.R;
 import com.insyslab.tooz.interfaces.OnSelectContactItemClickListener;
-import com.insyslab.tooz.interfaces.OnSyncContactItemClickListener;
-import com.insyslab.tooz.models.ContactItem;
-import com.insyslab.tooz.models.PhoneContact;
+import com.insyslab.tooz.models.User;
 import com.insyslab.tooz.ui.customui.CircleTransform;
 import com.squareup.picasso.Picasso;
 
@@ -26,9 +24,9 @@ import java.util.List;
 public class SelectContactsAdapter extends RecyclerView.Adapter<SelectContactsAdapter.ViewHolder> {
 
     private OnSelectContactItemClickListener onSelectContactItemClickListener;
-    private List<ContactItem> contactItems;
+    private List<User> contactItems;
 
-    public SelectContactsAdapter(OnSelectContactItemClickListener onSelectContactItemClickListener, List<ContactItem> contactItems) {
+    public SelectContactsAdapter(OnSelectContactItemClickListener onSelectContactItemClickListener, List<User> contactItems) {
         this.onSelectContactItemClickListener = onSelectContactItemClickListener;
         this.contactItems = contactItems;
     }
@@ -41,10 +39,10 @@ public class SelectContactsAdapter extends RecyclerView.Adapter<SelectContactsAd
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
-        ContactItem contactItem = contactItems.get(position);
+        User contactItem = contactItems.get(position);
 
         Picasso.with(holder.image.getContext())
-                .load(contactItem.getImage())
+                .load(contactItem.getProfileImage())
                 .placeholder(R.drawable.ic_default_user)
                 .error(R.drawable.ic_default_user)
                 .resize(100, 100)
@@ -54,10 +52,10 @@ public class SelectContactsAdapter extends RecyclerView.Adapter<SelectContactsAd
 
         if (contactItem.getName() != null)
             holder.name.setText(contactItem.getName());
-        if (contactItem.getNumber() != null)
-            holder.number.setText(contactItem.getNumber());
+        if (contactItem.getMobile() != null)
+            holder.number.setText(contactItem.getMobile());
 
-        if (contactItem.isSelected()){
+        if (contactItem.isSelected()) {
             holder.selector.setImageDrawable(ContextCompat.getDrawable(holder.selector.getContext(), R.drawable.ic_checkbox_selected));
         } else {
             holder.selector.setImageDrawable(ContextCompat.getDrawable(holder.selector.getContext(), R.drawable.ic_checkbox_not_selected));

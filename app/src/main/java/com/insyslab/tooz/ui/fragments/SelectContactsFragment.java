@@ -11,11 +11,11 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.RelativeLayout;
 
-import com.google.gson.Gson;
 import com.insyslab.tooz.R;
 import com.insyslab.tooz.interfaces.OnSelectContactItemClickListener;
-import com.insyslab.tooz.models.ContactItem;
 import com.insyslab.tooz.models.FragmentState;
+import com.insyslab.tooz.models.User;
+import com.insyslab.tooz.ui.activities.ActionsActivity;
 import com.insyslab.tooz.ui.adapters.SelectContactsAdapter;
 
 import java.util.ArrayList;
@@ -39,11 +39,9 @@ public class SelectContactsFragment extends BaseFragment implements OnSelectCont
 
     private RecyclerView.Adapter contactsAdapter;
 
-    private List<ContactItem> contactItems;
-    private List<ContactItem> selectedContacts = null;
+    private List<User> contactItems;
+    private List<User> selectedContacts = null;
     private String fromFragment = null;
-
-    private Gson gson;
 
     private OnContactsSelectedListener onContactsSelectedListener;
 
@@ -76,27 +74,18 @@ public class SelectContactsFragment extends BaseFragment implements OnSelectCont
         initView(layout);
         setUpActions();
 
+        selectedContacts = new ArrayList<>();
+        contactItems = ((ActionsActivity) getActivity()).getAppUserList();
         setUpContactsRv();
 
         return layout;
     }
 
     private void setUpContactsRv() {
-        createDummyContactList();
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
         contactsAdapter = new SelectContactsAdapter(this, contactItems);
         rvContacts.setLayoutManager(layoutManager);
         rvContacts.setAdapter(contactsAdapter);
-    }
-
-    private void createDummyContactList() {
-        contactItems = new ArrayList<>();
-        for (int i = 0; i < 10; i++) {
-            ContactItem contactItem = new ContactItem();
-            contactItem.setName("Developer " + i + " Airtel");
-            contactItem.setNumber("+91 88888 8888" + i);
-            contactItems.add(contactItem);
-        }
     }
 
     private void initView(View rootView) {
@@ -156,8 +145,8 @@ public class SelectContactsFragment extends BaseFragment implements OnSelectCont
         getActivity().onBackPressed();
     }
 
-    private List<ContactItem> getListOfSelectedContacts() {
-        List<ContactItem> list = new ArrayList<>();
+    private List<User> getListOfSelectedContacts() {
+        List<User> list = new ArrayList<>();
         for (int i = 0; i < contactItems.size(); i++) {
             if (contactItems.get(i).isSelected()) list.add(contactItems.get(i));
         }
@@ -172,7 +161,7 @@ public class SelectContactsFragment extends BaseFragment implements OnSelectCont
 
     public interface OnContactsSelectedListener {
 
-        void onContactsSelected(List<ContactItem> contactItemList, String from);
+        void onContactsSelected(List<User> contactItemList, String from);
 
     }
 

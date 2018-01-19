@@ -19,7 +19,6 @@ import android.widget.TimePicker;
 import com.android.volley.Request;
 import com.google.android.gms.maps.model.LatLng;
 import com.insyslab.tooz.R;
-import com.insyslab.tooz.models.ContactItem;
 import com.insyslab.tooz.models.FragmentState;
 import com.insyslab.tooz.models.User;
 import com.insyslab.tooz.models.responses.CreateReminderResponse;
@@ -31,13 +30,10 @@ import com.insyslab.tooz.ui.activities.ActionsActivity;
 import com.insyslab.tooz.utils.LocalStorage;
 import com.insyslab.tooz.utils.Util;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
-import java.util.Locale;
 
 import static com.insyslab.tooz.utils.AppConstants.KEY_FROM_FRAGMENT;
 import static com.insyslab.tooz.utils.AppConstants.KEY_SET_REMINDER_TYPE;
@@ -45,9 +41,9 @@ import static com.insyslab.tooz.utils.AppConstants.VAL_SEND_REMINDER;
 import static com.insyslab.tooz.utils.AppConstants.VAL_SET_PERSONAL_REMINDER;
 import static com.insyslab.tooz.utils.ConstantClass.CREATE_REMINDER_REQUEST_URL;
 import static com.insyslab.tooz.utils.ConstantClass.REQUEST_TYPE_009;
-import static com.insyslab.tooz.utils.Util.DEFAULT_DATE_FORMAT;
 import static com.insyslab.tooz.utils.Util.getAmPmFromIndex;
 import static com.insyslab.tooz.utils.Util.getDateExtension;
+import static com.insyslab.tooz.utils.Util.getDateInDefaultDateFormat;
 import static com.insyslab.tooz.utils.Util.getDayOfWeekFromIndex;
 import static com.insyslab.tooz.utils.Util.getFormattedHourOrMinute;
 import static com.insyslab.tooz.utils.Util.getMonthFromIndex;
@@ -70,11 +66,8 @@ public class SetReminderFragment extends BaseFragment implements BaseResponseInt
     private String timeSelected = null, addressSelected = null;
     private LatLng latLngSelected = null;
 
-    private List<ContactItem> selectedMembers = null;
+    private List<User> selectedMembers = null;
     private User user;
-
-    private SimpleDateFormat simpleDateFormat;
-
 
     public SetReminderFragment() {
 
@@ -123,7 +116,7 @@ public class SetReminderFragment extends BaseFragment implements BaseResponseInt
     }
 
     private void setUpActions() {
-        simpleDateFormat = new SimpleDateFormat(DEFAULT_DATE_FORMAT, Locale.getDefault());
+
 
         tietTime.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -212,7 +205,7 @@ public class SetReminderFragment extends BaseFragment implements BaseResponseInt
                         if (selectedTime <= currTime) {
                             showToastMessage("Please select a time in the future!", false);
                         } else {
-                            timeSelected = simpleDateFormat.format(cal1.getTime());
+                            timeSelected = getDateInDefaultDateFormat(cal1);
                             setUpDateAndTime(cal1);
                         }
                     }
@@ -344,9 +337,8 @@ public class SetReminderFragment extends BaseFragment implements BaseResponseInt
 
         String requestUrl = CREATE_REMINDER_REQUEST_URL;
         JSONObject requestObject = new RequestBuilder().getCreateReminderRequestPayload(
-                fragmentType, tietTask.getText().toString().trim(), tietTime.getText().toString().trim(),
-                latLngSelected.latitude + "", latLngSelected.longitude + "",
-                user.getId(), getArrayOfContacts()
+                fragmentType, tietTask.getText().toString().trim(), timeSelected, latLngSelected,
+                user.getId(), selectedMembers
         );
 
         if (requestObject != null) {
@@ -371,17 +363,6 @@ public class SetReminderFragment extends BaseFragment implements BaseResponseInt
         } else return null;
     }
 
-    private JSONArray getArrayOfContacts() {
-        String contactsInput = tietContact.getText().toString().trim();
-        if (contactsInput != null && !contactsInput.isEmpty()) {
-            String[] contactListItems = contactsInput.split(",");
-            JSONArray jsonArray = new JSONArray();
-            for (int i = 0; i < contactListItems.length; i++)
-                jsonArray.put(contactListItems[i].trim());
-            return jsonArray;
-        } else return null;
-    }
-
     private void closeThisFragment() {
         getActivity().onBackPressed();
     }
@@ -396,7 +377,7 @@ public class SetReminderFragment extends BaseFragment implements BaseResponseInt
         super.onDetach();
     }
 
-    public void onMembersSelected(List<ContactItem> contactItemList) {
+    public void onMembersSelected(List<User> contactItemList) {
         selectedMembers = contactItemList;
         String contactListStr = "";
         for (int i = 0; i < selectedMembers.size(); i++) {
@@ -444,6 +425,9 @@ public class SetReminderFragment extends BaseFragment implements BaseResponseInt
     }
 
     private void onCreateReminderResponse(CreateReminderResponse success) {
-        showToastMessage("Personal reminder created successfully!", true);
+        if (fragmentType.equals(VAL_SEND_REMINDER))
+            showToastMessage("Reminder sent to " + selectedMembers.size() + " contact(s)!", true);
+        else showToastMessage("Personal reminder created successfully!", true);
+        closeThisFragment();
     }
 }

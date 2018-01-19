@@ -6,13 +6,17 @@ import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
+import android.arch.persistence.room.TypeConverters;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import com.insyslab.tooz.rpl.TimestampConverter;
 
+import java.util.Date;
 import java.util.List;
 
 @Entity(indices = {@Index(value = "id", unique = true)})
+@TypeConverters(TimestampConverter.class)
 public class Reminder {
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "p_id")
@@ -34,9 +38,10 @@ public class Reminder {
     private String task;
 
     @ColumnInfo(name = "date")
+    @TypeConverters({TimestampConverter.class})
     @SerializedName("date")
     @Expose
-    private String date;
+    private Date date;
 
     @ColumnInfo(name = "longitude")
     @SerializedName("longitude")
@@ -48,12 +53,17 @@ public class Reminder {
     @Expose
     private String latitude;
 
+    @ColumnInfo(name = "createdAt")
+    @TypeConverters({TimestampConverter.class})
     @SerializedName("createdAt")
     @Expose
-    private String createdAt;
+    private Date createdAt;
+
+    @ColumnInfo(name = "updatedAt")
+    @TypeConverters({TimestampConverter.class})
     @SerializedName("updatedAt")
     @Expose
-    private String updatedAt;
+    private Date updatedAt;
 
     @ColumnInfo(name = "id")
     @SerializedName("id")
@@ -94,11 +104,11 @@ public class Reminder {
         this.task = task;
     }
 
-    public String getDate() {
+    public Date getDate() {
         return date;
     }
 
-    public void setDate(String date) {
+    public void setDate(Date date) {
         this.date = date;
     }
 
@@ -118,19 +128,19 @@ public class Reminder {
         this.latitude = latitude;
     }
 
-    public String getCreatedAt() {
+    public Date getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(String createdAt) {
+    public void setCreatedAt(Date createdAt) {
         this.createdAt = createdAt;
     }
 
-    public String getUpdatedAt() {
+    public Date getUpdatedAt() {
         return updatedAt;
     }
 
-    public void setUpdatedAt(String updatedAt) {
+    public void setUpdatedAt(Date updatedAt) {
         this.updatedAt = updatedAt;
     }
 

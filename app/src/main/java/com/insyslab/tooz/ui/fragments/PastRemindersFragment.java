@@ -63,7 +63,7 @@ public class PastRemindersFragment extends BaseFragment implements OnPastReminde
         initView(layout);
         setUpActions();
 
-        pastReminderList = ((DashboardActivity) getActivity()).getRemindersList();
+        pastReminderList = ((DashboardActivity) getActivity()).getPastRemindersList();
         setUpPastRv();
 
         return layout;

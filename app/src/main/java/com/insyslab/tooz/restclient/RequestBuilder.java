@@ -1,5 +1,6 @@
 package com.insyslab.tooz.restclient;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
 import com.insyslab.tooz.models.User;
 import com.insyslab.tooz.models.requests.ContactSyncRequest;
@@ -7,6 +8,9 @@ import com.insyslab.tooz.models.requests.ContactSyncRequest;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.insyslab.tooz.utils.AppConstants.VAL_SEND_REMINDER;
 
@@ -81,8 +85,8 @@ public class RequestBuilder {
     }
 
     public JSONObject getCreateReminderRequestPayload(String type, String task, String dateTime,
-                                                      String latitude, String longitude,
-                                                      String ownerUser, JSONArray contactsArray) {
+                                                      LatLng location, String ownerUser,
+                                                      List<User> contactsArray) {
         try {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put(key_task, task);
@@ -91,16 +95,24 @@ public class RequestBuilder {
                 jsonObject.put(key_time, dateTime);
                 jsonObject.put(key_date, dateTime);
             }
-            if (latitude != null) jsonObject.put(key_latitude, latitude);
-            if (longitude != null) jsonObject.put(key_longitude, longitude);
+            if (location != null) jsonObject.put(key_latitude, location.latitude);
+            if (location != null) jsonObject.put(key_longitude, location.longitude);
 
             if (type.equals(VAL_SEND_REMINDER)) {
-                jsonObject.put(key_contacts, contactsArray);
+                jsonObject.put(key_contacts, getUserIdList(contactsArray));
             }
             return jsonObject;
         } catch (JSONException e) {
             e.printStackTrace();
             return null;
         }
+    }
+
+    private JSONArray getUserIdList(List<User> contactsArray) {
+        JSONArray jsonArray = new JSONArray();
+        for (int i = 0; i < contactsArray.size(); i++) {
+            jsonArray.put(contactsArray.get(i).getId());
+        }
+        return jsonArray;
     }
 }

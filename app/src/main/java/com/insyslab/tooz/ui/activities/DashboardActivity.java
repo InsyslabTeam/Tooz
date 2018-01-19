@@ -40,6 +40,7 @@ import com.insyslab.tooz.utils.LocalStorage;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import static com.insyslab.tooz.utils.AppConstants.KEY_SET_REMINDER_TYPE;
@@ -63,8 +64,7 @@ public class DashboardActivity extends BaseActivity implements BaseResponseInter
 
     private String currentFragment = null;
     private boolean doubleBackToExitPressedOnce;
-    private List<User> userList;
-    private List<Reminder> remindersList;
+    private List<Reminder> upcomingRemindersList, pastRemindersList;
     private Integer responseCount = 0;
 
     private Intent locationServiceIntent;
@@ -81,8 +81,10 @@ public class DashboardActivity extends BaseActivity implements BaseResponseInter
         initView();
         setUpToolbar();
 
-        fetchAllRemindersFromDb();
-        fetchAllContactsFromDb();
+        fetchUpcomingRemindersFromDb();
+        fetchPastRemindersFromDb();
+        fetchAppUserContactsFromDb();
+        fetchNonAppUserContactsFromDb();
 
         setUpActions();
 
@@ -92,6 +94,8 @@ public class DashboardActivity extends BaseActivity implements BaseResponseInter
         if (LocalStorage.getInstance(this).isFirstLogin()) {
             initializeUserData();
         } else {
+            initGetContactsRequest();
+            initGetAllRemindersRequest();
             openThisFragment(UpcomingRemindersFragment.TAG, null);
         }
     }
@@ -418,37 +422,22 @@ public class DashboardActivity extends BaseActivity implements BaseResponseInter
         if (responseCount > 1) resumeNormalApp();
     }
 
+    private void onGetContactsResponse(GetContactsResponse success) {
+        initLocalDbContactsUpdate(success.getAppUser());
+        initLocalDbContactsUpdate(success.getNonAppUser());
+        if (responseCount > 1) resumeNormalApp();
+    }
+
     private void initLocalDbRemindersUpdate(List<Reminder> reminderList) {
         reminderRepository.insertReminders(reminderList);
     }
 
-    private void onGetContactsResponse(GetContactsResponse success) {
-        initLocalDbContactsUpdate(success.getAppUser());
-        if (responseCount > 1) resumeNormalApp();
-    }
-
-    private void initLocalDbContactsUpdate(List<User> appUsers) {
-        userRepository.insertUsers(appUsers);
-    }
-
-    private void fetchAllRemindersFromDb() {
-        reminderRepository.getAllReminder().observe(this, new Observer<List<Reminder>>() {
+    private void fetchUpcomingRemindersFromDb() {
+        reminderRepository.getUpcomingReminders(Calendar.getInstance().getTime()).observe(this, new Observer<List<Reminder>>() {
             @Override
             public void onChanged(@Nullable List<Reminder> list) {
-                remindersList = list;
+                upcomingRemindersList = list;
                 updateUpcomingReminders();
-                updatePastReminders();
-            }
-        });
-    }
-
-    public void fetchAllContactsFromDb() {
-        userList = new ArrayList<>();
-        userRepository.getAllUser().observe(this, new Observer<List<User>>() {
-            @Override
-            public void onChanged(@Nullable List<User> list) {
-                userList = list;
-                updateAllContacts();
             }
         });
     }
@@ -456,40 +445,86 @@ public class DashboardActivity extends BaseActivity implements BaseResponseInter
     private void updateUpcomingReminders() {
         try {
             UpcomingRemindersFragment fragment = (UpcomingRemindersFragment) getSupportFragmentManager().findFragmentById(R.id.ad_fragment_container);
-            if (fragment != null) fragment.updateRemindersRv(remindersList);
+            if (fragment != null) fragment.updateRemindersRv(upcomingRemindersList);
         } catch (ClassCastException e) {
             e.printStackTrace();
             Log.d(TAG, "ERROR: updateUpcomingReminders - " + e.getMessage());
         }
     }
 
+    public List<Reminder> getUpcomingRemindersList() {
+        return upcomingRemindersList;
+    }
+
+    private void fetchPastRemindersFromDb() {
+        reminderRepository.getPastReminders(Calendar.getInstance().getTime()).observe(this, new Observer<List<Reminder>>() {
+            @Override
+            public void onChanged(@Nullable List<Reminder> list) {
+                pastRemindersList = list;
+                updatePastReminders();
+            }
+        });
+    }
+
     private void updatePastReminders() {
         try {
             PastRemindersFragment fragment = (PastRemindersFragment) getSupportFragmentManager().findFragmentById(R.id.ad_fragment_container);
-            if (fragment != null) fragment.updateRemindersRv(remindersList);
+            if (fragment != null) fragment.updateRemindersRv(pastRemindersList);
         } catch (ClassCastException e) {
             e.printStackTrace();
             Log.d(TAG, "ERROR: updatePastReminders - " + e.getMessage());
         }
-
     }
 
-    private void updateAllContacts() {
+    public List<Reminder> getPastRemindersList() {
+        return pastRemindersList;
+    }
+
+    private void initLocalDbContactsUpdate(List<User> users) {
+        userRepository.insertUsers(users);
+    }
+
+    public void fetchAppUserContactsFromDb() {
+        setAppUserList(new ArrayList<User>());
+        userRepository.getAppUserContacts().observe(this, new Observer<List<User>>() {
+            @Override
+            public void onChanged(@Nullable List<User> list) {
+                setAppUserList(list);
+                updateAppUserContacts();
+            }
+        });
+    }
+
+    private void updateAppUserContacts() {
         try {
             AllContactsFragment fragment = (AllContactsFragment) getSupportFragmentManager().findFragmentById(R.id.ad_fragment_container);
-            if (fragment != null) fragment.updateContactsRv(userList);
+            if (fragment != null) fragment.updateAppUserContactsRv(getAppUserList());
         } catch (ClassCastException e) {
             e.printStackTrace();
-            Log.d(TAG, "ERROR: updateAllContacts - " + e.getMessage());
+            Log.d(TAG, "ERROR: updateAppUserContacts - " + e.getMessage());
         }
     }
 
-    public List<User> getContactList() {
-        return userList;
+
+    public void fetchNonAppUserContactsFromDb() {
+        setNonAppUserList(new ArrayList<User>());
+        userRepository.getNonAppUserContacts().observe(this, new Observer<List<User>>() {
+            @Override
+            public void onChanged(@Nullable List<User> list) {
+                setNonAppUserList(list);
+                updateNonAppUserContacts();
+            }
+        });
     }
 
-    public List<Reminder> getRemindersList() {
-        return remindersList;
+    private void updateNonAppUserContacts() {
+        try {
+            AllContactsFragment fragment = (AllContactsFragment) getSupportFragmentManager().findFragmentById(R.id.ad_fragment_container);
+            if (fragment != null) fragment.updateNonAppUserContactsRv(getAppUserList());
+        } catch (ClassCastException e) {
+            e.printStackTrace();
+            Log.d(TAG, "ERROR: updateNonAppUserContacts - " + e.getMessage());
+        }
     }
 
     private void resumeNormalApp() {

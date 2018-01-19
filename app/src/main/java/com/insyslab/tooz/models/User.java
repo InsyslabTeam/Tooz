@@ -40,7 +40,6 @@ public class User {
     @Expose
     private Boolean contactsSync;
 
-
     @SerializedName("createdAt")
     @Expose
     private String createdAt;
@@ -70,6 +69,10 @@ public class User {
     @SerializedName("token")
     @Expose
     private Token token;
+
+    private Boolean isBlocked = false;
+
+    private Boolean isSelected = false;
 
     public String getMobile() {
         return mobile;
@@ -174,4 +177,21 @@ public class User {
     public void setProfileImage(String profileImage) {
         this.profileImage = profileImage;
     }
+
+    public Boolean isBlocked() {
+        return isBlocked;
+    }
+
+    public void setBlocked(Boolean blocked) {
+        isBlocked = blocked;
+    }
+
+    public Boolean isSelected() {
+        return isSelected;
+    }
+
+    public void setSelected(Boolean selected) {
+        isSelected = selected;
+    }
 }
+

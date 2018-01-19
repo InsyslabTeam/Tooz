@@ -1,6 +1,8 @@
 package com.insyslab.tooz.ui.activities;
 
+import android.arch.lifecycle.Observer;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -10,14 +12,16 @@ import android.view.View;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.insyslab.tooz.R;
-import com.insyslab.tooz.models.ContactItem;
 import com.insyslab.tooz.models.FragmentState;
+import com.insyslab.tooz.models.User;
 import com.insyslab.tooz.ui.fragments.AddContactFragment;
+import com.insyslab.tooz.ui.fragments.AllContactsFragment;
 import com.insyslab.tooz.ui.fragments.CreateGroupFragment;
 import com.insyslab.tooz.ui.fragments.LocationSelectorFragment;
 import com.insyslab.tooz.ui.fragments.SelectContactsFragment;
 import com.insyslab.tooz.ui.fragments.SetReminderFragment;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.insyslab.tooz.utils.AppConstants.KEY_SET_REMINDER_TYPE;
@@ -45,6 +49,9 @@ public class ActionsActivity extends BaseActivity
 
         initView();
         setUpToolbar();
+
+        fetchAppUserContactsFromDb();
+
         setUpActions();
 
         getFragmentStatus();
@@ -186,7 +193,7 @@ public class ActionsActivity extends BaseActivity
     }
 
     @Override
-    public void onContactsSelected(List<ContactItem> contactItemList, String from) {
+    public void onContactsSelected(List<User> contactItemList, String from) {
         if (from.equals(SetReminderFragment.TAG)) {
             SetReminderFragment fragment = (SetReminderFragment) getSupportFragmentManager().findFragmentById(R.id.aa_fragment_container);
             fragment.onMembersSelected(contactItemList);
@@ -195,4 +202,25 @@ public class ActionsActivity extends BaseActivity
             fragment.onMembersSelected(contactItemList);
         }
     }
+
+    public void fetchAppUserContactsFromDb() {
+        setAppUserList(new ArrayList<User>());
+        userRepository.getAppUserContacts().observe(this, new Observer<List<User>>() {
+            @Override
+            public void onChanged(@Nullable List<User> list) {
+                setAppUserList(list);
+//                updateAppUserContacts();
+            }
+        });
+    }
+
+//    private void updateAppUserContacts() {
+//        try {
+//            SelectContactsFragment fragment = (SelectContactsFragment) getSupportFragmentManager().findFragmentById(R.id.aa_fragment_container);
+//            if (fragment != null) fragment.updateAppUserContactsRv(getAppUserList());
+//        } catch (ClassCastException e) {
+//            e.printStackTrace();
+//            Log.d(TAG, "ERROR: updateAppUserContacts - " + e.getMessage());
+//        }
+//    }
 }

@@ -65,7 +65,7 @@ public class UpcomingRemindersFragment extends BaseFragment implements OnUpcomin
         initView(layout);
         setUpActions();
 
-        upcomingReminderList = ((DashboardActivity) getActivity()).getRemindersList();
+        upcomingReminderList = ((DashboardActivity) getActivity()).getUpcomingRemindersList();
         setUpUpcomingRv();
 
         return layout;

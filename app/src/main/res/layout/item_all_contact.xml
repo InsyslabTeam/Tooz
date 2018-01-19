@@ -15,8 +15,8 @@
         <ImageView
             android:id="@+id/iac_image"
             android:layout_marginRight="16dp"
-            android:layout_width="48dp"
-            android:layout_height="48dp" />
+            android:layout_width="42dp"
+            android:layout_height="42dp" />
 
         <TextView
             android:id="@+id/iac_name"
