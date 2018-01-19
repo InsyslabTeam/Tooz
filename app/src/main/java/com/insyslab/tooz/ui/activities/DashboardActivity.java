@@ -243,7 +243,7 @@ public class DashboardActivity extends BaseActivity implements BaseResponseInter
 
     private void onToolbarSettingsClick() {
         openSettingsActivity();
-        throw new RuntimeException("This is a test crash!");
+//        throw new RuntimeException("This is a test crash!");
     }
 
     private void openSettingsActivity() {
