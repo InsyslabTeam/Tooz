@@ -496,6 +496,7 @@ public class DashboardActivity extends BaseActivity implements BaseResponseInter
     }
 
     private void onGetAllRemindersResponse(List<Reminder> success) {
+        startReminderSchedulingService();
         initLocalDbRemindersUpdate(success);
         if (responseCount > 1) resumeNormalApp();
     }

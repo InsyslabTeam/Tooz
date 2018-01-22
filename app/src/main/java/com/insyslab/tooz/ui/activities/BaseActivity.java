@@ -24,6 +24,7 @@ import com.insyslab.tooz.models.User;
 import com.insyslab.tooz.rpl.PhoneContactRepository;
 import com.insyslab.tooz.rpl.ReminderRepository;
 import com.insyslab.tooz.rpl.UserRepository;
+import com.insyslab.tooz.services.ReminderSchedulingService;
 import com.insyslab.tooz.utils.ToozApplication;
 
 import java.util.ArrayList;
@@ -379,5 +380,10 @@ public abstract class BaseActivity extends AppCompatActivity {
         userRepository.clearUserTable();
         reminderRepository.clearReminderTable();
         phoneContactRepository.clearPhoneContactTable();
+    }
+
+    public void startReminderSchedulingService() {
+        Intent intent = new Intent(this, ReminderSchedulingService.class);
+//        startService(intent);
     }
 }
