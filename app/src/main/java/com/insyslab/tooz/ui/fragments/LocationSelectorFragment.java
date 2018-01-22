@@ -21,7 +21,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.insyslab.tooz.R;
-import com.insyslab.tooz.models.FragmentState;
+import com.insyslab.tooz.models.eventbus.FragmentState;
 import com.insyslab.tooz.ui.adapters.PlacesAutoCompleteAdapter;
 import com.insyslab.tooz.utils.PlaceAPI;
 import com.insyslab.tooz.utils.ToozApplication;

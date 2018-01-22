@@ -1,10 +1,8 @@
 package com.insyslab.tooz.rpl;
 
 import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.Observer;
 import android.arch.persistence.room.Room;
 import android.os.AsyncTask;
-import android.support.annotation.Nullable;
 
 import com.insyslab.tooz.models.Reminder;
 import com.insyslab.tooz.utils.ToozApplication;
@@ -64,5 +62,9 @@ public class ReminderRepository {
 
     public LiveData<List<Reminder>> getPastReminders(Date date) {
         return appDatabase.reminderDao().fetchPastReminders(date);
+    }
+
+    public int clearReminderTable() {
+        return appDatabase.reminderDao().deleteAllReminders();
     }
 }

@@ -66,6 +66,8 @@
 
     <dimen name="all_contacts_invite_friends">10dp</dimen>
     <dimen name="all_contacts_invite_friends_text">20sp</dimen>
+    <dimen name="all_contacts_no_content_image">48dp</dimen>
+    <dimen name="all_contacts_no_content_title">14sp</dimen>
 
     <!--Settings-->
     <dimen name="settings_item_title_text">18sp</dimen>

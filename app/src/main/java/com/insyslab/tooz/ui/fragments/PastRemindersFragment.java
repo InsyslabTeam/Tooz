@@ -8,10 +8,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.insyslab.tooz.R;
 import com.insyslab.tooz.interfaces.OnPastReminderClickListener;
-import com.insyslab.tooz.models.FragmentState;
+import com.insyslab.tooz.models.eventbus.FragmentState;
 import com.insyslab.tooz.models.Reminder;
 import com.insyslab.tooz.ui.activities.DashboardActivity;
 import com.insyslab.tooz.ui.adapters.PastRemindersAdapter;
@@ -28,7 +29,8 @@ public class PastRemindersFragment extends BaseFragment implements OnPastReminde
 
     private static final String ARG_PARAM1 = "ARG_PARAM1";
 
-    private RelativeLayout content;
+    private RelativeLayout content, noContentView;
+    private TextView tvNcvTitle;
     private RecyclerView pastRv;
 
     private RecyclerView.Adapter pastAdapter;
@@ -70,14 +72,26 @@ public class PastRemindersFragment extends BaseFragment implements OnPastReminde
     }
 
     private void setUpPastRv() {
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
-        pastAdapter = new PastRemindersAdapter(this, pastReminderList);
-        pastRv.setLayoutManager(layoutManager);
-        pastRv.setAdapter(pastAdapter);
+        if (pastReminderList != null && pastReminderList.size() > 0) {
+            noContentView.setVisibility(View.GONE);
+            pastRv.setVisibility(View.VISIBLE);
+
+            RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
+            pastAdapter = new PastRemindersAdapter(this, pastReminderList);
+            pastRv.setLayoutManager(layoutManager);
+            pastRv.setAdapter(pastAdapter);
+        } else {
+            pastRv.setVisibility(View.GONE);
+            noContentView.setVisibility(View.VISIBLE);
+
+            tvNcvTitle.setText("No past reminders for you!");
+        }
     }
 
     private void initView(View rootView) {
         pastRv = rootView.findViewById(R.id.fpr_past_rv);
+        noContentView = rootView.findViewById(R.id.ncv_content);
+        tvNcvTitle = rootView.findViewById(R.id.ncv_text);
     }
 
     private void setUpActions() {
@@ -102,7 +116,9 @@ public class PastRemindersFragment extends BaseFragment implements OnPastReminde
     }
 
     public void updateRemindersRv(List<Reminder> list) {
-        pastReminderList = list;
+        pastReminderList.clear();
+        pastReminderList.addAll(list);
         if (pastAdapter != null) pastAdapter.notifyDataSetChanged();
+        else setUpPastRv();
     }
 }

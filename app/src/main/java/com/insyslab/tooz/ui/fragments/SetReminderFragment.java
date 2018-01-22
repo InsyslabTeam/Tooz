@@ -19,8 +19,9 @@ import android.widget.TimePicker;
 import com.android.volley.Request;
 import com.google.android.gms.maps.model.LatLng;
 import com.insyslab.tooz.R;
-import com.insyslab.tooz.models.FragmentState;
 import com.insyslab.tooz.models.User;
+import com.insyslab.tooz.models.eventbus.FragmentState;
+import com.insyslab.tooz.models.eventbus.ReminderCreated;
 import com.insyslab.tooz.models.responses.CreateReminderResponse;
 import com.insyslab.tooz.models.responses.Error;
 import com.insyslab.tooz.restclient.BaseResponseInterface;
@@ -34,6 +35,8 @@ import org.json.JSONObject;
 
 import java.util.Calendar;
 import java.util.List;
+
+import de.greenrobot.event.EventBus;
 
 import static com.insyslab.tooz.utils.AppConstants.KEY_FROM_FRAGMENT;
 import static com.insyslab.tooz.utils.AppConstants.KEY_SET_REMINDER_TYPE;
@@ -425,6 +428,7 @@ public class SetReminderFragment extends BaseFragment implements BaseResponseInt
     }
 
     private void onCreateReminderResponse(CreateReminderResponse success) {
+        EventBus.getDefault().postSticky(new ReminderCreated(true, !fragmentType.equals(VAL_SEND_REMINDER)));
         if (fragmentType.equals(VAL_SEND_REMINDER))
             showToastMessage("Reminder sent to " + selectedMembers.size() + " contact(s)!", true);
         else showToastMessage("Personal reminder created successfully!", true);

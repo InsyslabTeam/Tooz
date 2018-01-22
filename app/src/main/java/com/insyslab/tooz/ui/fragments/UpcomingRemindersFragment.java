@@ -12,11 +12,12 @@ import android.widget.TextView;
 
 import com.insyslab.tooz.R;
 import com.insyslab.tooz.interfaces.OnUpcomingReminderClickListener;
-import com.insyslab.tooz.models.FragmentState;
+import com.insyslab.tooz.models.eventbus.FragmentState;
 import com.insyslab.tooz.models.Reminder;
 import com.insyslab.tooz.ui.activities.DashboardActivity;
 import com.insyslab.tooz.ui.adapters.UpcomingRemindersAdapter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -65,6 +66,7 @@ public class UpcomingRemindersFragment extends BaseFragment implements OnUpcomin
         initView(layout);
         setUpActions();
 
+        upcomingReminderList = new ArrayList<>();
         upcomingReminderList = ((DashboardActivity) getActivity()).getUpcomingRemindersList();
         setUpUpcomingRv();
 
@@ -116,7 +118,8 @@ public class UpcomingRemindersFragment extends BaseFragment implements OnUpcomin
     }
 
     public void updateRemindersRv(List<Reminder> list) {
-        upcomingReminderList = list;
+        upcomingReminderList.clear();
+        upcomingReminderList.addAll(list);
         if (upcomingAdapter != null) upcomingAdapter.notifyDataSetChanged();
         else setUpUpcomingRv();
     }

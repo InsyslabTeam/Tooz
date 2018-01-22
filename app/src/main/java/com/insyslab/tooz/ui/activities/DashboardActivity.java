@@ -21,14 +21,21 @@ import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
 import com.google.gson.reflect.TypeToken;
 import com.insyslab.tooz.R;
-import com.insyslab.tooz.models.DashboardUpdate;
-import com.insyslab.tooz.models.FragmentState;
+import com.insyslab.tooz.models.PhoneContact;
 import com.insyslab.tooz.models.Reminder;
 import com.insyslab.tooz.models.User;
+import com.insyslab.tooz.models.eventbus.ContactAdded;
+import com.insyslab.tooz.models.eventbus.ContactSyncUpdate;
+import com.insyslab.tooz.models.eventbus.FragmentState;
+import com.insyslab.tooz.models.eventbus.ReminderCreated;
+import com.insyslab.tooz.models.requests.ContactSyncRequest;
+import com.insyslab.tooz.models.requests.Contact_;
+import com.insyslab.tooz.models.responses.ContactSyncResponse;
 import com.insyslab.tooz.models.responses.Error;
 import com.insyslab.tooz.models.responses.GetContactsResponse;
 import com.insyslab.tooz.restclient.BaseResponseInterface;
 import com.insyslab.tooz.restclient.GenericDataHandler;
+import com.insyslab.tooz.restclient.RequestBuilder;
 import com.insyslab.tooz.services.LocationService;
 import com.insyslab.tooz.ui.fragments.AddContactFragment;
 import com.insyslab.tooz.ui.fragments.AllContactsFragment;
@@ -37,6 +44,8 @@ import com.insyslab.tooz.ui.fragments.PastRemindersFragment;
 import com.insyslab.tooz.ui.fragments.SetReminderFragment;
 import com.insyslab.tooz.ui.fragments.UpcomingRemindersFragment;
 import com.insyslab.tooz.utils.LocalStorage;
+
+import org.json.JSONObject;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -47,8 +56,10 @@ import static com.insyslab.tooz.utils.AppConstants.KEY_SET_REMINDER_TYPE;
 import static com.insyslab.tooz.utils.AppConstants.KEY_TO_ACTIONS;
 import static com.insyslab.tooz.utils.AppConstants.VAL_SEND_REMINDER;
 import static com.insyslab.tooz.utils.AppConstants.VAL_SET_PERSONAL_REMINDER;
+import static com.insyslab.tooz.utils.ConstantClass.CONTACTS_SYNC_REQUEST_URL;
 import static com.insyslab.tooz.utils.ConstantClass.GET_ALL_REMINDERS_REQUEST_URL;
 import static com.insyslab.tooz.utils.ConstantClass.GET_CONTACTS_REQUEST_URL;
+import static com.insyslab.tooz.utils.ConstantClass.REQUEST_TYPE_005;
 import static com.insyslab.tooz.utils.ConstantClass.REQUEST_TYPE_006;
 import static com.insyslab.tooz.utils.ConstantClass.REQUEST_TYPE_011;
 
@@ -62,9 +73,9 @@ public class DashboardActivity extends BaseActivity implements BaseResponseInter
     private FloatingActionButton fabAddContact, fabCreateGroup, fabPersonalReminder, fabSendReminder;
     private FloatingActionMenu floatingActionMenu;
 
-    private String currentFragment = null;
+    private String currentFragment = null, reminderCreationType = null;
     private boolean doubleBackToExitPressedOnce;
-    private List<Reminder> upcomingRemindersList, pastRemindersList;
+    private List<Reminder> upcomingRemindersList = new ArrayList<>(), pastRemindersList = new ArrayList<>();
     private Integer responseCount = 0;
 
     private Intent locationServiceIntent;
@@ -267,11 +278,68 @@ public class DashboardActivity extends BaseActivity implements BaseResponseInter
         }
     }
 
-    public void onEvent(DashboardUpdate dashboardUpdate) {
-        Log.d(TAG, "Contact Update: " + dashboardUpdate.isContactUpdate());
+    public void onEvent(ContactSyncUpdate contactSyncUpdate) {
+        Log.d(TAG, "Contact Update: " + contactSyncUpdate.isContactSynced());
 
-        if (dashboardUpdate.isContactUpdate()) {
+        if (contactSyncUpdate.isContactSynced()) {
             initGetContactsRequest();
+        }
+    }
+
+    public void onEvent(ContactAdded contactAdded) {
+        Log.d(TAG, "Contact Added: " + contactAdded.isContactAdded());
+
+        if (contactAdded.isContactAdded()) {
+            initContactSyncProcess();
+        }
+    }
+
+    public void onEvent(ReminderCreated reminderCreated) {
+        Log.d(TAG, "ReminderCreated: " + reminderCreated.isReminderCreated());
+
+        if (reminderCreated.isReminderCreated()) {
+            initGetAllRemindersRequest();
+            reminderCreationType = reminderCreated.isPersonalReminder() ? VAL_SET_PERSONAL_REMINDER : VAL_SEND_REMINDER;
+        }
+    }
+
+    private void initContactSyncProcess() {
+        phoneContactRepository.getSyncedPhoneContacts().observe(this, new Observer<List<PhoneContact>>() {
+            @Override
+            public void onChanged(@Nullable List<PhoneContact> list) {
+                if (list != null && list.size() > 0) {
+                    proceedToContactSync(list);
+                }
+            }
+        });
+    }
+
+    private void proceedToContactSync(List<PhoneContact> list) {
+        ContactSyncRequest contactSyncRequest = new ContactSyncRequest();
+        contactSyncRequest.setContacts(getListOfSelectedContacts(list));
+        initContactSyncRequest(contactSyncRequest);
+    }
+
+    private List<Contact_> getListOfSelectedContacts(List<PhoneContact> list) {
+        List<Contact_> contact_s = new ArrayList<>();
+        for (int i = 0; i < list.size(); i++) {
+            Contact_ contact_ = new Contact_();
+            contact_.setName(list.get(i).getName());
+            contact_.setMobile(list.get(i).getPhoneNumber());
+            contact_s.add(contact_);
+        }
+        return contact_s;
+    }
+
+    private void initContactSyncRequest(ContactSyncRequest contactSyncRequest) {
+        showProgressDialog(getString(R.string.loading));
+
+        String requestUrl = CONTACTS_SYNC_REQUEST_URL;
+        JSONObject requestObject = new RequestBuilder().getContactSyncRequestPayload(contactSyncRequest);
+
+        if (requestObject != null) {
+            GenericDataHandler reqGenericDataHandler = new GenericDataHandler(this, this, REQUEST_TYPE_005);
+            reqGenericDataHandler.jsonObjectRequest(requestObject, requestUrl, Request.Method.POST, ContactSyncResponse.class);
         }
     }
 
@@ -381,6 +449,9 @@ public class DashboardActivity extends BaseActivity implements BaseResponseInter
         ++responseCount;
         if (error == null) {
             switch (requestCode) {
+                case REQUEST_TYPE_005:
+                    onContactSyncResponse((ContactSyncResponse) success);
+                    break;
                 case REQUEST_TYPE_006:
                     onGetContactsResponse((GetContactsResponse) success);
                     break;
@@ -418,7 +489,15 @@ public class DashboardActivity extends BaseActivity implements BaseResponseInter
         }
     }
 
+    private void onContactSyncResponse(ContactSyncResponse success) {
+        if (success.getStatus() == 200) {
+            initGetContactsRequest();
+        } else
+            showSnackbarMessage(findViewById(R.id.ad_fragment_container), success.getMessage(), true, getString(R.string.ok), null, true);
+    }
+
     private void onGetAllRemindersResponse(List<Reminder> success) {
+        startReminderSchedulingService();
         initLocalDbRemindersUpdate(success);
         if (responseCount > 1) resumeNormalApp();
     }
@@ -521,7 +600,7 @@ public class DashboardActivity extends BaseActivity implements BaseResponseInter
     private void updateNonAppUserContacts() {
         try {
             AllContactsFragment fragment = (AllContactsFragment) getSupportFragmentManager().findFragmentById(R.id.ad_fragment_container);
-            if (fragment != null) fragment.updateNonAppUserContactsRv(getAppUserList());
+            if (fragment != null) fragment.updateNonAppUserContactsRv(getNonAppUserList());
         } catch (ClassCastException e) {
             e.printStackTrace();
             Log.d(TAG, "ERROR: updateNonAppUserContacts - " + e.getMessage());

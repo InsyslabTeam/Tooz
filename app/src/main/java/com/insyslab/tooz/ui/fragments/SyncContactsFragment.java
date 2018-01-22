@@ -25,7 +25,7 @@ import com.google.gson.GsonBuilder;
 import com.insyslab.tooz.R;
 import com.insyslab.tooz.interfaces.OnRuntimePermissionsResultListener;
 import com.insyslab.tooz.interfaces.OnSyncContactItemClickListener;
-import com.insyslab.tooz.models.FragmentState;
+import com.insyslab.tooz.models.eventbus.FragmentState;
 import com.insyslab.tooz.models.PhoneContact;
 import com.insyslab.tooz.models.requests.ContactSyncRequest;
 import com.insyslab.tooz.models.requests.Contact_;
@@ -67,6 +67,7 @@ public class SyncContactsFragment extends BaseFragment implements OnSyncContactI
     private RecyclerView rvContacts;
 
     private RecyclerView.Adapter contactsAdapter;
+    private LinearLayoutManager layoutManager;
 
     private List<PhoneContact> phoneContacts;
 
@@ -133,7 +134,6 @@ public class SyncContactsFragment extends BaseFragment implements OnSyncContactI
                 ContentResolver cr = getContext().getContentResolver();
                 Cursor cursor = cr.query(ContactsContract.Contacts.CONTENT_URI, null, null, null, null);
                 if (cursor.moveToFirst()) {
-                    phoneContacts = new ArrayList<>();
                     do {
                         String id = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts._ID));
 
@@ -170,8 +170,12 @@ public class SyncContactsFragment extends BaseFragment implements OnSyncContactI
         }.execute();
     }
 
+    private void initPhoneContactDbUpdate() {
+        ((OnboardingActivity) getActivity()).initLocalDbPhoneContactsUpdate(phoneContacts);
+    }
+
     private void setUpContactsRv() {
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
+        layoutManager = new LinearLayoutManager(getContext());
         contactsAdapter = new SyncContactsAdapter(this, phoneContacts);
         rvContacts.setLayoutManager(layoutManager);
         rvContacts.setAdapter(contactsAdapter);
@@ -225,6 +229,7 @@ public class SyncContactsFragment extends BaseFragment implements OnSyncContactI
     private void modifySelection(boolean isSelected) {
         for (int i = 0; i < phoneContacts.size(); i++) {
             phoneContacts.get(i).setSelected(isSelected);
+            phoneContacts.get(i).setSynced(isSelected);
         }
         contactsAdapter.notifyDataSetChanged();
     }
@@ -366,20 +371,39 @@ public class SyncContactsFragment extends BaseFragment implements OnSyncContactI
     }
 
     private void onContactSyncResponse(ContactSyncResponse success) {
-        if (success.getStatus() == 200)
-            openDashboardActivity();
+        if (success.getStatus() == 200) openDashboardActivity();
         else
             showSnackbarMessage(content, success.getMessage(), true, getString(R.string.ok), null, true);
 
     }
 
     private void openDashboardActivity() {
-        ((OnboardingActivity) getActivity()).initProceedToDashboard();
+        new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+                showProgressDialog(getString(R.string.loading));
+            }
+
+            @Override
+            protected Void doInBackground(Void... voids) {
+                initPhoneContactDbUpdate();
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                super.onPostExecute(aVoid);
+                hideProgressDialog();
+                ((OnboardingActivity) getActivity()).initProceedToDashboard();
+            }
+        }.execute();
     }
 
     @Override
     public void onContactSelectorClick(int position) {
         phoneContacts.get(position).setSelected(!phoneContacts.get(position).getSelected());
-        contactsAdapter.notifyItemChanged(position);
+        phoneContacts.get(position).setSynced(!phoneContacts.get(position).isSynced());
+//        contactsAdapter.notifyItemChanged(position);
     }
 }

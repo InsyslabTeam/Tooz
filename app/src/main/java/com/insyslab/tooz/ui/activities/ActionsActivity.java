@@ -12,10 +12,10 @@ import android.view.View;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.insyslab.tooz.R;
-import com.insyslab.tooz.models.FragmentState;
+import com.insyslab.tooz.models.PhoneContact;
+import com.insyslab.tooz.models.eventbus.FragmentState;
 import com.insyslab.tooz.models.User;
 import com.insyslab.tooz.ui.fragments.AddContactFragment;
-import com.insyslab.tooz.ui.fragments.AllContactsFragment;
 import com.insyslab.tooz.ui.fragments.CreateGroupFragment;
 import com.insyslab.tooz.ui.fragments.LocationSelectorFragment;
 import com.insyslab.tooz.ui.fragments.SelectContactsFragment;
@@ -212,6 +212,10 @@ public class ActionsActivity extends BaseActivity
 //                updateAppUserContacts();
             }
         });
+    }
+
+    public void addContactToLocalDb(PhoneContact phoneContact) {
+        phoneContactRepository.insertPhoneContact(phoneContact);
     }
 
 //    private void updateAppUserContacts() {

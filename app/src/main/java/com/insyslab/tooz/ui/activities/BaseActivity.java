@@ -21,10 +21,13 @@ import android.widget.Toast;
 import com.insyslab.tooz.R;
 import com.insyslab.tooz.interfaces.OnRuntimePermissionsResultListener;
 import com.insyslab.tooz.models.User;
+import com.insyslab.tooz.rpl.PhoneContactRepository;
 import com.insyslab.tooz.rpl.ReminderRepository;
 import com.insyslab.tooz.rpl.UserRepository;
+import com.insyslab.tooz.services.ReminderSchedulingService;
 import com.insyslab.tooz.utils.ToozApplication;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
@@ -54,13 +57,15 @@ public abstract class BaseActivity extends AppCompatActivity {
     private final int REQUEST_LOCATION_PERMISSION_CODE = 4;
     public UserRepository userRepository;
     public ReminderRepository reminderRepository;
+    public PhoneContactRepository phoneContactRepository;
     protected ProgressDialog mProgressDialog = null;
-    private List<User> appUserList, nonAppUserList;
+    private List<User> appUserList = new ArrayList<>(), nonAppUserList = new ArrayList<>();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         userRepository = new UserRepository((ToozApplication) getApplicationContext());
         reminderRepository = new ReminderRepository((ToozApplication) getApplicationContext());
+        phoneContactRepository = new PhoneContactRepository((ToozApplication) getApplicationContext());
         super.onCreate(savedInstanceState);
     }
 
@@ -369,5 +374,16 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     public void setNonAppUserList(List<User> list) {
         nonAppUserList = list;
+    }
+
+    public void clearRoomDatabase() {
+        userRepository.clearUserTable();
+        reminderRepository.clearReminderTable();
+        phoneContactRepository.clearPhoneContactTable();
+    }
+
+    public void startReminderSchedulingService() {
+        Intent intent = new Intent(this, ReminderSchedulingService.class);
+//        startService(intent);
     }
 }

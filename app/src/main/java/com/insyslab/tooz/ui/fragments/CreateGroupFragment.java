@@ -16,8 +16,7 @@ import android.widget.RelativeLayout;
 
 import com.insyslab.tooz.R;
 import com.insyslab.tooz.interfaces.OnRuntimePermissionsResultListener;
-import com.insyslab.tooz.models.ContactItem;
-import com.insyslab.tooz.models.FragmentState;
+import com.insyslab.tooz.models.eventbus.FragmentState;
 import com.insyslab.tooz.models.User;
 import com.insyslab.tooz.ui.activities.ActionsActivity;
 import com.insyslab.tooz.ui.activities.BaseActivity;

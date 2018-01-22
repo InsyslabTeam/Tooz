@@ -2,17 +2,20 @@ package com.insyslab.tooz.ui.fragments;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.insyslab.tooz.R;
 import com.insyslab.tooz.interfaces.OnUserContactClickListener;
-import com.insyslab.tooz.models.FragmentState;
 import com.insyslab.tooz.models.User;
+import com.insyslab.tooz.models.eventbus.FragmentState;
 import com.insyslab.tooz.ui.activities.DashboardActivity;
 import com.insyslab.tooz.ui.adapters.AppUserContactsAdapter;
 import com.insyslab.tooz.ui.adapters.NonAppUserContactsAdapter;
@@ -29,7 +32,10 @@ public class AllContactsFragment extends BaseFragment implements OnUserContactCl
 
     private static final String ARG_PARAM1 = "ARG_PARAM1";
 
-    private RelativeLayout content;
+    private RelativeLayout content, noContentView;
+    private LinearLayout noAppUserView;
+    private NestedScrollView scrollContent;
+    private TextView tvNcvTitle, tvNoAppUserTitle;
     private RecyclerView appUserContactsRv, nonAppUserContactsRv;
 
     private RecyclerView.Adapter appUserContactsAdapter, nonAppUserContactsAdapter;
@@ -66,17 +72,49 @@ public class AllContactsFragment extends BaseFragment implements OnUserContactCl
 
         appUserContactsList = ((DashboardActivity) getActivity()).getAppUserList();
         nonAppUserContactsList = ((DashboardActivity) getActivity()).getNonAppUserList();
-        setUpAppUserContactsRv();
-        setUpNonAppUserContactsRv();
+
+        if (contactsSynced()) {
+            noContentView.setVisibility(View.GONE);
+            scrollContent.setVisibility(View.VISIBLE);
+
+            setUpAppUserContactsRv();
+            setUpNonAppUserContactsRv();
+        } else {
+            scrollContent.setVisibility(View.GONE);
+            noContentView.setVisibility(View.VISIBLE);
+
+            tvNcvTitle.setText("You haven't synced your contacts yet!");
+        }
 
         return layout;
     }
 
+    private boolean contactsSynced() {
+        if (appUserContactsList != null && nonAppUserContactsList != null) {
+            if (appUserContactsList.size() > 0 || nonAppUserContactsList.size() > 0) return true;
+            else return false;
+        } else if (appUserContactsList == null && nonAppUserContactsList == null) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
     private void setUpAppUserContactsRv() {
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
-        appUserContactsAdapter = new AppUserContactsAdapter(this, appUserContactsList);
-        appUserContactsRv.setLayoutManager(layoutManager);
-        appUserContactsRv.setAdapter(appUserContactsAdapter);
+        if (appUserContactsList != null && appUserContactsList.size() > 0) {
+            noAppUserView.setVisibility(View.GONE);
+            appUserContactsRv.setVisibility(View.VISIBLE);
+
+            RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
+            appUserContactsAdapter = new AppUserContactsAdapter(this, appUserContactsList);
+            appUserContactsRv.setLayoutManager(layoutManager);
+            appUserContactsRv.setAdapter(appUserContactsAdapter);
+        } else {
+            appUserContactsRv.setVisibility(View.GONE);
+            noAppUserView.setVisibility(View.VISIBLE);
+
+            tvNoAppUserTitle.setText("None of your contacts use " + getString(R.string.app_name) + "! You can invite some of them here.");
+        }
     }
 
     private void setUpNonAppUserContactsRv() {
@@ -89,6 +127,11 @@ public class AllContactsFragment extends BaseFragment implements OnUserContactCl
     private void initView(View rootView) {
         appUserContactsRv = rootView.findViewById(R.id.fac_app_user_contacts_rv);
         nonAppUserContactsRv = rootView.findViewById(R.id.fac_non_app_user_contacts_rv);
+        noContentView = rootView.findViewById(R.id.ncv_content);
+        tvNcvTitle = rootView.findViewById(R.id.ncv_text);
+        scrollContent = rootView.findViewById(R.id.fac_scroll_content);
+        noAppUserView = rootView.findViewById(R.id.fac_no_content);
+        tvNoAppUserTitle = rootView.findViewById(R.id.fac_ncv_text);
     }
 
     private void setUpActions() {
@@ -106,13 +149,17 @@ public class AllContactsFragment extends BaseFragment implements OnUserContactCl
     }
 
     public void updateAppUserContactsRv(List<User> list) {
-        appUserContactsList = list;
+        appUserContactsList.clear();
+        appUserContactsList.addAll(list);
         if (appUserContactsAdapter != null) appUserContactsAdapter.notifyDataSetChanged();
+        else setUpAppUserContactsRv();
     }
 
     public void updateNonAppUserContactsRv(List<User> list) {
-        nonAppUserContactsList = list;
+        nonAppUserContactsList.clear();
+        nonAppUserContactsList.addAll(list);
         if (nonAppUserContactsAdapter != null) nonAppUserContactsAdapter.notifyDataSetChanged();
+        else setUpNonAppUserContactsRv();
     }
 
     @Override

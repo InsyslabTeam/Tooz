@@ -91,6 +91,8 @@
             </intent-filter>
         </service>
 
+        <service android:name=".services.ReminderSchedulingService"/>
+
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
             android:resource="@mipmap/ic_launcher" />

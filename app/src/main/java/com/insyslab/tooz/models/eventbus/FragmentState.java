@@ -1,4 +1,4 @@
-package com.insyslab.tooz.models;
+package com.insyslab.tooz.models.eventbus;
 
 /**
  * Created by TaNMay on 12/10/17.

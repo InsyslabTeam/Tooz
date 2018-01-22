@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.provider.MediaStore;
@@ -21,10 +22,11 @@ import android.widget.RelativeLayout;
 
 import com.insyslab.tooz.R;
 import com.insyslab.tooz.interfaces.OnRuntimePermissionsResultListener;
-import com.insyslab.tooz.models.FragmentState;
+import com.insyslab.tooz.models.PhoneContact;
+import com.insyslab.tooz.models.eventbus.ContactAdded;
+import com.insyslab.tooz.models.eventbus.FragmentState;
 import com.insyslab.tooz.ui.activities.ActionsActivity;
 import com.insyslab.tooz.ui.activities.BaseActivity;
-import com.insyslab.tooz.ui.activities.DashboardActivity;
 import com.insyslab.tooz.ui.customui.CircleTransform;
 import com.insyslab.tooz.utils.Util;
 import com.insyslab.tooz.utils.Validator;
@@ -34,6 +36,8 @@ import com.theartofdev.edmodo.cropper.CropImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+
+import de.greenrobot.event.EventBus;
 
 import static android.Manifest.permission.READ_CONTACTS;
 import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
@@ -56,6 +60,7 @@ public class AddContactFragment extends BaseFragment implements OnRuntimePermiss
     private TextInputEditText tietName, tietNumber;
 
     private Bitmap profilePictureSelected = null;
+    private PhoneContact phoneContact;
 
     public AddContactFragment() {
 
@@ -170,6 +175,10 @@ public class AddContactFragment extends BaseFragment implements OnRuntimePermiss
         showProgressDialog(getString(R.string.saving));
         ArrayList<ContentProviderOperation> operationList = new ArrayList<ContentProviderOperation>();
 
+        phoneContact = new PhoneContact();
+        phoneContact.setName(name);
+        phoneContact.setPhoneNumber(number);
+
         int rawContactID = operationList.size();
 
         operationList.add(ContentProviderOperation.newInsert(ContactsContract.RawContacts.CONTENT_URI)
@@ -224,6 +233,32 @@ public class AddContactFragment extends BaseFragment implements OnRuntimePermiss
 
     private void contactSavedToDevice() {
         hideProgressDialog();
+        phoneContact.setSelected(true);
+        phoneContact.setSynced(true);
+
+        new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+                showProgressDialog(getString(R.string.loading));
+            }
+
+            @Override
+            protected Void doInBackground(Void... voids) {
+                ((ActionsActivity) getActivity()).addContactToLocalDb(phoneContact);
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                super.onPostExecute(aVoid);
+                hideProgressDialog();
+                contactAddedToLocalDb();
+            }
+        }.execute();
+    }
+
+    private void contactAddedToLocalDb() {
         showSnackbarMessage(
                 content,
                 "Contact added!",
@@ -232,6 +267,7 @@ public class AddContactFragment extends BaseFragment implements OnRuntimePermiss
                 null,
                 true
         );
+        EventBus.getDefault().postSticky(new ContactAdded(true));
         closeThisFragment();
     }
 

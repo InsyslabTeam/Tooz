@@ -12,8 +12,8 @@ import android.widget.TextView;
 
 import com.insyslab.tooz.R;
 import com.insyslab.tooz.interfaces.OnBlockedContactsClickListener;
-import com.insyslab.tooz.models.ContactItem;
-import com.insyslab.tooz.models.FragmentState;
+import com.insyslab.tooz.models.User;
+import com.insyslab.tooz.models.eventbus.FragmentState;
 import com.insyslab.tooz.ui.activities.SettingsActivity;
 import com.insyslab.tooz.ui.adapters.BlockedContactsAdapter;
 
@@ -36,7 +36,7 @@ public class BlockedContactsFragment extends BaseFragment implements OnBlockedCo
 
     private RecyclerView.Adapter blockedContactsAdapter;
 
-    private List<ContactItem> contactItems;
+    private List<User> contactItems;
 
     public BlockedContactsFragment() {
 
@@ -75,9 +75,9 @@ public class BlockedContactsFragment extends BaseFragment implements OnBlockedCo
     private void createDummyContactList() {
         contactItems = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
-            ContactItem contactItem = new ContactItem();
+            User contactItem = new User();
             contactItem.setName("Blocked Vodafone");
-            contactItem.setNumber("+91 88888 88888");
+            contactItem.setMobile("+91 88888 88888");
             contactItems.add(contactItem);
         }
     }
@@ -122,6 +122,6 @@ public class BlockedContactsFragment extends BaseFragment implements OnBlockedCo
     }
 
     private void closeThisFragment() {
-        ((SettingsActivity)getActivity()).closeCurrentFragment();
+        ((SettingsActivity) getActivity()).closeCurrentFragment();
     }
 }
