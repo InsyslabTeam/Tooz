@@ -62,4 +62,8 @@ public class UserRepository {
     public LiveData<List<User>> getNonAppUserContacts() {
         return appDatabase.userDao().fetchNonAppUserContacts();
     }
+
+    public int clearUserTable() {
+        return appDatabase.userDao().deleteAllUsers();
+    }
 }

@@ -10,7 +10,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.insyslab.tooz.models.FragmentState;
+import com.insyslab.tooz.models.eventbus.FragmentState;
 
 import de.greenrobot.event.EventBus;
 

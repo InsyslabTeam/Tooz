@@ -10,12 +10,15 @@ import android.widget.Toast;
 
 import com.insyslab.tooz.R;
 import com.insyslab.tooz.interfaces.OnRuntimePermissionsResultListener;
-import com.insyslab.tooz.models.FragmentState;
+import com.insyslab.tooz.models.eventbus.FragmentState;
+import com.insyslab.tooz.models.PhoneContact;
 import com.insyslab.tooz.ui.fragments.CreateProfileFragment;
 import com.insyslab.tooz.ui.fragments.MobileNumberFragment;
 import com.insyslab.tooz.ui.fragments.OtpVerificationFragment;
 import com.insyslab.tooz.ui.fragments.SyncContactsFragment;
 import com.insyslab.tooz.utils.Util;
+
+import java.util.List;
 
 import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
@@ -144,6 +147,10 @@ public class OnboardingActivity extends BaseActivity implements OnRuntimePermiss
     @Override
     public void onStoragePermissionsResult(boolean granted) {
 
+    }
+
+    public void initLocalDbPhoneContactsUpdate(List<PhoneContact> phoneContactList) {
+        phoneContactRepository.insertPhoneContacts(phoneContactList);
     }
 
     @Override

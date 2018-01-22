@@ -39,7 +39,7 @@ public class SyncContactsAdapter extends RecyclerView.Adapter<SyncContactsAdapte
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
-        PhoneContact phoneContact = phoneContacts.get(position);
+        final PhoneContact phoneContact = phoneContacts.get(position);
 
         Picasso.with(holder.image.getContext())
                 .load(phoneContact.getContactImageUri())
@@ -55,18 +55,23 @@ public class SyncContactsAdapter extends RecyclerView.Adapter<SyncContactsAdapte
         if (phoneContact.getPhoneNumber() != null)
             holder.number.setText(phoneContact.getPhoneNumber());
 
-        if (phoneContact.getSelected()){
-            holder.selector.setImageDrawable(ContextCompat.getDrawable(holder.selector.getContext(), R.drawable.ic_checkbox_selected));
-        } else {
-            holder.selector.setImageDrawable(ContextCompat.getDrawable(holder.selector.getContext(), R.drawable.ic_checkbox_not_selected));
-        }
+        setSelectionAs(phoneContact.getSelected(), holder.selector);
 
         holder.selectorSec.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                setSelectionAs(!phoneContact.getSelected(), holder.selector);
                 onSyncContactItemClickListener.onContactSelectorClick(position);
             }
         });
+    }
+
+    private void setSelectionAs(Boolean selected, ImageView selector) {
+        if (selected){
+            selector.setImageDrawable(ContextCompat.getDrawable(selector.getContext(), R.drawable.ic_checkbox_selected));
+        } else {
+            selector.setImageDrawable(ContextCompat.getDrawable(selector.getContext(), R.drawable.ic_checkbox_not_selected));
+        }
     }
 
     @Override

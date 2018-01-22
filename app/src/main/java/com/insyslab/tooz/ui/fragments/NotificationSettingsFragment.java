@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
 import com.insyslab.tooz.R;
-import com.insyslab.tooz.models.FragmentState;
+import com.insyslab.tooz.models.eventbus.FragmentState;
 
 /**
  * Created by TaNMay on 26/09/16.

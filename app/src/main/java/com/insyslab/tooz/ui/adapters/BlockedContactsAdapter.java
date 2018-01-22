@@ -10,7 +10,7 @@ import android.widget.TextView;
 
 import com.insyslab.tooz.R;
 import com.insyslab.tooz.interfaces.OnBlockedContactsClickListener;
-import com.insyslab.tooz.models.ContactItem;
+import com.insyslab.tooz.models.User;
 import com.insyslab.tooz.ui.customui.CircleTransform;
 import com.squareup.picasso.Picasso;
 
@@ -23,9 +23,9 @@ import java.util.List;
 public class BlockedContactsAdapter extends RecyclerView.Adapter<BlockedContactsAdapter.ViewHolder> {
 
     private OnBlockedContactsClickListener onBlockedContactsClickListener;
-    private List<ContactItem> contactItems;
+    private List<User> contactItems;
 
-    public BlockedContactsAdapter(OnBlockedContactsClickListener onBlockedContactsClickListener, List<ContactItem> contactItems) {
+    public BlockedContactsAdapter(OnBlockedContactsClickListener onBlockedContactsClickListener, List<User> contactItems) {
         this.onBlockedContactsClickListener = onBlockedContactsClickListener;
         this.contactItems = contactItems;
     }
@@ -39,7 +39,7 @@ public class BlockedContactsAdapter extends RecyclerView.Adapter<BlockedContacts
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
-        ContactItem contactItem = contactItems.get(position);
+        User contactItem = contactItems.get(position);
 
         Picasso.with(holder.image.getContext())
                 .load("abcdefghijklmnopqrstuvwxyz")
@@ -51,13 +51,12 @@ public class BlockedContactsAdapter extends RecyclerView.Adapter<BlockedContacts
                 .into(holder.image);
 
         holder.name.setText(contactItem.getName());
-        holder.number.setText(contactItem.getNumber());
+        holder.number.setText(contactItem.getMobile());
 
         if (contactItem.isBlocked()) {
             holder.unblock.setText("Unblock");
             holder.unblock.setBackground(ContextCompat.getDrawable(holder.unblock.getContext(), R.drawable.ic_blue_button));
-        }
-        else {
+        } else {
             holder.unblock.setText("Block");
             holder.unblock.setBackground(ContextCompat.getDrawable(holder.unblock.getContext(), R.drawable.ic_red_button));
         }

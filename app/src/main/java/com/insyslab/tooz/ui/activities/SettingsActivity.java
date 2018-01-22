@@ -1,6 +1,8 @@
 package com.insyslab.tooz.ui.activities;
 
+import android.arch.lifecycle.Observer;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -9,7 +11,8 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.insyslab.tooz.R;
-import com.insyslab.tooz.models.FragmentState;
+import com.insyslab.tooz.models.eventbus.FragmentState;
+import com.insyslab.tooz.models.PhoneContact;
 import com.insyslab.tooz.ui.fragments.BlockedContactsFragment;
 import com.insyslab.tooz.ui.fragments.FeedbackFragment;
 import com.insyslab.tooz.ui.fragments.HelpFragment;
@@ -22,6 +25,8 @@ import com.insyslab.tooz.ui.fragments.TermsPrivPolicyFragment;
 import com.insyslab.tooz.ui.fragments.UpdateProfileFragment;
 import com.insyslab.tooz.utils.Util;
 
+import java.util.List;
+
 public class SettingsActivity extends BaseActivity {
 
     private static final String TAG = "Settings ==> ";
@@ -29,6 +34,7 @@ public class SettingsActivity extends BaseActivity {
     private Toolbar toolbar;
 
     private String currentFragment = null;
+    private List<PhoneContact> syncedPhoneContactsList, nonSyncedPhoneContactsList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +43,9 @@ public class SettingsActivity extends BaseActivity {
 
         initView();
         setUpToolbar();
+
+        fetchSyncedPhoneContatcsFromDb();
+        fetchNonSyncedPhoneContatcsFromDb();
 
         getFragmentStatus();
         openThisFragment(SettingsFragment.TAG, null);
@@ -217,5 +226,57 @@ public class SettingsActivity extends BaseActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
+    }
+
+    private void fetchSyncedPhoneContatcsFromDb() {
+        phoneContactRepository.getSyncedPhoneContacts().observe(this, new Observer<List<PhoneContact>>() {
+            @Override
+            public void onChanged(@Nullable List<PhoneContact> list) {
+                syncedPhoneContactsList = list;
+                updateSyncedPhoneContacts();
+            }
+        });
+    }
+
+    private void updateSyncedPhoneContacts() {
+        try {
+            ManualContactSyncFragment fragment = (ManualContactSyncFragment) getSupportFragmentManager().findFragmentById(R.id.as_fragment_container);
+            if (fragment != null) fragment.updateSyncedContactsInRv(syncedPhoneContactsList);
+        } catch (ClassCastException e) {
+            e.printStackTrace();
+            Log.d(TAG, "ERROR: updateSyncedPhoneContacts - " + e.getMessage());
+        }
+    }
+
+    public List<PhoneContact> getSyncedPhoneContactsList() {
+        return syncedPhoneContactsList;
+    }
+
+    private void fetchNonSyncedPhoneContatcsFromDb() {
+        phoneContactRepository.getNonSyncedPhoneContacts().observe(this, new Observer<List<PhoneContact>>() {
+            @Override
+            public void onChanged(@Nullable List<PhoneContact> list) {
+                nonSyncedPhoneContactsList = list;
+                updateNonSyncedPhoneContacts();
+            }
+        });
+    }
+
+    private void updateNonSyncedPhoneContacts() {
+        try {
+            ManualContactSyncFragment fragment = (ManualContactSyncFragment) getSupportFragmentManager().findFragmentById(R.id.as_fragment_container);
+            if (fragment != null) fragment.updateNonSyncedContactsInRv(nonSyncedPhoneContactsList);
+        } catch (ClassCastException e) {
+            e.printStackTrace();
+            Log.d(TAG, "ERROR: updateNonSyncedPhoneContacts - " + e.getMessage());
+        }
+    }
+
+    public List<PhoneContact> getNonSyncedPhoneContactsList() {
+        return nonSyncedPhoneContactsList;
+    }
+
+    public void initLocalDbPhoneContactsUpdate(List<PhoneContact> phoneContactList) {
+        phoneContactRepository.insertPhoneContacts(phoneContactList);
     }
 }

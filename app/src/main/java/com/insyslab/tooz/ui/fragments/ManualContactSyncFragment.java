@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.v7.widget.LinearLayoutManager;
@@ -23,9 +24,9 @@ import com.google.gson.GsonBuilder;
 import com.insyslab.tooz.R;
 import com.insyslab.tooz.interfaces.OnRuntimePermissionsResultListener;
 import com.insyslab.tooz.interfaces.OnSyncContactItemClickListener;
-import com.insyslab.tooz.models.DashboardUpdate;
-import com.insyslab.tooz.models.FragmentState;
 import com.insyslab.tooz.models.PhoneContact;
+import com.insyslab.tooz.models.eventbus.ContactSyncUpdate;
+import com.insyslab.tooz.models.eventbus.FragmentState;
 import com.insyslab.tooz.models.requests.ContactSyncRequest;
 import com.insyslab.tooz.models.requests.Contact_;
 import com.insyslab.tooz.models.responses.ContactSyncResponse;
@@ -68,7 +69,7 @@ public class ManualContactSyncFragment extends BaseFragment implements OnSyncCon
 
     private RecyclerView.Adapter contactsAdapter;
 
-    private List<PhoneContact> phoneContacts;
+    private List<PhoneContact> phoneContacts, syncedPhoneContacts, nonSyncedPhoneContacts;
 
     private Gson gson;
 
@@ -99,24 +100,29 @@ public class ManualContactSyncFragment extends BaseFragment implements OnSyncCon
 
         updateFragment(new FragmentState(TAG));
         initView(layout);
-        setUpActions();
 
-        initContactPermissions();
+        syncedPhoneContacts = ((SettingsActivity) getActivity()).getSyncedPhoneContactsList();
+        nonSyncedPhoneContacts = ((SettingsActivity) getActivity()).getNonSyncedPhoneContactsList();
+        createListForRv();
+
+        setUpActions();
+        setUpContactsRv();
 
         return layout;
     }
 
+    private void createListForRv() {
+        phoneContacts = new ArrayList<>();
+        phoneContacts.addAll(syncedPhoneContacts);
+        phoneContacts.addAll(nonSyncedPhoneContacts);
+    }
+
     private void initContactPermissions() {
-        if (!verifyContactsPermissions()) {
-            initRuntimePermissions();
-        } else {
-            fetchContactsFromDevice();
-        }
+        if (!verifyContactsPermissions()) initRuntimePermissions();
+        else fetchContactsFromDevice();
     }
 
     private void fetchContactsFromDevice() {
-        phoneContacts = new ArrayList<>();
-
         gson = new GsonBuilder()
                 .registerTypeAdapter(Uri.class, new UriDeserializer())
                 .create();
@@ -124,7 +130,6 @@ public class ManualContactSyncFragment extends BaseFragment implements OnSyncCon
         ContentResolver cr = getContext().getContentResolver();
         Cursor cursor = cr.query(ContactsContract.Contacts.CONTENT_URI, null, null, null, null);
         if (cursor.moveToFirst()) {
-            phoneContacts = new ArrayList<>();
             do {
                 String id = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts._ID));
 
@@ -155,10 +160,14 @@ public class ManualContactSyncFragment extends BaseFragment implements OnSyncCon
     }
 
     private void setUpContactsRv() {
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
-        contactsAdapter = new SyncContactsAdapter(this, phoneContacts);
-        rvContacts.setLayoutManager(layoutManager);
-        rvContacts.setAdapter(contactsAdapter);
+        if (phoneContacts != null && phoneContacts.size() > 0) {
+            RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
+            contactsAdapter = new SyncContactsAdapter(this, phoneContacts);
+            rvContacts.setLayoutManager(layoutManager);
+            rvContacts.setAdapter(contactsAdapter);
+        } else {
+            initContactPermissions();
+        }
     }
 
     private boolean verifyContactsPermissions() {
@@ -192,6 +201,7 @@ public class ManualContactSyncFragment extends BaseFragment implements OnSyncCon
     private void modifySelection(boolean isSelected) {
         for (int i = 0; i < phoneContacts.size(); i++) {
             phoneContacts.get(i).setSelected(isSelected);
+            phoneContacts.get(i).setSynced(isSelected);
         }
         contactsAdapter.notifyDataSetChanged();
     }
@@ -210,7 +220,6 @@ public class ManualContactSyncFragment extends BaseFragment implements OnSyncCon
         } else {
             initContactSyncRequest(contactSyncRequest);
         }
-
     }
 
     private ContactSyncRequest getListOfSelectedContacts() {
@@ -228,7 +237,6 @@ public class ManualContactSyncFragment extends BaseFragment implements OnSyncCon
         }
 
         contactSyncRequest.setContacts(list);
-
         return contactSyncRequest;
     }
 
@@ -317,23 +325,45 @@ public class ManualContactSyncFragment extends BaseFragment implements OnSyncCon
                                         break;
                                     default:
                                         showToastMessage(getString(R.string.error_unknown), false);
+                                        break;
                                 }
                             }
                         });
             } else {
                 showSnackbarMessage(content, customError.getMessage(), true, getString(R.string.ok), null, true);
             }
-
         }
-
     }
 
     private void onContactSyncResponse(ContactSyncResponse success) {
         if (success.getStatus() == 200) {
-            EventBus.getDefault().postSticky(new DashboardUpdate(true));
-            closeThisFragment();
+            new AsyncTask<Void, Void, Void>() {
+                @Override
+                protected void onPreExecute() {
+                    super.onPreExecute();
+                    showProgressDialog(getString(R.string.loading));
+                }
+
+                @Override
+                protected Void doInBackground(Void... voids) {
+                    initPhoneContactDbUpdate();
+                    return null;
+                }
+
+                @Override
+                protected void onPostExecute(Void aVoid) {
+                    super.onPostExecute(aVoid);
+                    hideProgressDialog();
+                    EventBus.getDefault().postSticky(new ContactSyncUpdate(true));
+                    closeThisFragment();
+                }
+            }.execute();
         } else
             showSnackbarMessage(content, success.getMessage(), true, getString(R.string.ok), null, true);
+    }
+
+    private void initPhoneContactDbUpdate() {
+        ((SettingsActivity) getActivity()).initLocalDbPhoneContactsUpdate(phoneContacts);
     }
 
     private void closeThisFragment() {
@@ -343,6 +373,21 @@ public class ManualContactSyncFragment extends BaseFragment implements OnSyncCon
     @Override
     public void onContactSelectorClick(int position) {
         phoneContacts.get(position).setSelected(!phoneContacts.get(position).getSelected());
-        contactsAdapter.notifyItemChanged(position);
+        phoneContacts.get(position).setSynced(!phoneContacts.get(position).isSynced());
+//        contactsAdapter.notifyItemChanged(position);
+    }
+
+    public void updateSyncedContactsInRv(List<PhoneContact> list) {
+        syncedPhoneContacts = list;
+        createListForRv();
+        if (contactsAdapter != null) contactsAdapter.notifyDataSetChanged();
+        else setUpContactsRv();
+    }
+
+    public void updateNonSyncedContactsInRv(List<PhoneContact> list) {
+        nonSyncedPhoneContacts = list;
+        createListForRv();
+        if (contactsAdapter != null) contactsAdapter.notifyDataSetChanged();
+        else setUpContactsRv();
     }
 }

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -17,7 +18,7 @@ import android.widget.TextView;
 import com.android.volley.Request;
 import com.insyslab.tooz.R;
 import com.insyslab.tooz.interfaces.OnSettingItemClickListener;
-import com.insyslab.tooz.models.FragmentState;
+import com.insyslab.tooz.models.eventbus.FragmentState;
 import com.insyslab.tooz.models.SettingsItem;
 import com.insyslab.tooz.models.responses.Error;
 import com.insyslab.tooz.models.responses.LogoutResponse;
@@ -202,7 +203,30 @@ public class SettingsFragment extends BaseFragment implements OnSettingItemClick
 
 
     private void proceedToLogout() {
-        LocalStorage.getInstance(getContext()).clearUserSharedPreferences();
+        new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+                showProgressDialog(getString(R.string.loading));
+            }
+
+            @Override
+            protected Void doInBackground(Void... voids) {
+                ((SettingsActivity) getActivity()).clearRoomDatabase();
+                LocalStorage.getInstance(getContext()).clearUserSharedPreferences();
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                super.onPostExecute(aVoid);
+                hideProgressDialog();
+                performLogout();
+            }
+        }.execute();
+    }
+
+    private void performLogout() {
         Intent i = new Intent(getContext(), OnboardingActivity.class);
         i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(i);

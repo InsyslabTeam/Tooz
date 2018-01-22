@@ -13,7 +13,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.insyslab.tooz.R;
-import com.insyslab.tooz.models.FragmentState;
+import com.insyslab.tooz.models.eventbus.FragmentState;
 import com.insyslab.tooz.ui.activities.SettingsActivity;
 import com.insyslab.tooz.utils.Util;
 
