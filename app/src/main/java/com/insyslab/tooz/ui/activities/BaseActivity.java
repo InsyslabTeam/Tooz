@@ -384,6 +384,6 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     public void startReminderSchedulingService() {
         Intent intent = new Intent(this, ReminderSchedulingService.class);
-//        startService(intent);
+        startService(intent);
     }
 }

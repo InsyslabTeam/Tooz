@@ -14,8 +14,8 @@ public class AppConstants {
     public static final String KEY_SHARED_PREFS_USER = "USER";
     public static final String KEY_SHARED_PREFS_FIRST_LOGIN = "FIRST_LOGIN";
 
-    public static final String KEY_TO_ONBOARDING = "KEY_TO_ONBOARDING";
     public static final String KEY_TO_ACTIONS = "KEY_TO_ACTIONS";
+    public static final String KEY_FROM_FRAGMENT = "KEY_FROM_FRAGMENT";
 
     public static final String KEY_SET_REMINDER_TYPE = "KEY_SET_REMINDER_TYPE";
 
@@ -24,22 +24,17 @@ public class AppConstants {
     public static final String KEY_OTP_NUMBER = "KEY_OTP_NUMBER";
     public static final String KEY_SMS_PDUS = "pdus";
 
-    public static final String KEY_LOCATION_UPDATE = "KEY_LOCATION_UPDATE";
-    public static final String KEY_LOCATION_LATITUDE = "KEY_LOCATION_LATITUDE";
-    public static final String KEY_LOCATION_LONGITUDE = "KEY_LOCATION_LONGITUDE";
-
-    public static final String VAL_SET_PERSONAL_REMINDER = "VAL_SET_PERSONAL_REMINDER";
-    public static final String VAL_SEND_REMINDER = "VAL_SEND_REMINDER";
-
-    public static final String VAL_OTP_NUMBER = "MD-SMSMsg";
-
-    public static final int ERROR_CODE_UNAUTH = 422;
-    public static final int ERROR_CODE_SERVER = 500;
-
     public static final String KEY_PUSH_NOTIFICATION = "KEY_PUSH_NOTIFICATION";
     public static final String KEY_PUSH_MESSAGE = "message";
 
-    public static final String KEY_SIGN_IN_RESPONSE = "KEY_SIGN_IN_RESPONSE";
 
-    public static final String KEY_FROM_FRAGMENT = "KEY_FROM_FRAGMENT";
+    public static final String KEY_REMINDER_NOTIFICATION_UNIQUE_ID = "KEY_REMINDER_NOTIFICATION_UNIQUE_ID";
+    public static final String KEY_REMINDER_NOTIFICATION_OBJECT = "KEY_REMINDER_NOTIFICATION_OBJECT";
+
+    public static final String VAL_SET_PERSONAL_REMINDER = "SET_PERSONAL_REMINDER";
+    public static final String VAL_SEND_REMINDER = "SEND_REMINDER";
+
+    public static final String VAL_OTP_NUMBER = "AM_TESTIN";
+
+    public static final String VAL_REMINDER_NOTIFICATION_ACTION = "com.insyslab.tooz.utils.VAL_REMINDER_NOTIFICATION_ACTION";
 }

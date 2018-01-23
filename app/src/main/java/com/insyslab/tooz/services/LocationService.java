@@ -26,7 +26,7 @@ public class LocationService extends Service implements LocationListener,
     private static final long INTERVAL = 1000 * 10;                                     // in millis
     private static final long FASTEST_INTERVAL = 1000 * 5;                              // in millis
 
-    private final String TAG = "LocationService ==>> ";
+    private final String TAG = "LocationService ==> ";
 
     private LocationRequest mLocationRequest;
     private GoogleApiClient mGoogleApiClient;

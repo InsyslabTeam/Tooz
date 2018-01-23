@@ -17,6 +17,8 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
     <application
         android:name=".utils.ToozApplication"
         android:allowBackup="true"
@@ -41,8 +43,8 @@
 
         <activity
             android:name=".ui.activities.DashboardActivity"
-            android:screenOrientation="portrait"
             android:launchMode="singleTask"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
 
         <activity
@@ -78,6 +80,19 @@
             android:exported="true"
             android:label="RestartServiceWhenStopped" />
 
+        <receiver
+            android:name=".broadcastreceivers.ReminderReceiver"
+            android:enabled="true"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.insyslab.tooz.utils.VAL_REMINDER_NOTIFICATION_ACTION" />
+
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+
+                <action android:name="android.intent.action.NOTIFY" />
+            </intent-filter>
+        </receiver>
+
         <!-- FCM -->
         <service android:name=".fcm.MyFirebaseInstanceIDService">
             <intent-filter>
@@ -91,7 +106,7 @@
             </intent-filter>
         </service>
 
-        <service android:name=".services.ReminderSchedulingService"/>
+        <service android:name=".services.ReminderSchedulingService" />
 
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"

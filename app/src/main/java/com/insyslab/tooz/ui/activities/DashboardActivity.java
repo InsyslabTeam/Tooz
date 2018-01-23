@@ -2,6 +2,7 @@ package com.insyslab.tooz.ui.activities;
 
 import android.arch.lifecycle.Observer;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -257,6 +258,7 @@ public class DashboardActivity extends BaseActivity implements BaseResponseInter
     }
 
     private void openSettingsActivity() {
+        floatingActionMenu.close(true);
         Intent intent = new Intent(this, SettingsActivity.class);
         startActivity(intent);
     }
@@ -403,18 +405,21 @@ public class DashboardActivity extends BaseActivity implements BaseResponseInter
 
     @Override
     public void onBackPressed() {
-        if (doubleBackToExitPressedOnce) {
-            super.onBackPressed();
-            return;
-        }
-        doubleBackToExitPressedOnce = true;
-        Toast.makeText(this, "Please click BACK again to exit", Toast.LENGTH_SHORT).show();
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                doubleBackToExitPressedOnce = false;
+        if (floatingActionMenu.isOpened()) floatingActionMenu.close(true);
+        else {
+            if (doubleBackToExitPressedOnce) {
+                super.onBackPressed();
+                return;
             }
-        }, 2000);
+            doubleBackToExitPressedOnce = true;
+            Toast.makeText(this, "Please click BACK again to exit", Toast.LENGTH_SHORT).show();
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    doubleBackToExitPressedOnce = false;
+                }
+            }, 2000);
+        }
     }
 
     @Override
@@ -496,7 +501,6 @@ public class DashboardActivity extends BaseActivity implements BaseResponseInter
     }
 
     private void onGetAllRemindersResponse(List<Reminder> success) {
-        startReminderSchedulingService();
         initLocalDbRemindersUpdate(success);
         if (responseCount > 1) resumeNormalApp();
     }
@@ -507,8 +511,20 @@ public class DashboardActivity extends BaseActivity implements BaseResponseInter
         if (responseCount > 1) resumeNormalApp();
     }
 
-    private void initLocalDbRemindersUpdate(List<Reminder> reminderList) {
-        reminderRepository.insertReminders(reminderList);
+    private void initLocalDbRemindersUpdate(final List<Reminder> reminderList) {
+        new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... voids) {
+                reminderRepository.insertReminders(reminderList);
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                super.onPostExecute(aVoid);
+                startReminderSchedulingService();
+            }
+        }.execute();
     }
 
     private void fetchUpcomingRemindersFromDb() {
@@ -526,7 +542,7 @@ public class DashboardActivity extends BaseActivity implements BaseResponseInter
             UpcomingRemindersFragment fragment = (UpcomingRemindersFragment) getSupportFragmentManager().findFragmentById(R.id.ad_fragment_container);
             if (fragment != null) fragment.updateRemindersRv(upcomingRemindersList);
         } catch (ClassCastException e) {
-            e.printStackTrace();
+//            e.printStackTrace();
             Log.d(TAG, "ERROR: updateUpcomingReminders - " + e.getMessage());
         }
     }
@@ -550,7 +566,7 @@ public class DashboardActivity extends BaseActivity implements BaseResponseInter
             PastRemindersFragment fragment = (PastRemindersFragment) getSupportFragmentManager().findFragmentById(R.id.ad_fragment_container);
             if (fragment != null) fragment.updateRemindersRv(pastRemindersList);
         } catch (ClassCastException e) {
-            e.printStackTrace();
+//            e.printStackTrace();
             Log.d(TAG, "ERROR: updatePastReminders - " + e.getMessage());
         }
     }
@@ -579,7 +595,7 @@ public class DashboardActivity extends BaseActivity implements BaseResponseInter
             AllContactsFragment fragment = (AllContactsFragment) getSupportFragmentManager().findFragmentById(R.id.ad_fragment_container);
             if (fragment != null) fragment.updateAppUserContactsRv(getAppUserList());
         } catch (ClassCastException e) {
-            e.printStackTrace();
+//            e.printStackTrace();
             Log.d(TAG, "ERROR: updateAppUserContacts - " + e.getMessage());
         }
     }
@@ -601,7 +617,7 @@ public class DashboardActivity extends BaseActivity implements BaseResponseInter
             AllContactsFragment fragment = (AllContactsFragment) getSupportFragmentManager().findFragmentById(R.id.ad_fragment_container);
             if (fragment != null) fragment.updateNonAppUserContactsRv(getNonAppUserList());
         } catch (ClassCastException e) {
-            e.printStackTrace();
+//            e.printStackTrace();
             Log.d(TAG, "ERROR: updateNonAppUserContacts - " + e.getMessage());
         }
     }
