@@ -1,9 +1,7 @@
 package com.insyslab.tooz.models;
 
 import android.arch.persistence.room.ColumnInfo;
-import android.arch.persistence.room.Embedded;
 import android.arch.persistence.room.Entity;
-import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
 import android.arch.persistence.room.TypeConverters;
@@ -13,24 +11,13 @@ import com.google.gson.annotations.SerializedName;
 import com.insyslab.tooz.rpl.TimestampConverter;
 
 import java.util.Date;
-import java.util.List;
 
 @Entity(indices = {@Index(value = "id", unique = true)})
 @TypeConverters(TimestampConverter.class)
-public class Reminder {
+public class LocalReminder {
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "p_id")
-    public long pId;
-
-    @Ignore
-    @SerializedName("contacts")
-    @Expose
-    private List<User> contacts = null;
-
-    @Embedded
-    @SerializedName("user")
-    @Expose
-    private User_ user;
+    public Integer pId;
 
     @ColumnInfo(name = "task")
     @SerializedName("task")
@@ -70,31 +57,10 @@ public class Reminder {
     @Expose
     private String id;
 
-    private Boolean isExpanded = false;
-
-    public Boolean isExpanded() {
-        return isExpanded;
-    }
-
-    public void setExpanded(Boolean expanded) {
-        isExpanded = expanded;
-    }
-
-    public List<User> getContacts() {
-        return contacts;
-    }
-
-    public void setContacts(List<User> contacts) {
-        this.contacts = contacts;
-    }
-
-    public User_ getUser() {
-        return user;
-    }
-
-    public void setUser(User_ user) {
-        this.user = user;
-    }
+    @ColumnInfo(name = "uniqueInt")
+    @SerializedName("uniqueInt")
+    @Expose
+    private Integer uniqueInt;
 
     public String getTask() {
         return task;
@@ -150,5 +116,13 @@ public class Reminder {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public Integer getUniqueInt() {
+        return uniqueInt;
+    }
+
+    public void setUniqueInt(Integer uniqueInt) {
+        this.uniqueInt = uniqueInt;
     }
 }
