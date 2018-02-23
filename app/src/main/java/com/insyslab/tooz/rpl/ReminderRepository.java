@@ -35,21 +35,6 @@ public class ReminderRepository {
                 super.onPostExecute(aVoid);
             }
         }.execute();
-
-//        AsyncTask<Void, Void, Void> asyncTaskDel = new AsyncTask<Void, Void, Void>() {
-//            @Override
-//            protected Void doInBackground(Void... voids) {
-//                appDatabase.reminderDao().deleteAllReminders();
-//                return null;
-//            }
-//
-//            @Override
-//            protected void onPostExecute(Void aVoid) {
-//                super.onPostExecute(aVoid);
-//                asyncTaskIns.execute();
-//            }
-//        }.execute();
-
     }
 
     public LiveData<List<Reminder>> getAllReminder() {

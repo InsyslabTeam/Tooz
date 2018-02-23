@@ -33,6 +33,9 @@ public interface LocalReminderDao {
     @Query("select * from localreminder where id=:id")
     LiveData<LocalReminder> fetchLocalReminderById(int id);
 
+    @Query("select * from localreminder where uniqueInt=:uniqueInt")
+    LiveData<LocalReminder> fetchLocalReminderByUniqueInt(int uniqueInt);
+
     @Query("select * from localreminder")
     LiveData<List<LocalReminder>> fetchAllLocalReminders();
 
