@@ -40,6 +40,10 @@ public class LocalReminderRepository {
         return appDatabase.localReminderDao().fetchAllLocalReminders();
     }
 
+    public LiveData<LocalReminder> getLocalReminderFromUniqueInt(int uniqueInt) {
+        return appDatabase.localReminderDao().fetchLocalReminderByUniqueInt(uniqueInt);
+    }
+
     public int clearLocalReminderTable() {
         return appDatabase.localReminderDao().deleteAllLocalReminders();
     }

@@ -84,23 +84,25 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     protected void showSnackbarMessage(View view, String message, boolean isLong, String action,
                                        View.OnClickListener onClickListener, boolean isDismissed) {
-        Snackbar snackbar = null;
+        if (view != null) {
+            Snackbar snackbar = null;
 
-        if (isLong) snackbar = snackbar.make(view, message, Snackbar.LENGTH_LONG);
-        else if (!isLong) snackbar = snackbar.make(view, message, Snackbar.LENGTH_SHORT);
+            if (isLong) snackbar = snackbar.make(view, message, Snackbar.LENGTH_LONG);
+            else if (!isLong) snackbar = snackbar.make(view, message, Snackbar.LENGTH_SHORT);
 
-        if (action != null && isDismissed == true) {
-            final Snackbar finalSnackbar = snackbar.make(view, message, Snackbar.LENGTH_INDEFINITE);
-            snackbar = snackbar.setAction(action, new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    finalSnackbar.dismiss();
-                }
-            });
-        } else if (action != null)
-            snackbar = snackbar.make(view, message, Snackbar.LENGTH_INDEFINITE).setAction(action, onClickListener);
+            if (action != null && isDismissed == true) {
+                final Snackbar finalSnackbar = snackbar.make(view, message, Snackbar.LENGTH_INDEFINITE);
+                snackbar = snackbar.setAction(action, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        finalSnackbar.dismiss();
+                    }
+                });
+            } else if (action != null)
+                snackbar = snackbar.make(view, message, Snackbar.LENGTH_INDEFINITE).setAction(action, onClickListener);
 
-        snackbar.show();
+            snackbar.show();
+        }
     }
 
     protected void showNetworkErrorSnackbar(View view, String message, String action, View.OnClickListener mOnClickListener) {

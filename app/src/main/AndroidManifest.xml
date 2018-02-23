@@ -73,6 +73,13 @@
             android:name=".services.LocationService"
             android:enabled="true" />
 
+        <service android:name=".services.ReminderSchedulingService" />
+
+        <service
+            android:name=".services.GeofenceTransitionsIntentService"
+            android:exported="true"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
+
         <!--Broadcast Receivers-->
         <receiver
             android:name=".broadcastreceivers.LocationServiceRestartReceiver"
@@ -81,15 +88,19 @@
             android:label="RestartServiceWhenStopped" />
 
         <receiver
-            android:name=".broadcastreceivers.ReminderReceiver"
+            android:name=".broadcastreceivers.TimeReminderReceiver"
             android:enabled="true"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.insyslab.tooz.utils.VAL_REMINDER_NOTIFICATION_ACTION" />
 
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
-
                 <action android:name="android.intent.action.NOTIFY" />
+            </intent-filter>
+        </receiver>
+
+        <receiver android:name=".broadcastreceivers.ReminderServiceRestartReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
 
@@ -105,8 +116,6 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
-
-        <service android:name=".services.ReminderSchedulingService" />
 
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"

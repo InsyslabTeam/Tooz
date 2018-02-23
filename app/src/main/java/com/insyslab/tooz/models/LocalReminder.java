@@ -24,6 +24,11 @@ public class LocalReminder {
     @Expose
     private String task;
 
+    @ColumnInfo(name = "from_user")
+    @SerializedName("from_user")
+    @Expose
+    private String fromUser;
+
     @ColumnInfo(name = "date")
     @TypeConverters({TimestampConverter.class})
     @SerializedName("date")
@@ -124,5 +129,13 @@ public class LocalReminder {
 
     public void setUniqueInt(Integer uniqueInt) {
         this.uniqueInt = uniqueInt;
+    }
+
+    public String getFromUser() {
+        return fromUser;
+    }
+
+    public void setFromUser(String fromUser) {
+        this.fromUser = fromUser;
     }
 }

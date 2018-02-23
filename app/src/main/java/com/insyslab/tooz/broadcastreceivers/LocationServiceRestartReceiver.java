@@ -13,7 +13,7 @@ import com.insyslab.tooz.services.LocationService;
 
 public class LocationServiceRestartReceiver extends BroadcastReceiver {
 
-    private final String TAG = "LocRestartReceiver ==> ";
+    private final String TAG = "LocRestartReceiver ==>> ";
 
     @Override
     public void onReceive(Context context, Intent intent) {

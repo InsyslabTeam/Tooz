@@ -489,7 +489,7 @@ public class DashboardActivity extends BaseActivity implements BaseResponseInter
                             }
                         });
             } else {
-                showSnackbarMessage(findViewById(R.id.ad_container), customError.getMessage(), true, getString(R.string.ok), null, true);
+                showSnackbarMessage(findViewById(R.id.ad_fragment_container), customError.getMessage(), true, getString(R.string.ok), null, true);
             }
         }
     }
