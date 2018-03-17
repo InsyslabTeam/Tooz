@@ -6,34 +6,53 @@
     android:animateLayoutChanges="true"
     android:background="@color/fragment_background"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:padding="@dimen/set_reminder_padding">
 
     <android.support.design.widget.TextInputLayout
         android:id="@+id/fsr_task_sec"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="@dimen/set_reminder_margin"
         android:visibility="gone">
 
         <android.support.design.widget.TextInputEditText
             android:id="@+id/fsr_task"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
+            android:layout_marginLeft="@dimen/set_reminder_margin"
+            android:layout_marginRight="@dimen/set_reminder_margin"
             android:gravity="center_horizontal"
-            android:hint="REMIND..."
+            android:hint="@string/remind"
             android:imeOptions="actionDone"
             android:inputType="text"
             android:maxLength="100"
             android:maxLines="3" />
     </android.support.design.widget.TextInputLayout>
 
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_margin="@dimen/set_reminder_margin">
+
+        <ImageView
+            android:id="@+id/fsr_option_time"
+            style="@style/SetReminderOption"
+            android:layout_width="@dimen/set_reminder_option_icon"
+            android:layout_height="@dimen/set_reminder_option_icon" />
+
+        <ImageView
+            android:id="@+id/fsr_option_location"
+            style="@style/SetReminderOption"
+            android:layout_width="@dimen/set_reminder_option_icon"
+            android:layout_height="@dimen/set_reminder_option_icon" />
+    </LinearLayout>
+
     <android.support.design.widget.TextInputLayout
         android:id="@+id/fsr_time_sec"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="@dimen/set_reminder_margin"
         android:visibility="gone">
 
         <android.support.design.widget.TextInputEditText
@@ -41,8 +60,8 @@
             style="@style/DefaultEdittext"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
+            android:layout_marginLeft="@dimen/set_reminder_margin"
+            android:layout_marginRight="@dimen/set_reminder_margin"
             android:gravity="center_horizontal"
             android:hint="@string/date_time"
             android:inputType="none" />
@@ -52,7 +71,7 @@
         android:id="@+id/fsr_location_sec"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="@dimen/set_reminder_margin"
         android:visibility="gone">
 
         <android.support.design.widget.TextInputEditText
@@ -60,8 +79,8 @@
             style="@style/DefaultEdittext"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
+            android:layout_marginLeft="@dimen/set_reminder_margin"
+            android:layout_marginRight="@dimen/set_reminder_margin"
             android:gravity="center_horizontal"
             android:hint="@string/select_a_location"
             android:inputType="none" />
@@ -71,7 +90,7 @@
         android:id="@+id/fsr_contact_sec"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="@dimen/set_reminder_margin"
         android:visibility="gone">
 
         <android.support.design.widget.TextInputEditText
@@ -79,8 +98,8 @@
             style="@style/DefaultEdittext"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
+            android:layout_marginLeft="@dimen/set_reminder_margin"
+            android:layout_marginRight="@dimen/set_reminder_margin"
             android:gravity="center_horizontal"
             android:hint="@string/select_contact_s"
             android:inputType="none" />

@@ -6,6 +6,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
+import android.support.v4.content.ContextCompat;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -13,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.DatePicker;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TimePicker;
 
@@ -64,10 +66,12 @@ public class SetReminderFragment extends BaseFragment implements BaseResponseInt
     private LinearLayout content;
     private TextInputEditText tietTask, tietTime, tietLocation, tietContact;
     private TextInputLayout tilTask, tilTime, tilLocation, tilContact;
+    private ImageView ivOptionTime, ivOptionLocation;
 
     private String fragmentType = null;
     private String timeSelected = null, addressSelected = null;
     private LatLng latLngSelected = null;
+    private Boolean isTimeSelected = true;
 
     private List<User> selectedMembers = null;
     private User user;
@@ -119,8 +123,6 @@ public class SetReminderFragment extends BaseFragment implements BaseResponseInt
     }
 
     private void setUpActions() {
-
-
         tietTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -141,6 +143,34 @@ public class SetReminderFragment extends BaseFragment implements BaseResponseInt
                 onSelectContactsClick();
             }
         });
+
+        ivOptionLocation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onLocationOptionClick();
+            }
+        });
+
+        ivOptionTime.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onTimeOptionClick();
+            }
+        });
+    }
+
+    private void onTimeOptionClick() {
+        isTimeSelected = true;
+        updateSelectionView();
+    }
+
+    private void onLocationOptionClick() {
+        isTimeSelected = false;
+        updateSelectionView();
+    }
+
+    private void updateSelectionView() {
+
     }
 
     private void onSelectContactsClick() {
@@ -242,27 +272,27 @@ public class SetReminderFragment extends BaseFragment implements BaseResponseInt
         tilTask.setHint("REMIND THEM TO...");
         tilTask.setVisibility(View.VISIBLE);
 
-        tietTask.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-                String text = tietTask.getText().toString();
-                if (text != null && !text.isEmpty()) {
-                    tilTime.setVisibility(View.VISIBLE);
-                    tilLocation.setVisibility(View.VISIBLE);
-                    tilContact.setVisibility(View.VISIBLE);
-                }
-            }
-        });
+//        tietTask.addTextChangedListener(new TextWatcher() {
+//            @Override
+//            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+//
+//            }
+//
+//            @Override
+//            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+//
+//            }
+//
+//            @Override
+//            public void afterTextChanged(Editable editable) {
+//                String text = tietTask.getText().toString();
+//                if (text != null && !text.isEmpty()) {
+//                    tilTime.setVisibility(View.VISIBLE);
+//                    tilLocation.setVisibility(View.VISIBLE);
+//                    tilContact.setVisibility(View.VISIBLE);
+//                }
+//            }
+//        });
     }
 
     private void setUpPersonalReminderView() {
@@ -304,9 +334,15 @@ public class SetReminderFragment extends BaseFragment implements BaseResponseInt
         tietLocation = rootView.findViewById(R.id.fsr_location);
         tietContact = rootView.findViewById(R.id.fsr_contact);
 
+        ivOptionTime = rootView.findViewById(R.id.fsr_option_time);
+        ivOptionLocation = rootView.findViewById(R.id.fsr_option_location);
+
         clickableEdittext(tietTime);
         clickableEdittext(tietLocation);
         clickableEdittext(tietContact);
+
+        ivOptionTime.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.ic_option_time));
+        ivOptionLocation.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.ic_option_time));
     }
 
     public void onLocationSet(LatLng latLng, String locationSelected) {

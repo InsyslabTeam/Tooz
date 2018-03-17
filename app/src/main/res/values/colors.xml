@@ -31,4 +31,7 @@
 
     <color name="colorButtonRed">#D90A2D</color>
     <color name="colorButtonRedDark">#AD0824</color>
+
+    <color name="setReminderIconBackground">#D3DCEC</color>
+    <color name="setReminderIconBackgroundPressed">#BDC6D4</color>
 </resources>
