@@ -147,7 +147,7 @@ public class SettingsFragment extends BaseFragment implements OnSettingItemClick
      * 7. Feedback
      * 8. Terms and Privacy Policy
      * 9. Help
-     * 10. Logout
+     * 10. Logout -- REMOVED
      */
 
     @Override

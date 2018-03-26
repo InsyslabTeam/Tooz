@@ -6,6 +6,7 @@ import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.OnConflictStrategy;
 import android.arch.persistence.room.Query;
 import android.arch.persistence.room.TypeConverters;
+import android.arch.persistence.room.Update;
 
 import com.insyslab.tooz.models.Reminder;
 
@@ -38,6 +39,9 @@ public interface ReminderDao {
     @Query("select * from reminder where date < :date")
     LiveData<List<Reminder>> fetchPastReminders(Date date);
 
-    @Query("select * from reminder where date > :date")
+    @Query("select * from reminder where date > :date or latitude IS NOT NULL")
     LiveData<List<Reminder>> fetchUpcomingReminders(Date date);
+
+    @Query("select * from reminder where id=:id")
+    LiveData<Reminder> fetchUpcomingReminderByReminderId(String id);
 }

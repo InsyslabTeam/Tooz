@@ -1,6 +1,7 @@
 package com.insyslab.tooz.ui.fragments;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -14,11 +15,16 @@ import com.insyslab.tooz.R;
 import com.insyslab.tooz.interfaces.OnUpcomingReminderClickListener;
 import com.insyslab.tooz.models.Reminder;
 import com.insyslab.tooz.models.eventbus.FragmentState;
+import com.insyslab.tooz.ui.activities.ActionsActivity;
 import com.insyslab.tooz.ui.activities.DashboardActivity;
 import com.insyslab.tooz.ui.adapters.UpcomingRemindersAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.insyslab.tooz.utils.AppConstants.KEY_BUNDLE_TO_ACTIONS;
+import static com.insyslab.tooz.utils.AppConstants.KEY_GET_REMINDER_ID;
+import static com.insyslab.tooz.utils.AppConstants.KEY_TO_ACTIONS;
 
 /**
  * Created by TaNMay on 26/09/16.
@@ -119,12 +125,19 @@ public class UpcomingRemindersFragment extends BaseFragment implements OnUpcomin
 
     @Override
     public void onUpcomingReminderEditClick(int position) {
+        openEditReminder(upcomingReminderList.get(position).getId());
+    }
 
+    private void openEditReminder(String remId) {
+        Intent intent = new Intent(getActivity(), ActionsActivity.class);
+        intent.putExtra(KEY_TO_ACTIONS, EditReminderFragment.TAG);
+        intent.putExtra(KEY_GET_REMINDER_ID, remId);
+        startActivity(intent);
     }
 
     @Override
     public void onUpcomingReminderDeleteClick(int position) {
-        ((DashboardActivity)getActivity()).deleteReminder(upcomingReminderList.get(position).getId());
+        ((DashboardActivity) getActivity()).deleteReminder(upcomingReminderList.get(position).getId());
     }
 
     public void updateRemindersRv(List<Reminder> list) {

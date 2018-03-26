@@ -29,9 +29,9 @@ import com.insyslab.tooz.utils.Util;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Locale;
 
 import static com.insyslab.tooz.utils.AppConstants.KEY_SET_REMINDER_TYPE;
+import static com.insyslab.tooz.utils.Util.getAddressFromCoords;
 
 /**
  * Created by TaNMay on 26/09/16.
@@ -195,7 +195,7 @@ public class LocationSelectorFragment extends BaseFragment implements OnMapReady
 
         if (selectedLocation != null) {
             actvSearchLocation.setText(selectedLocation.latitude + ", " + selectedLocation.longitude);
-            String address = getAddressFromCoords(selectedLocation);
+            String address = getAddressFromCoords(getContext(), selectedLocation);
             if (address.isEmpty())
                 address = "Address not available (" + selectedLocation.latitude + ", " + selectedLocation.longitude + ")";
             actvSearchLocation.setText(address);
@@ -247,30 +247,6 @@ public class LocationSelectorFragment extends BaseFragment implements OnMapReady
             e.printStackTrace();
         }
         return latLng;
-    }
-
-    private String getAddressFromCoords(LatLng location) {
-        Geocoder geocoder = new Geocoder(getContext(), Locale.getDefault());
-        String finalAddress = "";
-
-        try {
-            List<Address> addresses = geocoder.getFromLocation(location.latitude, location.longitude, 1);
-            String address = addresses.get(0).getAddressLine(0);
-            String city = addresses.get(0).getLocality();
-            String state = addresses.get(0).getAdminArea();
-            String postalCode = addresses.get(0).getPostalCode();
-            String country = addresses.get(0).getCountryName();
-
-            if (address != null) finalAddress += address;
-            if (city != null) finalAddress += ", " + city;
-            if (state != null) finalAddress += ", " + state;
-            if (postalCode != null) finalAddress += " - " + postalCode;
-            if (country != null) finalAddress += ", " + country.toUpperCase();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return finalAddress;
     }
 
     public interface OnLocationSelectedListener {

@@ -45,7 +45,7 @@
         <item>Feedback</item>
         <item>Terms and Privacy Policy</item>
         <item>Help</item>                           <!--FAQ, Contact Us-->
-        <item>Logout</item>
+        <!--<item>Logout</item>-->
     </string-array>
     <string name="unblock">Unblock</string>
     <string name="location_bounds">Location Bounds</string>

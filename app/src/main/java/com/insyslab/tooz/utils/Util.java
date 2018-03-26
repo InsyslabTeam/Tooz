@@ -4,23 +4,28 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.content.res.TypedArray;
+import android.location.Address;
+import android.location.Geocoder;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.insyslab.tooz.R;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.text.DateFormatSymbols;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 
@@ -226,4 +231,29 @@ public class Util {
 
         return hour + ":" + minute + " " + meridian;
     }
+
+    public static String getAddressFromCoords(Context context, LatLng location) {
+        Geocoder geocoder = new Geocoder(context, Locale.getDefault());
+        String finalAddress = "";
+
+        try {
+            List<Address> addresses = geocoder.getFromLocation(location.latitude, location.longitude, 1);
+            String address = addresses.get(0).getAddressLine(0);
+            String city = addresses.get(0).getLocality();
+            String state = addresses.get(0).getAdminArea();
+            String postalCode = addresses.get(0).getPostalCode();
+            String country = addresses.get(0).getCountryName();
+
+            if (address != null) finalAddress += address;
+            if (city != null) finalAddress += ", " + city;
+            if (state != null) finalAddress += ", " + state;
+            if (postalCode != null) finalAddress += " - " + postalCode;
+            if (country != null) finalAddress += ", " + country.toUpperCase();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return finalAddress;
+    }
+
 }

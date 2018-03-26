@@ -17,11 +17,6 @@ import com.insyslab.tooz.utils.Util;
 import java.util.Calendar;
 import java.util.List;
 
-import static com.insyslab.tooz.utils.Util.getAmPmFromIndex;
-import static com.insyslab.tooz.utils.Util.getDateExtension;
-import static com.insyslab.tooz.utils.Util.getDayOfWeekFromIndex;
-import static com.insyslab.tooz.utils.Util.getFormattedHourOrMinute;
-import static com.insyslab.tooz.utils.Util.getMonthFromIndex;
 import static com.insyslab.tooz.utils.Util.getReminderFormatedDate;
 import static com.insyslab.tooz.utils.Util.getReminderFormatedTime;
 import static com.insyslab.tooz.utils.Util.getReminderRemainingTime;
@@ -69,11 +64,13 @@ public class UpcomingRemindersAdapter extends RecyclerView.Adapter<UpcomingRemin
             else holder.task.setText(reminder.getTask());
         }
 
-        Calendar cal = Util.getCalenderFormatDate(reminder.getDate());
+        if (reminder.getDate() != null) {
+            Calendar cal = Util.getCalenderFormatDate(reminder.getDate());
+            holder.date.setText(getReminderFormatedDate(cal));
+            holder.time.setText(getReminderFormatedTime(cal));
+            holder.remainingTime.setText("After " + getReminderRemainingTime(cal, currentTime));
+        }
 
-        holder.date.setText(getReminderFormatedDate(cal));
-        holder.time.setText(getReminderFormatedTime(cal));
-        holder.remainingTime.setText("After " + getReminderRemainingTime(cal, currentTime));
         holder.setter.setText(Html.fromHtml("Sent by <B>" + reminder.getUser().getName() + "</B>"));
 
         if (position == reminders.size() - 1) holder.divider.setVisibility(View.GONE);

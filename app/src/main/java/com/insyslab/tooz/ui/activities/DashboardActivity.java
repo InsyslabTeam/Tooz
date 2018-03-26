@@ -626,7 +626,6 @@ public class DashboardActivity extends BaseActivity implements BaseResponseInter
             AllContactsFragment fragment = (AllContactsFragment) getSupportFragmentManager().findFragmentById(R.id.ad_fragment_container);
             if (fragment != null) fragment.updateAppUserContactsRv(getAppUserList());
         } catch (ClassCastException e) {
-//            e.printStackTrace();
             Log.d(TAG, "ERROR: updateAppUserContacts - " + e.getMessage());
         }
     }
@@ -648,7 +647,6 @@ public class DashboardActivity extends BaseActivity implements BaseResponseInter
             AllContactsFragment fragment = (AllContactsFragment) getSupportFragmentManager().findFragmentById(R.id.ad_fragment_container);
             if (fragment != null) fragment.updateNonAppUserContactsRv(getNonAppUserList());
         } catch (ClassCastException e) {
-//            e.printStackTrace();
             Log.d(TAG, "ERROR: updateNonAppUserContacts - " + e.getMessage());
         }
     }
