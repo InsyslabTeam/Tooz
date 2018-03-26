@@ -61,6 +61,7 @@
             android:textSize="14sp" />
     </RelativeLayout>
 
+<!--
     <LinearLayout
         android:id="@+id/ipr_options_sec"
         android:layout_width="match_parent"
@@ -95,6 +96,7 @@
                 android:src="@drawable/ic_delete_sweep" />
         </RelativeLayout>
     </LinearLayout>
+-->
 
     <View
         android:id="@+id/ipr_divider"
