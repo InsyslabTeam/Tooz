@@ -24,7 +24,7 @@ public interface ReminderDao {
     void insertAll(List<Reminder> reminders);
 
     @Query("delete from reminder where id=:id")
-    int deleteReminder(int id);
+    int deleteReminder(String id);
 
     @Query("delete from reminder")
     int deleteAllReminders();

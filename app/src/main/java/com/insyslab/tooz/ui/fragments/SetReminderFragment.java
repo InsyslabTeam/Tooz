@@ -7,8 +7,6 @@ import android.os.Bundle;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.content.ContextCompat;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -63,7 +61,7 @@ public class SetReminderFragment extends BaseFragment implements BaseResponseInt
 
     private static final String ARG_PARAM1 = "ARG_PARAM1";
 
-    private LinearLayout content;
+    private LinearLayout content, optionsSec;
     private TextInputEditText tietTask, tietTime, tietLocation, tietContact;
     private TextInputLayout tilTask, tilTime, tilLocation, tilContact;
     private ImageView ivOptionTime, ivOptionLocation;
@@ -170,7 +168,34 @@ public class SetReminderFragment extends BaseFragment implements BaseResponseInt
     }
 
     private void updateSelectionView() {
+        if (isTimeSelected) {
+            ivOptionLocation.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.ic_option_location));
+            ivOptionTime.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.ic_option_time_selected));
+            enableTimeView();
+        } else {
+            ivOptionTime.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.ic_option_time));
+            ivOptionLocation.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.ic_option_location_selected));
+            enableLocationView();
+        }
+        if (fragmentType.equals(VAL_SEND_REMINDER)) enableContactsView();
+    }
 
+    private void enableContactsView() {
+        tilContact.setVisibility(View.VISIBLE);
+    }
+
+    private void enableLocationView() {
+        tilTime.setVisibility(View.GONE);
+        tietTime.setVisibility(View.GONE);
+        tilLocation.setVisibility(View.VISIBLE);
+        tietLocation.setVisibility(View.VISIBLE);
+    }
+
+    private void enableTimeView() {
+        tilLocation.setVisibility(View.GONE);
+        tietLocation.setVisibility(View.GONE);
+        tilTime.setVisibility(View.VISIBLE);
+        tietTime.setVisibility(View.VISIBLE);
     }
 
     private void onSelectContactsClick() {
@@ -271,54 +296,15 @@ public class SetReminderFragment extends BaseFragment implements BaseResponseInt
     private void setUpSendReminderView() {
         tilTask.setHint("REMIND THEM TO...");
         tilTask.setVisibility(View.VISIBLE);
-
-//        tietTask.addTextChangedListener(new TextWatcher() {
-//            @Override
-//            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-//
-//            }
-//
-//            @Override
-//            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-//
-//            }
-//
-//            @Override
-//            public void afterTextChanged(Editable editable) {
-//                String text = tietTask.getText().toString();
-//                if (text != null && !text.isEmpty()) {
-//                    tilTime.setVisibility(View.VISIBLE);
-//                    tilLocation.setVisibility(View.VISIBLE);
-//                    tilContact.setVisibility(View.VISIBLE);
-//                }
-//            }
-//        });
+        optionsSec.setVisibility(View.VISIBLE);
+        updateSelectionView();
     }
 
     private void setUpPersonalReminderView() {
         tilTask.setHint("REMIND ME TO...");
         tilTask.setVisibility(View.VISIBLE);
-
-        tietTask.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-                String text = tietTask.getText().toString();
-                if (text != null && !text.isEmpty()) {
-                    tilTime.setVisibility(View.VISIBLE);
-                    tilLocation.setVisibility(View.VISIBLE);
-                }
-            }
-        });
+        optionsSec.setVisibility(View.VISIBLE);
+        updateSelectionView();
     }
 
     private void initView(View rootView) {
@@ -334,15 +320,13 @@ public class SetReminderFragment extends BaseFragment implements BaseResponseInt
         tietLocation = rootView.findViewById(R.id.fsr_location);
         tietContact = rootView.findViewById(R.id.fsr_contact);
 
+        optionsSec = rootView.findViewById(R.id.fsr_option_sec);
         ivOptionTime = rootView.findViewById(R.id.fsr_option_time);
         ivOptionLocation = rootView.findViewById(R.id.fsr_option_location);
 
         clickableEdittext(tietTime);
         clickableEdittext(tietLocation);
         clickableEdittext(tietContact);
-
-        ivOptionTime.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.ic_option_time));
-        ivOptionLocation.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.ic_option_time));
     }
 
     public void onLocationSet(LatLng latLng, String locationSelected) {
@@ -360,8 +344,10 @@ public class SetReminderFragment extends BaseFragment implements BaseResponseInt
 
         if (task != null && task.isEmpty()) {
             tietTask.setError(getString(R.string.error_empty_field));
-        } else if (timeSelected == null && latLngSelected == null) {
-            showToastMessage("Please select either a time or a location for the reminder!", true);
+        } else if (isTimeSelected && timeSelected == null) {
+            showToastMessage("Please select a time for the reminder!", true);
+        } else if (!isTimeSelected && latLngSelected == null) {
+            showToastMessage("Please select a location for the reminder!", true);
         } else if (fragmentType.equals(VAL_SEND_REMINDER) && selectedMembers == null) {
             showToastMessage("Please select a contact to send the reminder!", false);
         } else if (fragmentType.equals(VAL_SEND_REMINDER) && selectedMembers.size() == 0) {

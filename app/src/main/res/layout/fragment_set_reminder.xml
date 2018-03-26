@@ -30,10 +30,12 @@
     </android.support.design.widget.TextInputLayout>
 
     <LinearLayout
+        android:id="@+id/fsr_option_sec"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:layout_margin="@dimen/set_reminder_margin">
+        android:layout_margin="@dimen/set_reminder_margin"
+        android:visibility="gone">
 
         <ImageView
             android:id="@+id/fsr_option_time"

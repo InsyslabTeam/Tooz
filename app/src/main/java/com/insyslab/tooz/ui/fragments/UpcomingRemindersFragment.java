@@ -117,6 +117,16 @@ public class UpcomingRemindersFragment extends BaseFragment implements OnUpcomin
         upcomingAdapter.notifyItemChanged(position);
     }
 
+    @Override
+    public void onUpcomingReminderEditClick(int position) {
+
+    }
+
+    @Override
+    public void onUpcomingReminderDeleteClick(int position) {
+        ((DashboardActivity)getActivity()).deleteReminder(upcomingReminderList.get(position).getId());
+    }
+
     public void updateRemindersRv(List<Reminder> list) {
         upcomingReminderList.clear();
         upcomingReminderList.addAll(list);

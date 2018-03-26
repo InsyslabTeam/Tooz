@@ -34,6 +34,7 @@ import com.insyslab.tooz.models.requests.Contact_;
 import com.insyslab.tooz.models.responses.ContactSyncResponse;
 import com.insyslab.tooz.models.responses.Error;
 import com.insyslab.tooz.models.responses.GetContactsResponse;
+import com.insyslab.tooz.models.responses.GetDeleteReminderResponse;
 import com.insyslab.tooz.restclient.BaseResponseInterface;
 import com.insyslab.tooz.restclient.GenericDataHandler;
 import com.insyslab.tooz.restclient.RequestBuilder;
@@ -58,11 +59,13 @@ import static com.insyslab.tooz.utils.AppConstants.KEY_TO_ACTIONS;
 import static com.insyslab.tooz.utils.AppConstants.VAL_SEND_REMINDER;
 import static com.insyslab.tooz.utils.AppConstants.VAL_SET_PERSONAL_REMINDER;
 import static com.insyslab.tooz.utils.ConstantClass.CONTACTS_SYNC_REQUEST_URL;
+import static com.insyslab.tooz.utils.ConstantClass.DELETE_REMINDER_REQUEST_URL;
 import static com.insyslab.tooz.utils.ConstantClass.GET_ALL_REMINDERS_REQUEST_URL;
 import static com.insyslab.tooz.utils.ConstantClass.GET_CONTACTS_REQUEST_URL;
 import static com.insyslab.tooz.utils.ConstantClass.REQUEST_TYPE_005;
 import static com.insyslab.tooz.utils.ConstantClass.REQUEST_TYPE_006;
 import static com.insyslab.tooz.utils.ConstantClass.REQUEST_TYPE_011;
+import static com.insyslab.tooz.utils.ConstantClass.REQUEST_TYPE_012;
 
 public class DashboardActivity extends BaseActivity implements BaseResponseInterface {
 
@@ -127,11 +130,11 @@ public class DashboardActivity extends BaseActivity implements BaseResponseInter
 
     private void initGetAllRemindersRequest() {
         String requestUrl = GET_ALL_REMINDERS_REQUEST_URL;
-        Type requestType = new TypeToken<List<Reminder>>() {
+        Type responseType = new TypeToken<List<Reminder>>() {
         }.getType();
 
         GenericDataHandler req2GenericDataHandler = new GenericDataHandler(this, this, REQUEST_TYPE_011);
-        req2GenericDataHandler.jsonArrayRequest(requestUrl, requestType);
+        req2GenericDataHandler.jsonArrayRequest(requestUrl, responseType);
     }
 
     private void initGetContactsRequest() {
@@ -462,6 +465,9 @@ public class DashboardActivity extends BaseActivity implements BaseResponseInter
                 case REQUEST_TYPE_011:
                     onGetAllRemindersResponse((List<Reminder>) success);
                     break;
+                case REQUEST_TYPE_012:
+                    onGetDeleteReminderResponse((GetDeleteReminderResponse) success);
+                    break;
                 default:
                     showToastMessage("ERROR " + requestCode + "!", false);
                     break;
@@ -471,7 +477,7 @@ public class DashboardActivity extends BaseActivity implements BaseResponseInter
             Log.d(TAG, "Error: " + customError.getMessage() + " -- " + customError.getStatus() + " -- ");
             if (customError.getStatus() == 000) {
                 hideProgressDialog();
-                showNetworkErrorSnackbar(findViewById(R.id.ad_container), getString(R.string.error_no_internet), getString(R.string.retry),
+                showNetworkErrorSnackbar(findViewById(R.id.ad_fragment_container), getString(R.string.error_no_internet), getString(R.string.retry),
                         new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
@@ -491,6 +497,31 @@ public class DashboardActivity extends BaseActivity implements BaseResponseInter
                 showSnackbarMessage(findViewById(R.id.ad_fragment_container), customError.getMessage(), true, getString(R.string.ok), null, true);
             }
         }
+    }
+
+    private void onGetDeleteReminderResponse(GetDeleteReminderResponse success) {
+        if (success.getStatus() == 200) {
+            initLocalDbReminderDeletion(success.getId());
+        } else {
+            if (success != null && success.getMessage() != null && !success.getMessage().isEmpty())
+                showToastMessage(success.getMessage(), true);
+        }
+    }
+
+    private void initLocalDbReminderDeletion(final String id) {
+        new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... voids) {
+                reminderRepository.deleteReminder(id);
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                super.onPostExecute(aVoid);
+                showToastMessage("Reminder deleted successfully!", true);
+            }
+        }.execute();
     }
 
     private void onContactSyncResponse(ContactSyncResponse success) {
@@ -628,5 +659,16 @@ public class DashboardActivity extends BaseActivity implements BaseResponseInter
             openThisFragment(UpcomingRemindersFragment.TAG, null);
         }
         LocalStorage.getInstance(this).firstLoginCompleted();
+    }
+
+    public void deleteReminder(String reminderId) {
+        initDeleteReminderRequest(reminderId);
+    }
+
+    private void initDeleteReminderRequest(String reminderId) {
+        String requestUrl = DELETE_REMINDER_REQUEST_URL + reminderId;
+
+        GenericDataHandler req3GenericDataHandler = new GenericDataHandler(this, this, REQUEST_TYPE_012);
+        req3GenericDataHandler.jsonObjectRequest(null, requestUrl, Request.Method.GET, GetDeleteReminderResponse.class);
     }
 }

@@ -22,6 +22,9 @@ public class ConstantClass {
             "you about anything and everything, anywhere and everywhere, anytime and everytime....from people you like!";
     public static final String APP_URL = "https://play.google.com/store/apps/details?id=com.insyslab.tooz";
 
+    /**
+     * USER
+     */
     public static final int REQUEST_TYPE_001 = 1001;
     public static final String SIGN_IN_REQUEST_URL = "user/signup";
 
@@ -46,6 +49,9 @@ public class ConstantClass {
     public static final int REQUEST_TYPE_008 = 1008;
     public static final String UPDATE_PROFILE_PICTURE_REQUEST_URL = "user/imageProfile";
 
+    /**
+     * REMINDER
+     */
     public static final int REQUEST_TYPE_009 = 1009;
     public static final String CREATE_REMINDER_REQUEST_URL = "reminder/addReminder";
 
@@ -54,4 +60,7 @@ public class ConstantClass {
 
     public static final int REQUEST_TYPE_011 = 1011;
     public static final String GET_ALL_REMINDERS_REQUEST_URL = "reminder/getAllReminders";
+
+    public static final int REQUEST_TYPE_012 = 1012;
+    public static final String DELETE_REMINDER_REQUEST_URL = "reminder/deleteReminder/";
 }

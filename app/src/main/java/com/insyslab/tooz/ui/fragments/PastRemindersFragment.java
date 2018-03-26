@@ -12,8 +12,8 @@ import android.widget.TextView;
 
 import com.insyslab.tooz.R;
 import com.insyslab.tooz.interfaces.OnPastReminderClickListener;
-import com.insyslab.tooz.models.eventbus.FragmentState;
 import com.insyslab.tooz.models.Reminder;
+import com.insyslab.tooz.models.eventbus.FragmentState;
 import com.insyslab.tooz.ui.activities.DashboardActivity;
 import com.insyslab.tooz.ui.adapters.PastRemindersAdapter;
 
@@ -113,6 +113,16 @@ public class PastRemindersFragment extends BaseFragment implements OnPastReminde
         int position = pastRv.getChildAdapterPosition(view);
         pastReminderList.get(position).setExpanded(!pastReminderList.get(position).isExpanded());
         pastAdapter.notifyItemChanged(position);
+    }
+
+    @Override
+    public void onPastReminderEditClick(int position) {
+
+    }
+
+    @Override
+    public void onPastReminderDeleteClick(int position) {
+
     }
 
     public void updateRemindersRv(List<Reminder> list) {

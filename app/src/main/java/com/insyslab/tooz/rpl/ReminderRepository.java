@@ -49,6 +49,10 @@ public class ReminderRepository {
         return appDatabase.reminderDao().fetchPastReminders(date);
     }
 
+    public int deleteReminder(String id) {
+        return appDatabase.reminderDao().deleteReminder(id);
+    }
+
     public int clearReminderTable() {
         return appDatabase.reminderDao().deleteAllReminders();
     }
