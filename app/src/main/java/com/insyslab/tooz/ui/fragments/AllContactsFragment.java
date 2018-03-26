@@ -118,8 +118,9 @@ public class AllContactsFragment extends BaseFragment implements OnUserContactCl
     }
 
     private void setUpNonAppUserContactsRv() {
+        int maxSize = nonAppUserContactsList.size() > 10 ? 10 : nonAppUserContactsList.size();
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
-        nonAppUserContactsAdapter = new NonAppUserContactsAdapter(this, nonAppUserContactsList);
+        nonAppUserContactsAdapter = new NonAppUserContactsAdapter(this, nonAppUserContactsList.subList(0, maxSize));
         nonAppUserContactsRv.setLayoutManager(layoutManager);
         nonAppUserContactsRv.setAdapter(nonAppUserContactsAdapter);
     }

@@ -45,8 +45,16 @@ public class ReminderRepository {
         return appDatabase.reminderDao().fetchUpcomingReminders(date);
     }
 
+    public LiveData<Reminder> getUpcomingReminderFromId(String id) {
+        return appDatabase.reminderDao().fetchUpcomingReminderByReminderId(id);
+    }
+
     public LiveData<List<Reminder>> getPastReminders(Date date) {
         return appDatabase.reminderDao().fetchPastReminders(date);
+    }
+
+    public int deleteReminder(String id) {
+        return appDatabase.reminderDao().deleteReminder(id);
     }
 
     public int clearReminderTable() {

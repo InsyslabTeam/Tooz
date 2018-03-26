@@ -18,19 +18,21 @@ import android.widget.TimePicker;
 
 import com.android.volley.Request;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.gson.Gson;
 import com.insyslab.tooz.R;
+import com.insyslab.tooz.interfaces.OnReminderFetchedListener;
+import com.insyslab.tooz.models.Reminder;
 import com.insyslab.tooz.models.User;
 import com.insyslab.tooz.models.eventbus.FragmentState;
 import com.insyslab.tooz.models.eventbus.ReminderCreated;
-import com.insyslab.tooz.models.responses.CreateReminderResponse;
 import com.insyslab.tooz.models.responses.Error;
 import com.insyslab.tooz.restclient.BaseResponseInterface;
 import com.insyslab.tooz.restclient.GenericDataHandler;
-import com.insyslab.tooz.restclient.RequestBuilder;
 import com.insyslab.tooz.ui.activities.ActionsActivity;
 import com.insyslab.tooz.utils.LocalStorage;
 import com.insyslab.tooz.utils.Util;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Calendar;
@@ -39,12 +41,15 @@ import java.util.List;
 import de.greenrobot.event.EventBus;
 
 import static com.insyslab.tooz.utils.AppConstants.KEY_FROM_FRAGMENT;
+import static com.insyslab.tooz.utils.AppConstants.KEY_GET_REMINDER_ID;
 import static com.insyslab.tooz.utils.AppConstants.KEY_SET_REMINDER_TYPE;
 import static com.insyslab.tooz.utils.AppConstants.VAL_SEND_REMINDER;
 import static com.insyslab.tooz.utils.AppConstants.VAL_SET_PERSONAL_REMINDER;
-import static com.insyslab.tooz.utils.ConstantClass.CREATE_REMINDER_REQUEST_URL;
-import static com.insyslab.tooz.utils.ConstantClass.REQUEST_TYPE_009;
+import static com.insyslab.tooz.utils.ConstantClass.REQUEST_TYPE_010;
+import static com.insyslab.tooz.utils.ConstantClass.UPDATE_REMINDER_REQUEST_URL;
+import static com.insyslab.tooz.utils.Util.getAddressFromCoords;
 import static com.insyslab.tooz.utils.Util.getAmPmFromIndex;
+import static com.insyslab.tooz.utils.Util.getCalenderFormatDate;
 import static com.insyslab.tooz.utils.Util.getDateExtension;
 import static com.insyslab.tooz.utils.Util.getDateInDefaultDateFormat;
 import static com.insyslab.tooz.utils.Util.getDayOfWeekFromIndex;
@@ -55,9 +60,9 @@ import static com.insyslab.tooz.utils.Util.getMonthFromIndex;
  * Created by TaNMay on 26/09/16.
  */
 
-public class SetReminderFragment extends BaseFragment implements BaseResponseInterface {
+public class EditReminderFragment extends BaseFragment implements OnReminderFetchedListener, BaseResponseInterface {
 
-    public static final String TAG = "SetReminderFrag ==> ";
+    public static final String TAG = "EditReminderFrag ==> ";
 
     private static final String ARG_PARAM1 = "ARG_PARAM1";
 
@@ -70,16 +75,18 @@ public class SetReminderFragment extends BaseFragment implements BaseResponseInt
     private String timeSelected = null, addressSelected = null;
     private LatLng latLngSelected = null;
     private Boolean isTimeSelected = true;
+    private String reminderId = null;
 
     private List<User> selectedMembers = null;
     private User user;
+    private Reminder reminder;
 
-    public SetReminderFragment() {
+    public EditReminderFragment() {
 
     }
 
-    public static SetReminderFragment newInstance(Bundle bundle) {
-        SetReminderFragment fragment = new SetReminderFragment();
+    public static EditReminderFragment newInstance(Bundle bundle) {
+        EditReminderFragment fragment = new EditReminderFragment();
         Bundle args = new Bundle();
         args.putBundle(ARG_PARAM1, bundle);
         fragment.setArguments(args);
@@ -91,8 +98,9 @@ public class SetReminderFragment extends BaseFragment implements BaseResponseInt
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             Bundle bundle = getArguments().getBundle(ARG_PARAM1);
-            fragmentType = bundle.getString(KEY_SET_REMINDER_TYPE);
+            reminderId = bundle.getString(KEY_GET_REMINDER_ID);
         }
+        ActionsActivity.onReminderFetchedListener = this;
     }
 
     @Override
@@ -100,24 +108,35 @@ public class SetReminderFragment extends BaseFragment implements BaseResponseInt
         View layout = inflater.inflate(R.layout.fragment_set_reminder, container, false);
 
         FragmentState fragmentState = new FragmentState(TAG);
-        fragmentState.setFragmentDetailedName(fragmentType);
+        fragmentState.setFragmentDetailedName("Edit Reminder");
         updateFragment(fragmentState);
         initView(layout);
 
         user = LocalStorage.getInstance(getContext()).getUser();
 
-        if (fragmentType.equals(VAL_SET_PERSONAL_REMINDER)) {
-            setUpPersonalReminderView();
-        } else if (fragmentType.equals(VAL_SEND_REMINDER)) {
-            setUpSendReminderView();
-        } else {
-            showToastMessage("Some error occurred!", false);
-            getActivity().finish();
-        }
+        ((ActionsActivity) getActivity()).getReminderFromId(reminderId);
 
         setUpActions();
 
         return layout;
+    }
+
+    private void setUpInitialView() {
+        tietTask.setText(reminder.getTask());
+        if (isTimeSelected) {
+            Calendar selectedCal = getCalenderFormatDate(reminder.getDate());
+            setUpDateAndTime(selectedCal);
+        } else {
+            Double latDouble = Double.parseDouble(reminder.getLatitude());
+            Double longDouble = Double.parseDouble(reminder.getLongitude());
+            String location = getAddressFromCoords(getContext(), new LatLng(latDouble, longDouble));
+            if (location != null) tietLocation.setText(location);
+            else tietLocation.setText(reminder.getLatitude() + ", " + reminder.getLongitude());
+        }
+
+        if (reminder.getContacts() != null && reminder.getContacts().size() > 0) {
+            onMembersSelected(reminder.getContacts());
+        }
     }
 
     private void setUpActions() {
@@ -141,30 +160,6 @@ public class SetReminderFragment extends BaseFragment implements BaseResponseInt
                 onSelectContactsClick();
             }
         });
-
-        ivOptionLocation.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                onLocationOptionClick();
-            }
-        });
-
-        ivOptionTime.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                onTimeOptionClick();
-            }
-        });
-    }
-
-    private void onTimeOptionClick() {
-        isTimeSelected = true;
-        updateSelectionView();
-    }
-
-    private void onLocationOptionClick() {
-        isTimeSelected = false;
-        updateSelectionView();
     }
 
     private void updateSelectionView() {
@@ -342,6 +337,17 @@ public class SetReminderFragment extends BaseFragment implements BaseResponseInt
 
         String task = tietTask.getText().toString().trim();
 
+        if (isTimeSelected && timeSelected == null) {
+            Calendar cal = getCalenderFormatDate(reminder.getDate());
+            timeSelected = getDateInDefaultDateFormat(cal);
+        }
+
+        if (!isTimeSelected && latLngSelected == null) {
+            Double latDouble = Double.parseDouble(reminder.getLatitude());
+            Double longDouble = Double.parseDouble(reminder.getLongitude());
+            latLngSelected = new LatLng(latDouble, longDouble);
+        }
+
         if (task != null && task.isEmpty()) {
             tietTask.setError(getString(R.string.error_empty_field));
         } else if (isTimeSelected && timeSelected == null) {
@@ -353,23 +359,31 @@ public class SetReminderFragment extends BaseFragment implements BaseResponseInt
         } else if (fragmentType.equals(VAL_SEND_REMINDER) && selectedMembers.size() == 0) {
             showToastMessage("Please select a contact to send the reminder!", false);
         } else {
-            initCreateReminderRequest();
+            reminder.setTask(tietTask.getText().toString().trim());
+            if (latLngSelected != null) {
+                reminder.setLatitude(latLngSelected.latitude + "");
+                reminder.setLongitude(latLngSelected.longitude + "");
+            }
+            if (selectedMembers != null) reminder.setContacts(selectedMembers);
+            initUpdateReminderRequest();
         }
     }
 
-    private void initCreateReminderRequest() {
-        showProgressDialog(getString(R.string.loading));
-
-        String requestUrl = CREATE_REMINDER_REQUEST_URL;
-        JSONObject requestObject = new RequestBuilder().getCreateReminderRequestPayload(
-                fragmentType, tietTask.getText().toString().trim(), timeSelected, latLngSelected,
-                user.getId(), selectedMembers
-        );
-
-        if (requestObject != null) {
-            GenericDataHandler req1GenericDataHandler = new GenericDataHandler(this, getContext(), REQUEST_TYPE_009);
-            req1GenericDataHandler.jsonObjectRequest(requestObject, requestUrl, Request.Method.POST, CreateReminderResponse.class);
+    private void initUpdateReminderRequest() {
+        String requestUrl = UPDATE_REMINDER_REQUEST_URL;
+        JSONObject jsonObject = null;
+        try {
+            jsonObject = new JSONObject(new Gson().toJson(reminder));
+            if (timeSelected != null) {
+                jsonObject.put("date", timeSelected);
+                jsonObject.put("time", timeSelected);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
+
+        GenericDataHandler reqGenericDataHandler = new GenericDataHandler(this, getContext(), REQUEST_TYPE_010);
+        reqGenericDataHandler.jsonObjectRequest(jsonObject, requestUrl, Request.Method.POST, Reminder.class);
     }
 
     private String getLatitudeFromInput() {
@@ -404,13 +418,47 @@ public class SetReminderFragment extends BaseFragment implements BaseResponseInt
 
     public void onMembersSelected(List<User> contactItemList) {
         selectedMembers = contactItemList;
+        String contactListStr = getStringFormatContactList();
+        tietContact.setText(contactListStr);
+    }
+
+    private String getStringFormatContactList() {
         String contactListStr = "";
         for (int i = 0; i < selectedMembers.size(); i++) {
             contactListStr += selectedMembers.get(i).getName();
             if (i != selectedMembers.size() - 1) contactListStr += ", ";
         }
+        return contactListStr;
+    }
 
-        tietContact.setText(contactListStr);
+    private void onUpdateReminderResponse(Reminder success) {
+        EventBus.getDefault().postSticky(new ReminderCreated(true, !fragmentType.equals(VAL_SEND_REMINDER)));
+        if (fragmentType.equals(VAL_SEND_REMINDER))
+            showToastMessage("Updated reminder sent to " + selectedMembers.size() + " contact(s)!", true);
+        else showToastMessage("Personal reminder updated successfully!", true);
+        closeThisFragment();
+    }
+
+    @Override
+    public void onReminderFetched(Reminder reminder) {
+        if (reminder != null) {
+            this.reminder = reminder;
+            fragmentType = reminder.getContacts() != null && reminder.getContacts().size() > 0 ? VAL_SEND_REMINDER : VAL_SET_PERSONAL_REMINDER;
+
+            if (fragmentType.equals(VAL_SET_PERSONAL_REMINDER)) {
+                setUpPersonalReminderView();
+            } else if (fragmentType.equals(VAL_SEND_REMINDER)) {
+                setUpSendReminderView();
+            } else {
+                showToastMessage("Some error occurred!", false);
+                getActivity().finish();
+            }
+
+            isTimeSelected = reminder.getLatitude() == null && reminder.getLongitude() == null;
+            updateSelectionView();
+
+            setUpInitialView();
+        }
     }
 
     @Override
@@ -418,8 +466,8 @@ public class SetReminderFragment extends BaseFragment implements BaseResponseInt
         hideProgressDialog();
         if (error == null) {
             switch (requestCode) {
-                case REQUEST_TYPE_009:
-                    onCreateReminderResponse((CreateReminderResponse) success);
+                case REQUEST_TYPE_010:
+                    onUpdateReminderResponse((Reminder) success);
                     break;
                 default:
                     showToastMessage("ERROR " + requestCode + "!", false);
@@ -435,8 +483,8 @@ public class SetReminderFragment extends BaseFragment implements BaseResponseInt
                             @Override
                             public void onClick(View v) {
                                 switch (requestCode) {
-                                    case REQUEST_TYPE_009:
-                                        initCreateReminderRequest();
+                                    case REQUEST_TYPE_010:
+                                        initUpdateReminderRequest();
                                         break;
                                     default:
                                         showToastMessage(getString(R.string.error_unknown), false);
@@ -447,13 +495,6 @@ public class SetReminderFragment extends BaseFragment implements BaseResponseInt
                 showSnackbarMessage(content, customError.getMessage(), true, getString(R.string.ok), null, true);
             }
         }
-    }
 
-    private void onCreateReminderResponse(CreateReminderResponse success) {
-        EventBus.getDefault().postSticky(new ReminderCreated(true, !fragmentType.equals(VAL_SEND_REMINDER)));
-        if (fragmentType.equals(VAL_SEND_REMINDER))
-            showToastMessage("Reminder sent to " + selectedMembers.size() + " contact(s)!", true);
-        else showToastMessage("Personal reminder created successfully!", true);
-        closeThisFragment();
     }
 }

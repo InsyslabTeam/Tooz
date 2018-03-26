@@ -62,4 +62,12 @@
         <item name="android:maxLines">1</item>
     </style>
 
+    <style name="SetReminderOption">
+        <item name="android:layout_marginLeft">@dimen/set_reminder_option_icon_spacing</item>
+        <item name="android:layout_marginRight">@dimen/set_reminder_option_icon_spacing</item>
+        <item name="android:layout_marginTop">@dimen/set_reminder_margin</item>
+        <item name="android:layout_marginBottom">@dimen/set_reminder_margin</item>
+        <item name="android:elevation">@dimen/default_elevation</item>
+        <item name="android:background">@drawable/ic_option_background</item>
+    </style>
 </resources>

@@ -69,9 +69,18 @@
     <dimen name="all_contacts_no_content_image">48dp</dimen>
     <dimen name="all_contacts_no_content_title">14sp</dimen>
 
+    <!--Actions-->
+    <dimen name="set_reminder_padding">16dp</dimen>
+    <dimen name="set_reminder_margin">8dp</dimen>
+    <dimen name="set_reminder_option_icon">84dp</dimen>
+    <dimen name="set_reminder_option_icon_spacing">24dp</dimen>
+    <dimen name="set_reminder_option_icon_corner">2dp</dimen>
+
     <!--Settings-->
     <dimen name="settings_item_title_text">18sp</dimen>
     <dimen name="settings_item_margin">16dp</dimen>
     <dimen name="settings_item_divider">1dp</dimen>
+
     <dimen name="generic_button_corner">3dp</dimen>
+
 </resources>

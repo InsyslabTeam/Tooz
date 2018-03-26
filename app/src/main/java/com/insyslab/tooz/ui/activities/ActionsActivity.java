@@ -12,11 +12,14 @@ import android.view.View;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.insyslab.tooz.R;
+import com.insyslab.tooz.interfaces.OnReminderFetchedListener;
 import com.insyslab.tooz.models.PhoneContact;
-import com.insyslab.tooz.models.eventbus.FragmentState;
+import com.insyslab.tooz.models.Reminder;
 import com.insyslab.tooz.models.User;
+import com.insyslab.tooz.models.eventbus.FragmentState;
 import com.insyslab.tooz.ui.fragments.AddContactFragment;
 import com.insyslab.tooz.ui.fragments.CreateGroupFragment;
+import com.insyslab.tooz.ui.fragments.EditReminderFragment;
 import com.insyslab.tooz.ui.fragments.LocationSelectorFragment;
 import com.insyslab.tooz.ui.fragments.SelectContactsFragment;
 import com.insyslab.tooz.ui.fragments.SetReminderFragment;
@@ -24,6 +27,7 @@ import com.insyslab.tooz.ui.fragments.SetReminderFragment;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.insyslab.tooz.utils.AppConstants.KEY_GET_REMINDER_ID;
 import static com.insyslab.tooz.utils.AppConstants.KEY_SET_REMINDER_TYPE;
 import static com.insyslab.tooz.utils.AppConstants.KEY_TO_ACTIONS;
 import static com.insyslab.tooz.utils.AppConstants.VAL_SEND_REMINDER;
@@ -34,6 +38,8 @@ public class ActionsActivity extends BaseActivity
         SelectContactsFragment.OnContactsSelectedListener {
 
     private static final String TAG = "Actions ==> ";
+
+    public static OnReminderFetchedListener onReminderFetchedListener;
 
     private Toolbar toolbar;
 
@@ -46,6 +52,7 @@ public class ActionsActivity extends BaseActivity
 
         toFragment = getIntent().getStringExtra(KEY_TO_ACTIONS);
         String fragmentType = getIntent().getStringExtra(KEY_SET_REMINDER_TYPE);
+        String reminderId = getIntent().getStringExtra(KEY_GET_REMINDER_ID);
 
         initView();
         setUpToolbar();
@@ -58,6 +65,7 @@ public class ActionsActivity extends BaseActivity
         if (toFragment != null) {
             Bundle bundle = new Bundle();
             bundle.putString(KEY_SET_REMINDER_TYPE, fragmentType);
+            if (reminderId != null) bundle.putString(KEY_GET_REMINDER_ID, reminderId);
             openThisFragment(toFragment, bundle);
         } else {
             showToastMessage("Some error occurred!", false);
@@ -88,6 +96,10 @@ public class ActionsActivity extends BaseActivity
             fragmentManager.beginTransaction()
                     .add(R.id.aa_fragment_container, SelectContactsFragment.newInstance((Bundle) bundle), fragmentTag)
                     .addToBackStack(TAG)
+                    .commit();
+        } else if (fragmentTag.equals(EditReminderFragment.TAG)) {
+            fragmentManager.beginTransaction()
+                    .replace(R.id.aa_fragment_container, EditReminderFragment.newInstance((Bundle) bundle), fragmentTag)
                     .commit();
         }
     }
@@ -183,6 +195,10 @@ public class ActionsActivity extends BaseActivity
                 SelectContactsFragment fragment5 = (SelectContactsFragment) getSupportFragmentManager().findFragmentById(R.id.aa_fragment_container);
                 fragment5.onSaveClick();
                 break;
+            case EditReminderFragment.TAG:
+                EditReminderFragment fragment6 = (EditReminderFragment) getSupportFragmentManager().findFragmentById(R.id.aa_fragment_container);
+                fragment6.onSaveClick();
+                break;
         }
     }
 
@@ -200,6 +216,9 @@ public class ActionsActivity extends BaseActivity
         } else if (from.equals(CreateGroupFragment.TAG)) {
             CreateGroupFragment fragment = (CreateGroupFragment) getSupportFragmentManager().findFragmentById(R.id.aa_fragment_container);
             fragment.onMembersSelected(contactItemList);
+        } else if (from.equals(EditReminderFragment.TAG)) {
+            EditReminderFragment fragment = (EditReminderFragment) getSupportFragmentManager().findFragmentById(R.id.aa_fragment_container);
+            fragment.onMembersSelected(contactItemList);
         }
     }
 
@@ -209,7 +228,6 @@ public class ActionsActivity extends BaseActivity
             @Override
             public void onChanged(@Nullable List<User> list) {
                 setAppUserList(list);
-//                updateAppUserContacts();
             }
         });
     }
@@ -218,13 +236,12 @@ public class ActionsActivity extends BaseActivity
         phoneContactRepository.insertPhoneContact(phoneContact);
     }
 
-//    private void updateAppUserContacts() {
-//        try {
-//            SelectContactsFragment fragment = (SelectContactsFragment) getSupportFragmentManager().findFragmentById(R.id.aa_fragment_container);
-//            if (fragment != null) fragment.updateAppUserContactsRv(getAppUserList());
-//        } catch (ClassCastException e) {
-//            e.printStackTrace();
-//            Log.d(TAG, "ERROR: updateAppUserContacts - " + e.getMessage());
-//        }
-//    }
+    public void getReminderFromId(final String reminderId) {
+        reminderRepository.getUpcomingReminderFromId(reminderId).observe(this, new Observer<Reminder>() {
+            @Override
+            public void onChanged(@Nullable Reminder reminder) {
+                onReminderFetchedListener.onReminderFetched(reminder);
+            }
+        });
+    }
 }

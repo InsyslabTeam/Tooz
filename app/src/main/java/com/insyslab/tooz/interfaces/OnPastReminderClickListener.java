@@ -9,4 +9,9 @@ import android.view.View;
 public interface OnPastReminderClickListener {
 
     void onPastReminderClick(View view);
+
+    void onPastReminderEditClick(int position);
+
+    void onPastReminderDeleteClick(int position);
+
 }

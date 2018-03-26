@@ -17,7 +17,6 @@ import java.util.List;
 
 import static com.insyslab.tooz.utils.Util.getReminderFormatedDate;
 import static com.insyslab.tooz.utils.Util.getReminderFormatedTime;
-import static com.insyslab.tooz.utils.Util.getReminderRemainingTime;
 
 
 /**
@@ -54,7 +53,9 @@ public class PastRemindersAdapter extends RecyclerView.Adapter<PastRemindersAdap
 
         if (reminder.isExpanded()) {
             holder.task.setText(reminder.getTask());
+//            holder.optionsSec.setVisibility(View.VISIBLE);
         } else {
+//            holder.optionsSec.setVisibility(View.GONE);
             if (reminder.getTask().length() > 20)
                 holder.task.setText(reminder.getTask().substring(0, 20) + "...");
             else holder.task.setText(reminder.getTask());
@@ -69,6 +70,20 @@ public class PastRemindersAdapter extends RecyclerView.Adapter<PastRemindersAdap
 
         if (position == reminders.size() - 1) holder.divider.setVisibility(View.GONE);
         else holder.divider.setVisibility(View.VISIBLE);
+
+//        holder.editSec.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                onPastReminderClickListener.onPastReminderEditClick(position);
+//            }
+//        });
+//
+//        holder.deleteSec.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                onPastReminderClickListener.onPastReminderDeleteClick(position);
+//            }
+//        });
     }
 
     @Override
@@ -79,6 +94,8 @@ public class PastRemindersAdapter extends RecyclerView.Adapter<PastRemindersAdap
     class ViewHolder extends RecyclerView.ViewHolder {
 
         public TextView task, date, time, status, setter;
+        //        public LinearLayout optionsSec;
+//        public RelativeLayout editSec, deleteSec;
         public View divider;
 
         public ViewHolder(View itemView) {
@@ -90,6 +107,9 @@ public class PastRemindersAdapter extends RecyclerView.Adapter<PastRemindersAdap
             status = itemView.findViewById(R.id.ipr_status);
             setter = itemView.findViewById(R.id.ipr_setter);
             divider = itemView.findViewById(R.id.ipr_divider);
+//            optionsSec = itemView.findViewById(R.id.ipr_options_sec);
+//            editSec = itemView.findViewById(R.id.ipr_edit_sec);
+//            deleteSec = itemView.findViewById(R.id.ipr_delete_sec);
         }
     }
 }

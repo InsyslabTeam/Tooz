@@ -15,9 +15,11 @@ public class AppConstants {
     public static final String KEY_SHARED_PREFS_FIRST_LOGIN = "FIRST_LOGIN";
 
     public static final String KEY_TO_ACTIONS = "KEY_TO_ACTIONS";
+    public static final String KEY_BUNDLE_TO_ACTIONS = "KEY_BUNDLE_TO_ACTIONS";
     public static final String KEY_FROM_FRAGMENT = "KEY_FROM_FRAGMENT";
 
     public static final String KEY_SET_REMINDER_TYPE = "KEY_SET_REMINDER_TYPE";
+    public static final String KEY_GET_REMINDER_ID = "KEY_GET_REMINDER_ID";
 
     public static final String KEY_OTP_SMS = "otp";
     public static final String KEY_OTP_MESSAGE = "KEY_OTP_MESSAGE";
@@ -26,7 +28,6 @@ public class AppConstants {
 
     public static final String KEY_PUSH_NOTIFICATION = "KEY_PUSH_NOTIFICATION";
     public static final String KEY_PUSH_MESSAGE = "message";
-
 
     public static final String KEY_REMINDER_NOTIFICATION_UNIQUE_ID = "KEY_REMINDER_NOTIFICATION_UNIQUE_ID";
     public static final String KEY_REMINDER_NOTIFICATION_OBJECT = "KEY_REMINDER_NOTIFICATION_OBJECT";
