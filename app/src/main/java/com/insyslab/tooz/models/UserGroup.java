@@ -10,10 +10,8 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.insyslab.tooz.models.responses.Token;
 
-import java.io.Serializable;
-
 @Entity(indices = {@Index(value = "id", unique = true)})
-public class User implements Serializable {
+public class UserGroup {
 
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "p_id")

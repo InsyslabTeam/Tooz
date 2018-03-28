@@ -13,6 +13,7 @@ import android.view.View;
 import com.google.android.gms.maps.model.LatLng;
 import com.insyslab.tooz.R;
 import com.insyslab.tooz.interfaces.OnReminderFetchedListener;
+import com.insyslab.tooz.interfaces.OnUserFetchedListener;
 import com.insyslab.tooz.models.PhoneContact;
 import com.insyslab.tooz.models.Reminder;
 import com.insyslab.tooz.models.User;
@@ -28,6 +29,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.insyslab.tooz.utils.AppConstants.KEY_GET_REMINDER_ID;
+import static com.insyslab.tooz.utils.AppConstants.KEY_GET_SELECTED_CONTACT_ID;
+import static com.insyslab.tooz.utils.AppConstants.KEY_SELECTED_CONTACT_BUNDLE;
 import static com.insyslab.tooz.utils.AppConstants.KEY_SET_REMINDER_TYPE;
 import static com.insyslab.tooz.utils.AppConstants.KEY_TO_ACTIONS;
 import static com.insyslab.tooz.utils.AppConstants.VAL_SEND_REMINDER;
@@ -40,6 +43,7 @@ public class ActionsActivity extends BaseActivity
     private static final String TAG = "Actions ==> ";
 
     public static OnReminderFetchedListener onReminderFetchedListener;
+    public static OnUserFetchedListener onUserFetchedListener;
 
     private Toolbar toolbar;
 
@@ -53,6 +57,7 @@ public class ActionsActivity extends BaseActivity
         toFragment = getIntent().getStringExtra(KEY_TO_ACTIONS);
         String fragmentType = getIntent().getStringExtra(KEY_SET_REMINDER_TYPE);
         String reminderId = getIntent().getStringExtra(KEY_GET_REMINDER_ID);
+        Bundle contactBundle = getIntent().getBundleExtra(KEY_SELECTED_CONTACT_BUNDLE);
 
         initView();
         setUpToolbar();
@@ -65,6 +70,9 @@ public class ActionsActivity extends BaseActivity
         if (toFragment != null) {
             Bundle bundle = new Bundle();
             bundle.putString(KEY_SET_REMINDER_TYPE, fragmentType);
+            if (contactBundle != null) {
+                bundle.putString(KEY_GET_SELECTED_CONTACT_ID, contactBundle.getString(KEY_GET_SELECTED_CONTACT_ID));
+            }
             if (reminderId != null) bundle.putString(KEY_GET_REMINDER_ID, reminderId);
             openThisFragment(toFragment, bundle);
         } else {
@@ -157,7 +165,7 @@ public class ActionsActivity extends BaseActivity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_actions, menu);
+        getMenuInflater().inflate(R.menu.menu_save, menu);
         return true;
     }
 
@@ -241,6 +249,15 @@ public class ActionsActivity extends BaseActivity
             @Override
             public void onChanged(@Nullable Reminder reminder) {
                 onReminderFetchedListener.onReminderFetched(reminder);
+            }
+        });
+    }
+
+    public void getUserFromId(String selectedUserId) {
+        userRepository.getUserFromId(selectedUserId).observe(this, new Observer<User>() {
+            @Override
+            public void onChanged(@Nullable User user) {
+                onUserFetchedListener.onUserFetched(user);
             }
         });
     }

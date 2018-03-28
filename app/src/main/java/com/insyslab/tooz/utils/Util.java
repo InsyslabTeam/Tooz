@@ -256,4 +256,50 @@ public class Util {
         return finalAddress;
     }
 
+    public static String getShortAddressFromCoords(Context context, LatLng location) {
+        Geocoder geocoder = new Geocoder(context, Locale.getDefault());
+        String finalAddress = "";
+
+        try {
+            List<Address> addresses = geocoder.getFromLocation(location.latitude, location.longitude, 1);
+            String address = addresses.get(0).getAddressLine(0);
+            String thoroughfare = addresses.get(0).getThoroughfare();
+            String subLocality = addresses.get(0).getSubLocality();
+            String city = addresses.get(0).getLocality();
+
+            if (thoroughfare != null) finalAddress += thoroughfare;
+            if (subLocality != null) finalAddress += ", " + subLocality;
+            if (city != null) finalAddress += ", " + city;
+            if (address != null && thoroughfare == null && subLocality == null)
+                finalAddress = address;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return finalAddress;
+    }
+
+    public static Double getDistanceBetweenTwoCoords(Double lat1, Double lng1, Double lat2, Double lng2) {
+        Double earthRadius = 6371000.0; //meters
+        Double dLat = Math.toRadians(lat2 - lat1);
+        Double dLng = Math.toRadians(lng2 - lng1);
+        Double a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2)) *
+                        Math.sin(dLng / 2) * Math.sin(dLng / 2);
+        Double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        Double dist = earthRadius * c;
+
+        return dist;
+    }
+
+    public static String getFormattedDistance(Double distanceInMeter) {
+        String formattedDist = "";
+        if (distanceInMeter > 999) {
+            Double distanceInKm = distanceInMeter / 1000;
+            formattedDist = getToTwoDecimalPlaces(distanceInKm) + "km";
+        } else {
+            formattedDist = distanceInMeter.intValue() + "m";
+        }
+        return formattedDist;
+    }
 }

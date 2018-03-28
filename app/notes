@@ -1,40 +1,22 @@
 Next in Line
-> update db and lists on adding a reminder
-
 > test with lots of contacts
+> create group
+> show groups in contacts
+> notification settings
+> feedback
+> privacy options
 
-> add contact, list update
+Longer term
+> completed option in reminders
+> location and time based filters
+> priority options in reminders
+> change number for account
+> share app with non app users
+> delete account
 
-> sync contacts, show synced contacts
-
-
-
-
-Delete option and other options in reminders
-
-Location based and time based - filters in reminders
-
-Create Group, New group
-
-Groups in contacts
-
-Priority options in reminders
-
-Change number functionality
 
 
 
 
 
 Privacy options - My contacts, My contacts except, Only share with
-Tell a friend / Refer
-
-Delete account
-Notification settings
-FAQ
-Terms and privacy policy
-Contact Us
-Feedback
-
-
-clear localreminders from db, which have been completed

@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.design.widget.TextInputEditText;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,31 +15,55 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
+import com.android.volley.Request;
+import com.google.gson.Gson;
 import com.insyslab.tooz.R;
 import com.insyslab.tooz.interfaces.OnRuntimePermissionsResultListener;
-import com.insyslab.tooz.models.eventbus.FragmentState;
 import com.insyslab.tooz.models.User;
+import com.insyslab.tooz.models.eventbus.FragmentState;
+import com.insyslab.tooz.models.responses.CreateGroupResponse;
+import com.insyslab.tooz.models.responses.CreateReminderResponse;
+import com.insyslab.tooz.models.responses.Error;
+import com.insyslab.tooz.models.responses.GroupImageUploadResponse;
+import com.insyslab.tooz.restclient.BaseResponseInterface;
+import com.insyslab.tooz.restclient.GenericDataHandler;
+import com.insyslab.tooz.restclient.RequestBuilder;
+import com.insyslab.tooz.restclient.VolleyMultipartRequest;
 import com.insyslab.tooz.ui.activities.ActionsActivity;
 import com.insyslab.tooz.ui.activities.BaseActivity;
 import com.insyslab.tooz.ui.customui.CircleTransform;
+import com.insyslab.tooz.utils.LocalStorage;
 import com.insyslab.tooz.utils.Util;
 import com.insyslab.tooz.utils.Validator;
 import com.squareup.picasso.Picasso;
 import com.theartofdev.edmodo.cropper.CropImage;
 
+import org.json.JSONObject;
+
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 import static android.app.Activity.RESULT_OK;
 import static com.insyslab.tooz.utils.AppConstants.KEY_FROM_FRAGMENT;
+import static com.insyslab.tooz.utils.ConstantClass.CREATE_GROUP_REQUEST_URL;
+import static com.insyslab.tooz.utils.ConstantClass.GROUP_PICTURE_REQUEST_URL;
+import static com.insyslab.tooz.utils.ConstantClass.REQUEST_TYPE_004;
+import static com.insyslab.tooz.utils.ConstantClass.REQUEST_TYPE_008;
+import static com.insyslab.tooz.utils.ConstantClass.REQUEST_TYPE_013;
+import static com.insyslab.tooz.utils.ConstantClass.REQUEST_TYPE_017;
+import static com.insyslab.tooz.utils.MultipartFileHelper.convertStreamToByteArray;
 
 /**
  * Created by TaNMay on 26/09/16.
  */
 
-public class CreateGroupFragment extends BaseFragment implements OnRuntimePermissionsResultListener {
+public class CreateGroupFragment extends BaseFragment implements OnRuntimePermissionsResultListener, BaseResponseInterface {
 
     public static final String TAG = "CreateGroupFrag ==> ";
 
@@ -50,6 +75,7 @@ public class CreateGroupFragment extends BaseFragment implements OnRuntimePermis
 
     private Bitmap profilePictureSelected = null;
     private List<User> selectedMembers = null;
+    private String imageUrl = null, createrId;
 
     public CreateGroupFragment() {
 
@@ -75,6 +101,8 @@ public class CreateGroupFragment extends BaseFragment implements OnRuntimePermis
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View layout = inflater.inflate(R.layout.fragment_create_group, container, false);
+
+        createrId = LocalStorage.getInstance(getContext()).getUser().getId();
 
         updateFragment(new FragmentState(TAG));
         initView(layout);
@@ -154,7 +182,19 @@ public class CreateGroupFragment extends BaseFragment implements OnRuntimePermis
         } else if (selectedMembers.size() == 0) {
             showToastMessage("Please select a few members for your group!", false);
         } else {
-            closeThisFragment();
+            initCreateGroupRequest();
+        }
+    }
+
+    private void initCreateGroupRequest() {
+        showProgressDialog(getString(R.string.loading));
+
+        String requestUrl = CREATE_GROUP_REQUEST_URL;
+        JSONObject requestObject = new RequestBuilder().getCreateGroupRequestPayload(tietName.getText().toString(), selectedMembers, imageUrl, createrId);
+
+        if (requestObject != null) {
+            GenericDataHandler req1GenericDataHandler = new GenericDataHandler(this, getContext(), REQUEST_TYPE_013);
+            req1GenericDataHandler.jsonObjectRequest(requestObject, requestUrl, Request.Method.POST, CreateGroupResponse.class);
         }
     }
 
@@ -203,6 +243,36 @@ public class CreateGroupFragment extends BaseFragment implements OnRuntimePermis
                 .centerCrop()
                 .transform(new CircleTransform())
                 .into(ivProfilePicture);
+
+        initUploadGroupPicture(resultUri);
+    }
+
+    private void initUploadGroupPicture(Uri resultUri) {
+        showProgressDialog(getString(R.string.loading));
+
+        String requestUrl = GROUP_PICTURE_REQUEST_URL;
+        Map<String, VolleyMultipartRequest.DataPart> partMap = getByteDataParams(resultUri);
+        Map<String, String> paramsMap = null;
+
+        GenericDataHandler req1GenericDataHandler = new GenericDataHandler(this, getContext(), REQUEST_TYPE_017);
+        req1GenericDataHandler.multipartRequest(requestUrl, Request.Method.POST, partMap, paramsMap, String.class);
+    }
+
+    private Map<String, VolleyMultipartRequest.DataPart> getByteDataParams(Uri uri) {
+        Map<String, VolleyMultipartRequest.DataPart> params = new HashMap<>();
+        InputStream inputStream = null;
+        String imageName = LocalStorage.getInstance(getContext()).getUser().getMobile() + "_" + System.currentTimeMillis() + ".jpg";
+
+        try {
+            inputStream = getContext().getContentResolver().openInputStream(uri);
+            byte[] byteFile = convertStreamToByteArray(inputStream);
+            params.put("media", new VolleyMultipartRequest.DataPart(imageName, byteFile, "image/jpeg"));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return params;
     }
 
     @Override
@@ -249,5 +319,65 @@ public class CreateGroupFragment extends BaseFragment implements OnRuntimePermis
         }
 
         tietMembers.setText(memberListStr);
+    }
+
+    @Override
+    public void onResponse(Object success, Object error, final int requestCode) {
+        hideProgressDialog();
+        if (error == null) {
+            switch (requestCode) {
+                case REQUEST_TYPE_017:
+                    onUploadGroupPictureResponse((String)success);
+                    break;
+                case REQUEST_TYPE_013:
+                    onCreateGroupResponse((CreateGroupResponse) success);
+                    break;
+                default:
+                    showToastMessage("ERROR " + requestCode + "!", false);
+                    break;
+            }
+        } else {
+            Error customError = (Error) error;
+            Log.d(TAG, "Error: " + customError.getMessage() + " -- " + customError.getStatus() + " -- ");
+            if (customError.getStatus() == 000) {
+                hideProgressDialog();
+                showNetworkErrorSnackbar(content, getString(R.string.error_no_internet), getString(R.string.retry),
+                        new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                switch (requestCode) {
+                                    case REQUEST_TYPE_017:
+                                        initImageSelector();
+                                    case REQUEST_TYPE_013:
+                                        initCreateGroupRequest();
+                                        break;
+                                    default:
+                                        showToastMessage(getString(R.string.error_unknown), false);
+                                }
+                            }
+                        });
+            } else {
+                if (requestCode == REQUEST_TYPE_017) {
+                    onImageUploadError();
+                }
+                showSnackbarMessage(content, customError.getMessage(), true, getString(R.string.ok), null, true);
+            }
+        }
+
+    }
+
+    private void onImageUploadError() {
+        ivProfilePicture.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.ic_user));
+    }
+
+    private void onUploadGroupPictureResponse(String success) {
+        GroupImageUploadResponse groupImageUploadResponse = new Gson().fromJson(success, GroupImageUploadResponse.class);
+        imageUrl = groupImageUploadResponse.getUrl();
+
+    }
+
+    private void onCreateGroupResponse(CreateGroupResponse success) {
+        showToastMessage("Group created successfully!", false);
+        closeThisFragment();
     }
 }

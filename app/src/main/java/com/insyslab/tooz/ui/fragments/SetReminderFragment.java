@@ -19,6 +19,7 @@ import android.widget.TimePicker;
 import com.android.volley.Request;
 import com.google.android.gms.maps.model.LatLng;
 import com.insyslab.tooz.R;
+import com.insyslab.tooz.interfaces.OnUserFetchedListener;
 import com.insyslab.tooz.models.User;
 import com.insyslab.tooz.models.eventbus.FragmentState;
 import com.insyslab.tooz.models.eventbus.ReminderCreated;
@@ -33,13 +34,16 @@ import com.insyslab.tooz.utils.Util;
 
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
 
 import static com.insyslab.tooz.utils.AppConstants.KEY_FROM_FRAGMENT;
+import static com.insyslab.tooz.utils.AppConstants.KEY_GET_SELECTED_CONTACT_ID;
 import static com.insyslab.tooz.utils.AppConstants.KEY_SET_REMINDER_TYPE;
+import static com.insyslab.tooz.utils.AppConstants.KEY_TO_CONTACTS_SELECTOR_BUNDLE;
 import static com.insyslab.tooz.utils.AppConstants.VAL_SEND_REMINDER;
 import static com.insyslab.tooz.utils.AppConstants.VAL_SET_PERSONAL_REMINDER;
 import static com.insyslab.tooz.utils.ConstantClass.CREATE_REMINDER_REQUEST_URL;
@@ -55,7 +59,7 @@ import static com.insyslab.tooz.utils.Util.getMonthFromIndex;
  * Created by TaNMay on 26/09/16.
  */
 
-public class SetReminderFragment extends BaseFragment implements BaseResponseInterface {
+public class SetReminderFragment extends BaseFragment implements BaseResponseInterface, OnUserFetchedListener {
 
     public static final String TAG = "SetReminderFrag ==> ";
 
@@ -73,6 +77,7 @@ public class SetReminderFragment extends BaseFragment implements BaseResponseInt
 
     private List<User> selectedMembers = null;
     private User user;
+    private String selectedUserId = null;
 
     public SetReminderFragment() {
 
@@ -92,7 +97,9 @@ public class SetReminderFragment extends BaseFragment implements BaseResponseInt
         if (getArguments() != null) {
             Bundle bundle = getArguments().getBundle(ARG_PARAM1);
             fragmentType = bundle.getString(KEY_SET_REMINDER_TYPE);
+            selectedUserId = bundle.getString(KEY_GET_SELECTED_CONTACT_ID);
         }
+        ActionsActivity.onUserFetchedListener = this;
     }
 
     @Override
@@ -201,6 +208,7 @@ public class SetReminderFragment extends BaseFragment implements BaseResponseInt
     private void onSelectContactsClick() {
         Bundle bundle = new Bundle();
         bundle.putString(KEY_FROM_FRAGMENT, TAG);
+        bundle.putSerializable(KEY_TO_CONTACTS_SELECTOR_BUNDLE, (ArrayList<User>) selectedMembers);
         ((ActionsActivity) getActivity()).openThisFragment(SelectContactsFragment.TAG, bundle);
     }
 
@@ -298,6 +306,14 @@ public class SetReminderFragment extends BaseFragment implements BaseResponseInt
         tilTask.setVisibility(View.VISIBLE);
         optionsSec.setVisibility(View.VISIBLE);
         updateSelectionView();
+
+        if (selectedUserId != null) {
+            setUpSelectedContacts();
+        }
+    }
+
+    private void setUpSelectedContacts() {
+        ((ActionsActivity) getActivity()).getUserFromId(selectedUserId);
     }
 
     private void setUpPersonalReminderView() {
@@ -455,5 +471,12 @@ public class SetReminderFragment extends BaseFragment implements BaseResponseInt
             showToastMessage("Reminder sent to " + selectedMembers.size() + " contact(s)!", true);
         else showToastMessage("Personal reminder created successfully!", true);
         closeThisFragment();
+    }
+
+    @Override
+    public void onUserFetched(User user) {
+        List<User> list = new ArrayList<>();
+        list.add(user);
+        onMembersSelected(list);
     }
 }

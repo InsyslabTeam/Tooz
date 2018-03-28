@@ -4,6 +4,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
 import com.insyslab.tooz.models.User;
 import com.insyslab.tooz.models.requests.ContactSyncRequest;
+import com.insyslab.tooz.models.requests.CreateGroupRequest;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -31,6 +32,7 @@ public class RequestBuilder {
     private final String key_longitude = "longitude";
     private final String key_owner_user = "user";
     private final String key_contacts = "contacts";
+    private final String key_feedback = "feedback";
 
     public RequestBuilder() {
     }
@@ -114,5 +116,50 @@ public class RequestBuilder {
             jsonArray.put(contactsArray.get(i).getId());
         }
         return jsonArray;
+    }
+
+    public JSONObject getCreateGroupRequestPayload(String groupName, List<User> selectedMembers, String imageUrl, String createrId) {
+        try {
+            CreateGroupRequest createGroupRequest = new CreateGroupRequest();
+
+            createGroupRequest.setName(groupName);
+            createGroupRequest.setGroupCreator(createrId);
+
+            List<String> members = new ArrayList<>();
+            for (int i = 0; i < selectedMembers.size(); i++) {
+                members.add(selectedMembers.get(i).getId());
+            }
+
+            createGroupRequest.setUsers(members);
+            createGroupRequest.setUrl(imageUrl);
+
+            JSONObject jsonObject = new JSONObject(new Gson().toJson(createGroupRequest));
+            return jsonObject;
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public JSONObject getFeedbackRequestPayload(String feedbackText) {
+        try {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put(key_feedback, feedbackText);
+            return jsonObject;
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public JSONObject getInviteRequestPayload(String mobile) {
+        try {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put(key_mobile, mobile);
+            return jsonObject;
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }

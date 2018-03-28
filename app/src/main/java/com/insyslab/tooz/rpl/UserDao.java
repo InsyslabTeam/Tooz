@@ -21,13 +21,13 @@ public interface UserDao {
     void insertAll(List<User> user);
 
     @Query("delete from user where id=:id")
-    int deleteUser(int id);
+    int deleteUser(String id);
 
     @Query("delete from user")
     int deleteAllUsers();
 
     @Query("select * from user where id=:id")
-    LiveData<User> fetchUserByUserId(int id);
+    LiveData<User> fetchUserByUserId(String id);
 
     @Query("select * from user")
     LiveData<List<User>> fetchAllUsers();

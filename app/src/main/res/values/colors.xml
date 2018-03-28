@@ -34,4 +34,6 @@
 
     <color name="setReminderIconBackground">#D3DCEC</color>
     <color name="setReminderIconBackgroundPressed">#BDC6D4</color>
+
+    <color name="feedbackEdittextOutline">#666666</color>
 </resources>

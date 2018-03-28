@@ -65,6 +65,7 @@
         android:id="@+id/iur_options_sec"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:visibility="gone"
         android:weightSum="2">
 
         <RelativeLayout

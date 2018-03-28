@@ -11,8 +11,8 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.insyslab.tooz.R;
-import com.insyslab.tooz.models.eventbus.FragmentState;
 import com.insyslab.tooz.models.PhoneContact;
+import com.insyslab.tooz.models.eventbus.FragmentState;
 import com.insyslab.tooz.ui.fragments.BlockedContactsFragment;
 import com.insyslab.tooz.ui.fragments.FeedbackFragment;
 import com.insyslab.tooz.ui.fragments.HelpFragment;
@@ -161,11 +161,13 @@ public class SettingsActivity extends BaseActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         if (currentFragment.equals(ManualContactSyncFragment.TAG)) {
             getMenuInflater().inflate(R.menu.menu_sync, menu);
+        } else if (currentFragment.equals(FeedbackFragment.TAG)) {
+            getMenuInflater().inflate(R.menu.menu_submit, menu);
         } else if (!currentFragment.equals(SettingsFragment.TAG)
                 && !currentFragment.equals(TermsPrivPolicyFragment.TAG)
                 && !currentFragment.equals(FeedbackFragment.TAG)
                 && !currentFragment.equals(HelpFragment.TAG)) {
-            getMenuInflater().inflate(R.menu.menu_actions, menu);
+            getMenuInflater().inflate(R.menu.menu_save, menu);
         }
         return true;
     }
@@ -181,6 +183,11 @@ public class SettingsActivity extends BaseActivity {
 
         if (id == R.id.action_sync) {
             onToolbarSyncClick();
+            return true;
+        }
+
+        if (id == R.id.action_submit) {
+            onToolbarSaveClick();
             return true;
         }
 
@@ -200,6 +207,10 @@ public class SettingsActivity extends BaseActivity {
             case UpdateProfileFragment.TAG:
                 UpdateProfileFragment fragment3 = (UpdateProfileFragment) getSupportFragmentManager().findFragmentById(R.id.as_fragment_container);
                 fragment3.onSaveClick();
+                break;
+            case FeedbackFragment.TAG:
+                FeedbackFragment fragment4 = (FeedbackFragment) getSupportFragmentManager().findFragmentById(R.id.as_fragment_container);
+                fragment4.onSaveClick();
                 break;
             default:
                 showToastMessage("Some error occurred!", false);

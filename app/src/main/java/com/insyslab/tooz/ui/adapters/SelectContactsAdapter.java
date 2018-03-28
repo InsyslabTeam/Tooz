@@ -15,6 +15,7 @@ import com.insyslab.tooz.models.User;
 import com.insyslab.tooz.ui.customui.CircleTransform;
 import com.squareup.picasso.Picasso;
 
+import java.util.HashMap;
 import java.util.List;
 
 

@@ -52,7 +52,7 @@ public class GenericDataHandler implements SuccessListener {
     }
 
     public void multipartRequest(String url, Integer method, Map<String, VolleyMultipartRequest.DataPart> partMap, Map<String, String> paramsMap, Type responseType) {
-        HttpRequestHandler.makeMultipartRequest(BASE_URL + url, token, method, this, partMap, paramsMap, responseType, context);
+        HttpRequestHandler.makeMultipartRequest(BASE_URL + url, token, method, this, partMap, paramsMap, responseType, context, responseType == String.class);
     }
 
     @Override
