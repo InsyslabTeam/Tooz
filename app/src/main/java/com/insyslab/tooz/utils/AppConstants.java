@@ -21,6 +21,11 @@ public class AppConstants {
     public static final String KEY_SET_REMINDER_TYPE = "KEY_SET_REMINDER_TYPE";
     public static final String KEY_GET_REMINDER_ID = "KEY_GET_REMINDER_ID";
 
+    public static final String KEY_SELECTED_CONTACT_BUNDLE = "KEY_SELECTED_CONTACT_BUNDLE";
+    public static final String KEY_GET_SELECTED_CONTACT_ID = "KEY_GET_SELECTED_CONTACT_ID";
+
+    public static final String KEY_TO_CONTACTS_SELECTOR_BUNDLE = "KEY_TO_CONTACTS_SELECTOR_BUNDLE";
+
     public static final String KEY_OTP_SMS = "otp";
     public static final String KEY_OTP_MESSAGE = "KEY_OTP_MESSAGE";
     public static final String KEY_OTP_NUMBER = "KEY_OTP_NUMBER";

@@ -4,7 +4,7 @@ import android.arch.lifecycle.LiveData;
 import android.arch.persistence.room.Room;
 import android.os.AsyncTask;
 
-import com.insyslab.tooz.models.User;
+import com.insyslab.tooz.models.UserGroup;
 import com.insyslab.tooz.utils.ToozApplication;
 
 import java.util.List;
@@ -13,19 +13,19 @@ import java.util.List;
  * Created by TaNMay on 20/12/17.
  */
 
-public class UserRepository {
+public class UserGroupRepository {
 
     private AppDatabase appDatabase;
 
-    public UserRepository(ToozApplication toozApplication) {
+    public UserGroupRepository(ToozApplication toozApplication) {
         appDatabase = Room.databaseBuilder(toozApplication, AppDatabase.class, AppDatabase.DB_NAME).build();
     }
 
-    public void insertUsers(final List<User> userList) {
+    public void insertGroups(final List<UserGroup> userGroupList) {
         final AsyncTask<Void, Void, Void> asyncTaskIns = new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... voids) {
-                appDatabase.userDao().insertAll(userList);
+                appDatabase.userGroupDao().insertAll(userGroupList);
                 return null;
             }
 
@@ -38,7 +38,7 @@ public class UserRepository {
         final AsyncTask<Void, Void, Void> asyncTaskDel = new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... voids) {
-                appDatabase.userDao().deleteAllUsers();
+                appDatabase.userGroupDao().deleteAllUserGroups();
                 return null;
             }
 
@@ -51,33 +51,11 @@ public class UserRepository {
     }
 
 
-    public LiveData<List<User>> getAllUser() {
-        return appDatabase.userDao().fetchAllUsers();
+    public LiveData<List<UserGroup>> getAllUserGroups() {
+        return appDatabase.userGroupDao().fetchAllUserGroups();
     }
 
-    public LiveData<List<User>> getAppUserContacts() {
-        return appDatabase.userDao().fetchAppUserContacts();
-    }
-
-    public LiveData<User> getUserFromId(String id) {
-        return appDatabase.userDao().fetchUserByUserId(id);
-    }
-
-    public LiveData<List<User>> getNonAppUserContacts() {
-        return appDatabase.userDao().fetchNonAppUserContacts();
-    }
-
-    public void deleteUserFromUserId(final String id) {
-        new AsyncTask<Void, Void, Void>() {
-            @Override
-            protected Void doInBackground(Void... voids) {
-                appDatabase.userDao().deleteUser(id);
-                return null;
-            }
-        }.execute();
-    }
-
-    public int clearUserTable() {
-        return appDatabase.userDao().deleteAllUsers();
+    public int clearUserGroupTable() {
+        return appDatabase.userGroupDao().deleteAllUserGroups();
     }
 }

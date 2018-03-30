@@ -13,4 +13,8 @@ public interface OnUserContactClickListener {
     void onNonAppUserContactClick(View view);
 
     void onNonAppUserInviteClick(int position);
+
+    void onAppUserSendReminderClick(int position);
+
+    void onAppUserBlockClick(int position);
 }

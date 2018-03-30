@@ -13,15 +13,17 @@ import android.widget.RelativeLayout;
 
 import com.insyslab.tooz.R;
 import com.insyslab.tooz.interfaces.OnSelectContactItemClickListener;
-import com.insyslab.tooz.models.eventbus.FragmentState;
 import com.insyslab.tooz.models.User;
+import com.insyslab.tooz.models.eventbus.FragmentState;
 import com.insyslab.tooz.ui.activities.ActionsActivity;
 import com.insyslab.tooz.ui.adapters.SelectContactsAdapter;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import static com.insyslab.tooz.utils.AppConstants.KEY_FROM_FRAGMENT;
+import static com.insyslab.tooz.utils.AppConstants.KEY_TO_CONTACTS_SELECTOR_BUNDLE;
 
 /**
  * Created by TaNMay on 26/09/16.
@@ -63,6 +65,7 @@ public class SelectContactsFragment extends BaseFragment implements OnSelectCont
         if (getArguments() != null) {
             Bundle bundle = getArguments().getBundle(ARG_PARAM1);
             fromFragment = bundle.getString(KEY_FROM_FRAGMENT);
+            selectedContacts = (List<User>) bundle.getSerializable(KEY_TO_CONTACTS_SELECTOR_BUNDLE);
         }
     }
 
@@ -74,7 +77,7 @@ public class SelectContactsFragment extends BaseFragment implements OnSelectCont
         initView(layout);
         setUpActions();
 
-        selectedContacts = new ArrayList<>();
+        if (selectedContacts == null) selectedContacts = new ArrayList<>();
         contactItems = ((ActionsActivity) getActivity()).getAppUserList();
         setUpContactsRv();
 
@@ -82,10 +85,25 @@ public class SelectContactsFragment extends BaseFragment implements OnSelectCont
     }
 
     private void setUpContactsRv() {
+        if (selectedContacts.size() > 0) getUpgradedContactList();
+
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
         contactsAdapter = new SelectContactsAdapter(this, contactItems);
         rvContacts.setLayoutManager(layoutManager);
         rvContacts.setAdapter(contactsAdapter);
+    }
+
+    private void getUpgradedContactList() {
+        HashMap<String, User> hashMap = new HashMap<>();
+        for (int i = 0; i < selectedContacts.size(); i++) {
+            hashMap.put(selectedContacts.get(i).getId(), selectedContacts.get(i));
+        }
+
+        for (int i = 0; i < contactItems.size(); i++) {
+            if (hashMap.get(contactItems.get(i).getId()) != null) {
+                contactItems.get(i).setSelected(true);
+            }
+        }
     }
 
     private void initView(View rootView) {
@@ -120,6 +138,7 @@ public class SelectContactsFragment extends BaseFragment implements OnSelectCont
 
     @Override
     public void onDetach() {
+        selectedContacts = getListOfSelectedContacts();
         updateFragment(new FragmentState(fromFragment));
         onContactsSelectedListener.onContactsSelected(selectedContacts, fromFragment);
         super.onDetach();

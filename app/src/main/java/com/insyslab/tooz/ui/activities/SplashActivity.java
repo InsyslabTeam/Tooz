@@ -84,6 +84,7 @@ public class SplashActivity extends BaseActivity implements OnRuntimePermissions
 
     private void initProceedToDashboard() {
         if (Util.verifyPermission(this, ACCESS_FINE_LOCATION) && Util.verifyPermission(this, ACCESS_COARSE_LOCATION)) {
+            initLocationService();
             proceedToDashboard();
         } else {
             requestLocationPermissions();

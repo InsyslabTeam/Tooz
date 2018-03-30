@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,21 +13,37 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.android.volley.Request;
 import com.insyslab.tooz.R;
 import com.insyslab.tooz.interfaces.OnUserContactClickListener;
 import com.insyslab.tooz.models.User;
 import com.insyslab.tooz.models.eventbus.FragmentState;
+import com.insyslab.tooz.models.responses.BlockUserResponse;
+import com.insyslab.tooz.models.responses.Error;
+import com.insyslab.tooz.models.responses.InviteNonAppUserResponse;
+import com.insyslab.tooz.restclient.BaseResponseInterface;
+import com.insyslab.tooz.restclient.GenericDataHandler;
+import com.insyslab.tooz.restclient.RequestBuilder;
 import com.insyslab.tooz.ui.activities.DashboardActivity;
 import com.insyslab.tooz.ui.adapters.AppUserContactsAdapter;
 import com.insyslab.tooz.ui.adapters.NonAppUserContactsAdapter;
 
+import org.json.JSONObject;
+
 import java.util.List;
+
+import static com.insyslab.tooz.utils.AppConstants.KEY_GET_SELECTED_CONTACT_ID;
+import static com.insyslab.tooz.utils.AppConstants.VAL_SEND_REMINDER;
+import static com.insyslab.tooz.utils.ConstantClass.BLOCK_CONTACT_REQUEST_URL;
+import static com.insyslab.tooz.utils.ConstantClass.INVITE_NON_APP_USER_REQUEST_URL;
+import static com.insyslab.tooz.utils.ConstantClass.REQUEST_TYPE_018;
+import static com.insyslab.tooz.utils.ConstantClass.REQUEST_TYPE_022;
 
 /**
  * Created by TaNMay on 26/09/16.
  */
 
-public class AllContactsFragment extends BaseFragment implements OnUserContactClickListener {
+public class AllContactsFragment extends BaseFragment implements OnUserContactClickListener, BaseResponseInterface {
 
     public static final String TAG = "AllContactsFrag ==> ";
 
@@ -41,6 +58,7 @@ public class AllContactsFragment extends BaseFragment implements OnUserContactCl
     private RecyclerView.Adapter appUserContactsAdapter, nonAppUserContactsAdapter;
 
     private List<User> appUserContactsList, nonAppUserContactsList;
+    private int selectedAppUserItemIndex = -1;
 
     public AllContactsFragment() {
 
@@ -71,7 +89,8 @@ public class AllContactsFragment extends BaseFragment implements OnUserContactCl
         setUpActions();
 
         appUserContactsList = ((DashboardActivity) getActivity()).getAppUserList();
-        nonAppUserContactsList = ((DashboardActivity) getActivity()).getNonAppUserList();
+        List<User> tempList = ((DashboardActivity) getActivity()).getNonAppUserList();
+        nonAppUserContactsList = tempList.subList(0, tempList.size() > 10 ? 10 : tempList.size());
 
         if (contactsSynced()) {
             noContentView.setVisibility(View.GONE);
@@ -118,9 +137,8 @@ public class AllContactsFragment extends BaseFragment implements OnUserContactCl
     }
 
     private void setUpNonAppUserContactsRv() {
-        int maxSize = nonAppUserContactsList.size() > 10 ? 10 : nonAppUserContactsList.size();
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
-        nonAppUserContactsAdapter = new NonAppUserContactsAdapter(this, nonAppUserContactsList.subList(0, maxSize));
+        nonAppUserContactsAdapter = new NonAppUserContactsAdapter(this, nonAppUserContactsList);
         nonAppUserContactsRv.setLayoutManager(layoutManager);
         nonAppUserContactsRv.setAdapter(nonAppUserContactsAdapter);
     }
@@ -175,6 +193,101 @@ public class AllContactsFragment extends BaseFragment implements OnUserContactCl
 
     @Override
     public void onNonAppUserInviteClick(int position) {
+        initNonAppUserInviteRequest(nonAppUserContactsList.get(position).getMobile());
+    }
 
+    @Override
+    public void onAppUserSendReminderClick(int position) {
+        openSendReminderView(appUserContactsList.get(position));
+    }
+
+    private void openSendReminderView(User user) {
+        Bundle bundle = new Bundle();
+        bundle.putString(KEY_GET_SELECTED_CONTACT_ID, user.getId());
+        ((DashboardActivity) getActivity()).openActionsActivity(SetReminderFragment.TAG, VAL_SEND_REMINDER, bundle);
+    }
+
+    @Override
+    public void onAppUserBlockClick(int position) {
+        selectedAppUserItemIndex = position;
+        initBlockUserRequest(appUserContactsList.get(position));
+    }
+
+    private void initBlockUserRequest(User user) {
+        showProgressDialog(getString(R.string.loading));
+
+        String requestUrl = BLOCK_CONTACT_REQUEST_URL;
+        JSONObject requestObject = new RequestBuilder().getFeedbackRequestPayload(user.getId());
+
+        if (requestObject != null) {
+            GenericDataHandler req2GenericDataHandler = new GenericDataHandler(this, getContext(), REQUEST_TYPE_018);
+            req2GenericDataHandler.jsonObjectRequest(requestObject, requestUrl, Request.Method.POST, BlockUserResponse.class);
+        }
+    }
+
+    private void initNonAppUserInviteRequest(String mobile) {
+        showProgressDialog(getString(R.string.loading));
+
+        String requestUrl = INVITE_NON_APP_USER_REQUEST_URL;
+        JSONObject requestObject = new RequestBuilder().getInviteRequestPayload(mobile);
+
+        if (requestObject != null) {
+            GenericDataHandler req1GenericDataHandler = new GenericDataHandler(this, getContext(), REQUEST_TYPE_022);
+            req1GenericDataHandler.jsonObjectRequest(requestObject, requestUrl, Request.Method.POST, InviteNonAppUserResponse.class);
+        }
+    }
+
+    @Override
+    public void onResponse(Object success, Object error, final int requestCode) {
+        hideProgressDialog();
+        if (error == null) {
+            switch (requestCode) {
+                case REQUEST_TYPE_022:
+                    onInviteNonAppUserResponse((InviteNonAppUserResponse) success);
+                    break;
+                case REQUEST_TYPE_018:
+                    onBlockContactResponse((BlockUserResponse) success);
+                    break;
+                default:
+                    showToastMessage("ERROR " + requestCode + "!", false);
+                    break;
+            }
+        } else {
+            Error customError = (Error) error;
+            Log.d(TAG, "Error: " + customError.getMessage() + " -- " + customError.getStatus() + " -- ");
+            if (customError.getStatus() == 000) {
+                hideProgressDialog();
+                showNetworkErrorSnackbar(content, getString(R.string.error_no_internet), getString(R.string.retry),
+                        new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                switch (requestCode) {
+                                    case REQUEST_TYPE_022:
+                                        break;
+                                    default:
+                                        showToastMessage(getString(R.string.error_unknown), false);
+                                }
+                            }
+                        });
+            } else {
+                showSnackbarMessage(getActivity().findViewById(R.id.ad_fragment_container), customError.getMessage(), true, getString(R.string.ok), null, true);
+
+            }
+        }
+    }
+
+    private void onBlockContactResponse(BlockUserResponse success) {
+        appUserContactsList.remove(selectedAppUserItemIndex);
+        appUserContactsAdapter.notifyItemChanged(selectedAppUserItemIndex);
+
+        initLocalDbContactDeletion(appUserContactsList.get(selectedAppUserItemIndex).getId());
+    }
+
+    private void initLocalDbContactDeletion(String userId) {
+        ((DashboardActivity) getActivity()).deleteUserFromDb(userId);
+    }
+
+    private void onInviteNonAppUserResponse(InviteNonAppUserResponse success) {
+        showToastMessage("Invitation sent successfully!", false);
     }
 }

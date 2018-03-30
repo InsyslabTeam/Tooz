@@ -1,5 +1,6 @@
 package com.insyslab.tooz.ui.adapters;
 
+import android.location.Location;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.view.LayoutInflater;
@@ -9,14 +10,17 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.insyslab.tooz.R;
 import com.insyslab.tooz.interfaces.OnUpcomingReminderClickListener;
 import com.insyslab.tooz.models.Reminder;
+import com.insyslab.tooz.utils.ToozApplication;
 import com.insyslab.tooz.utils.Util;
 
 import java.util.Calendar;
 import java.util.List;
 
+import static com.insyslab.tooz.utils.Util.getDistanceBetweenTwoCoords;
 import static com.insyslab.tooz.utils.Util.getReminderFormatedDate;
 import static com.insyslab.tooz.utils.Util.getReminderFormatedTime;
 import static com.insyslab.tooz.utils.Util.getReminderRemainingTime;
@@ -30,11 +34,13 @@ public class UpcomingRemindersAdapter extends RecyclerView.Adapter<UpcomingRemin
     private OnUpcomingReminderClickListener onUpcomingReminderClickListener;
     private List<Reminder> reminders;
     private Calendar currentTime;
+    private Location currentLocation;
 
     public UpcomingRemindersAdapter(OnUpcomingReminderClickListener onUpcomingReminderClickListener, List<Reminder> reminders) {
         this.onUpcomingReminderClickListener = onUpcomingReminderClickListener;
         this.reminders = reminders;
         currentTime = Calendar.getInstance();
+        currentLocation = ToozApplication.getInstance().getLastLocation();
     }
 
     @Override
@@ -69,6 +75,20 @@ public class UpcomingRemindersAdapter extends RecyclerView.Adapter<UpcomingRemin
             holder.date.setText(getReminderFormatedDate(cal));
             holder.time.setText(getReminderFormatedTime(cal));
             holder.remainingTime.setText("After " + getReminderRemainingTime(cal, currentTime));
+        } else if (reminder.getLatitude() != null && reminder.getLongitude() != null) {
+            Double dLat = Double.parseDouble(reminder.getLatitude());
+            Double dLng = Double.parseDouble(reminder.getLongitude());
+            String address = Util.getShortAddressFromCoords(holder.date.getContext(), new LatLng(dLat, dLng));
+            if (address.length() > 25) {
+                holder.date.setText(address.substring(0, 25) + "\n" + address.substring(25, address.length() > 50 ? 48 : address.length()));
+            } else {
+                holder.date.setText(address);
+            }
+            if (currentLocation != null) {
+                Double distanceFromPointInMeters = getDistanceBetweenTwoCoords(currentLocation.getLatitude(), currentLocation.getLongitude(), dLat, dLng);
+                String distance = Util.getFormattedDistance(distanceFromPointInMeters);
+                holder.remainingTime.setText(distance + " from here");
+            }
         }
 
         holder.setter.setText(Html.fromHtml("Sent by <B>" + reminder.getUser().getName() + "</B>"));

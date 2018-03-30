@@ -63,4 +63,43 @@ public class ConstantClass {
 
     public static final int REQUEST_TYPE_012 = 1012;
     public static final String DELETE_REMINDER_REQUEST_URL = "reminder/deleteReminder/";
+
+    /**
+     * GROUPS
+     */
+    public static final int REQUEST_TYPE_013 = 1013;
+    public static final String CREATE_GROUP_REQUEST_URL = "group/addGroup";
+
+    public static final int REQUEST_TYPE_014 = 1014;
+    public static final String UPDATE_GROUP_REQUEST_URL = "group/updateGroup";
+
+    public static final int REQUEST_TYPE_015 = 1015;
+    public static final String DELETE_GROUP_REQUEST_URL = "group/deleteGroup/";
+
+    public static final int REQUEST_TYPE_016 = 1016;
+    public static final String GET_MY_GROUPS_REQUEST_URL = "group/getMyGroups";
+
+    public static final int REQUEST_TYPE_017 = 1017;
+    public static final String GROUP_PICTURE_REQUEST_URL = "group/groupProfile";
+
+    /**
+     * BLOCK/UNBLOCK
+     */
+    public static final int REQUEST_TYPE_018 = 1018;
+    public static final String BLOCK_CONTACT_REQUEST_URL = "";
+
+    public static final int REQUEST_TYPE_019 = 1019;
+    public static final String GET_BLOCKED_CONTACTS_REQUEST_URL = "";
+
+    /**
+     * OTHERS
+     */
+    public static final int REQUEST_TYPE_020 = 1020;
+    public static final String DELETE_ACCOUNT_REQUEST_URL = "";
+
+    public static final int REQUEST_TYPE_021 = 1021;
+    public static final String SEND_FEEDBACK_REQUEST_URL = "";
+
+    public static final int REQUEST_TYPE_022 = 1022;
+    public static final String INVITE_NON_APP_USER_REQUEST_URL = "";
 }

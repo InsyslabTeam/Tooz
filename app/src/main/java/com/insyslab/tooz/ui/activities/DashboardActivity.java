@@ -25,6 +25,7 @@ import com.insyslab.tooz.R;
 import com.insyslab.tooz.models.PhoneContact;
 import com.insyslab.tooz.models.Reminder;
 import com.insyslab.tooz.models.User;
+import com.insyslab.tooz.models.UserGroup;
 import com.insyslab.tooz.models.eventbus.ContactAdded;
 import com.insyslab.tooz.models.eventbus.ContactSyncUpdate;
 import com.insyslab.tooz.models.eventbus.FragmentState;
@@ -38,7 +39,6 @@ import com.insyslab.tooz.models.responses.GetDeleteReminderResponse;
 import com.insyslab.tooz.restclient.BaseResponseInterface;
 import com.insyslab.tooz.restclient.GenericDataHandler;
 import com.insyslab.tooz.restclient.RequestBuilder;
-import com.insyslab.tooz.services.LocationService;
 import com.insyslab.tooz.ui.fragments.AddContactFragment;
 import com.insyslab.tooz.ui.fragments.AllContactsFragment;
 import com.insyslab.tooz.ui.fragments.CreateGroupFragment;
@@ -54,6 +54,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import static com.insyslab.tooz.utils.AppConstants.KEY_SELECTED_CONTACT_BUNDLE;
 import static com.insyslab.tooz.utils.AppConstants.KEY_SET_REMINDER_TYPE;
 import static com.insyslab.tooz.utils.AppConstants.KEY_TO_ACTIONS;
 import static com.insyslab.tooz.utils.AppConstants.VAL_SEND_REMINDER;
@@ -62,10 +63,12 @@ import static com.insyslab.tooz.utils.ConstantClass.CONTACTS_SYNC_REQUEST_URL;
 import static com.insyslab.tooz.utils.ConstantClass.DELETE_REMINDER_REQUEST_URL;
 import static com.insyslab.tooz.utils.ConstantClass.GET_ALL_REMINDERS_REQUEST_URL;
 import static com.insyslab.tooz.utils.ConstantClass.GET_CONTACTS_REQUEST_URL;
+import static com.insyslab.tooz.utils.ConstantClass.GET_MY_GROUPS_REQUEST_URL;
 import static com.insyslab.tooz.utils.ConstantClass.REQUEST_TYPE_005;
 import static com.insyslab.tooz.utils.ConstantClass.REQUEST_TYPE_006;
 import static com.insyslab.tooz.utils.ConstantClass.REQUEST_TYPE_011;
 import static com.insyslab.tooz.utils.ConstantClass.REQUEST_TYPE_012;
+import static com.insyslab.tooz.utils.ConstantClass.REQUEST_TYPE_016;
 
 public class DashboardActivity extends BaseActivity implements BaseResponseInterface {
 
@@ -81,8 +84,6 @@ public class DashboardActivity extends BaseActivity implements BaseResponseInter
     private boolean doubleBackToExitPressedOnce;
     private List<Reminder> upcomingRemindersList = new ArrayList<>(), pastRemindersList = new ArrayList<>();
     private Integer responseCount = 0;
-
-    private Intent locationServiceIntent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -142,14 +143,17 @@ public class DashboardActivity extends BaseActivity implements BaseResponseInter
 
         GenericDataHandler req1GenericDataHandler = new GenericDataHandler(this, this, REQUEST_TYPE_006);
         req1GenericDataHandler.jsonObjectRequest(null, requestUrl, Request.Method.GET, GetContactsResponse.class);
+
+        initGetContactGroupsRequest();
     }
 
-    private void initLocationService() {
-        LocationService locationService = new LocationService();
-        locationServiceIntent = new Intent(this, locationService.getClass());
-        if (!isMyServiceRunning(locationService.getClass())) {
-            startService(locationServiceIntent);
-        }
+    private void initGetContactGroupsRequest() {
+        String requestUrl = GET_MY_GROUPS_REQUEST_URL;
+        Type responseType = new TypeToken<List<UserGroup>>() {
+        }.getType();
+
+        GenericDataHandler req4GenericDataHandler = new GenericDataHandler(this, this, REQUEST_TYPE_016);
+        req4GenericDataHandler.jsonArrayRequest(requestUrl, responseType);
     }
 
     public void openThisFragment(String fragmentTag, Object bundle) {
@@ -230,28 +234,29 @@ public class DashboardActivity extends BaseActivity implements BaseResponseInter
 
     private void onCreateGroupClick() {
         floatingActionMenu.close(true);
-        openActionsActivity(CreateGroupFragment.TAG, null);
+        openActionsActivity(CreateGroupFragment.TAG, null, null);
     }
 
     private void onSendReminderClick() {
         floatingActionMenu.close(true);
-        openActionsActivity(SetReminderFragment.TAG, VAL_SEND_REMINDER);
+        openActionsActivity(SetReminderFragment.TAG, VAL_SEND_REMINDER, null);
     }
 
     private void onSetPersonalReminderClick() {
         floatingActionMenu.close(true);
-        openActionsActivity(SetReminderFragment.TAG, VAL_SET_PERSONAL_REMINDER);
+        openActionsActivity(SetReminderFragment.TAG, VAL_SET_PERSONAL_REMINDER, null);
     }
 
     private void onAddContactClick() {
         floatingActionMenu.close(true);
-        openActionsActivity(AddContactFragment.TAG, null);
+        openActionsActivity(AddContactFragment.TAG, null, null);
     }
 
-    private void openActionsActivity(String fragmentTag, String fragmentType) {
+    public void openActionsActivity(String fragmentTag, String fragmentType, Bundle bundle) {
         Intent intent = new Intent(this, ActionsActivity.class);
         intent.putExtra(KEY_TO_ACTIONS, fragmentTag);
         intent.putExtra(KEY_SET_REMINDER_TYPE, fragmentType);
+        intent.putExtra(KEY_SELECTED_CONTACT_BUNDLE, bundle);
         startActivity(intent);
         overridePendingTransition(R.anim.slide_in_from_bottom, 0);
     }
@@ -469,6 +474,9 @@ public class DashboardActivity extends BaseActivity implements BaseResponseInter
                 case REQUEST_TYPE_012:
                     onGetDeleteReminderResponse((GetDeleteReminderResponse) success);
                     break;
+                case REQUEST_TYPE_016:
+                    onGetMyGroupsResponse((List<UserGroup>) success);
+                    break;
                 default:
                     showToastMessage("ERROR " + requestCode + "!", false);
                     break;
@@ -498,6 +506,15 @@ public class DashboardActivity extends BaseActivity implements BaseResponseInter
                 showSnackbarMessage(findViewById(R.id.ad_fragment_container), customError.getMessage(), true, getString(R.string.ok), null, true);
             }
         }
+    }
+
+    private void onGetMyGroupsResponse(List<UserGroup> success) {
+        initLocalDbGroupsUpdate(success);
+        if (responseCount > 2) resumeNormalApp();
+    }
+
+    private void initLocalDbGroupsUpdate(List<UserGroup> userGroups) {
+        userGroupRepository.insertGroups(userGroups);
     }
 
     private void onGetDeleteReminderResponse(GetDeleteReminderResponse success) {
@@ -534,13 +551,13 @@ public class DashboardActivity extends BaseActivity implements BaseResponseInter
 
     private void onGetAllRemindersResponse(List<Reminder> success) {
         initLocalDbRemindersUpdate(success);
-        if (responseCount > 1) resumeNormalApp();
+        if (responseCount > 2) resumeNormalApp();
     }
 
     private void onGetContactsResponse(GetContactsResponse success) {
         initLocalDbContactsUpdate(success.getAppUser());
         initLocalDbContactsUpdate(success.getNonAppUser());
-        if (responseCount > 1) resumeNormalApp();
+        if (responseCount > 2) resumeNormalApp();
     }
 
     private void initLocalDbRemindersUpdate(final List<Reminder> reminderList) {
@@ -662,6 +679,22 @@ public class DashboardActivity extends BaseActivity implements BaseResponseInter
 
     public void deleteReminder(String reminderId) {
         initDeleteReminderRequest(reminderId);
+    }
+
+    public void deleteUserFromDb(final String userId) {
+        new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... voids) {
+                userRepository.deleteUserFromUserId(userId);
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                super.onPostExecute(aVoid);
+                showToastMessage("User deleted successfully!", true);
+            }
+        }.execute();
     }
 
     private void initDeleteReminderRequest(String reminderId) {

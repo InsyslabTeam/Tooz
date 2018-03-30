@@ -3,7 +3,9 @@ package com.insyslab.tooz.models.responses;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Token {
+import java.io.Serializable;
+
+public class Token implements Serializable {
 
     @SerializedName("access_token")
     @Expose

@@ -338,7 +338,7 @@ public class HttpRequestHandler {
     public static void makeMultipartRequest(String url, final String token, int method, final SuccessListener listener,
                                             final Map<String, VolleyMultipartRequest.DataPart> partMap,
                                             final Map<String, String> paramsMap, final Type responseType,
-                                            Context context) {
+                                            Context context, final Boolean isStringResponse) {
         if (hasInternetAccess(context)) {
             Log.d(TAG, "Make Multipart Request -");
             Log.d(TAG, "Token: " + token);
@@ -352,8 +352,11 @@ public class HttpRequestHandler {
                     new Response.Listener<NetworkResponse>() {
                         @Override
                         public void onResponse(NetworkResponse response) {
-                            Log.d(TAG, "Response: " + response.statusCode);
-                            listener.onSuccess(null, null, response.statusCode + "", responseType);
+                            Log.d(TAG, "Response: " + response.data + " -- " + new String(response.data));
+                            if (!isStringResponse)
+                                listener.onSuccess(null, null, response.statusCode + "", responseType);
+                            else
+                                listener.onSuccess(null, null, new String(response.data) + "", responseType);
                         }
                     },
                     new Response.ErrorListener() {
@@ -435,7 +438,8 @@ public class HttpRequestHandler {
 
     private static String getErrorMessage(String jsonStr) {
         ErrorFromServer error = new Gson().fromJson(jsonStr, ErrorFromServer.class);
-        return error.getMessage();
+        return error != null ? error.getMessage() : "Error!";
+
     }
 
     private static String getObjectInStringFormat(JSONObject jObject) {

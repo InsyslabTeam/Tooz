@@ -23,7 +23,9 @@ import com.insyslab.tooz.interfaces.OnRuntimePermissionsResultListener;
 import com.insyslab.tooz.models.User;
 import com.insyslab.tooz.rpl.PhoneContactRepository;
 import com.insyslab.tooz.rpl.ReminderRepository;
+import com.insyslab.tooz.rpl.UserGroupRepository;
 import com.insyslab.tooz.rpl.UserRepository;
+import com.insyslab.tooz.services.LocationService;
 import com.insyslab.tooz.services.ReminderSchedulingService;
 import com.insyslab.tooz.utils.ToozApplication;
 
@@ -55,15 +57,23 @@ public abstract class BaseActivity extends AppCompatActivity {
     private final int REQUEST_CONTACTS_PERMISSION_CODE = 2;
     private final int REQUEST_STORAGE_PERMISSION_CODE = 3;
     private final int REQUEST_LOCATION_PERMISSION_CODE = 4;
+
     public UserRepository userRepository;
+    public UserGroupRepository userGroupRepository;
     public ReminderRepository reminderRepository;
     public PhoneContactRepository phoneContactRepository;
+
+    public Intent locationServiceIntent;
+
     protected ProgressDialog mProgressDialog = null;
+
     private List<User> appUserList = new ArrayList<>(), nonAppUserList = new ArrayList<>();
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         userRepository = new UserRepository((ToozApplication) getApplicationContext());
+        userGroupRepository = new UserGroupRepository((ToozApplication) getApplicationContext());
         reminderRepository = new ReminderRepository((ToozApplication) getApplicationContext());
         phoneContactRepository = new PhoneContactRepository((ToozApplication) getApplicationContext());
         super.onCreate(savedInstanceState);
@@ -380,6 +390,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     public void clearRoomDatabase() {
         userRepository.clearUserTable();
+        userGroupRepository.clearUserGroupTable();
         reminderRepository.clearReminderTable();
         phoneContactRepository.clearPhoneContactTable();
     }
@@ -388,4 +399,13 @@ public abstract class BaseActivity extends AppCompatActivity {
         Intent intent = new Intent(this, ReminderSchedulingService.class);
         startService(intent);
     }
+
+    public void initLocationService() {
+        LocationService locationService = new LocationService();
+        locationServiceIntent = new Intent(this, locationService.getClass());
+        if (!isMyServiceRunning(locationService.getClass())) {
+            startService(locationServiceIntent);
+        }
+    }
+
 }
