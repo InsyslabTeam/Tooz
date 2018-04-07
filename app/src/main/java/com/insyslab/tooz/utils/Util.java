@@ -264,11 +264,14 @@ public class Util {
             List<Address> addresses = geocoder.getFromLocation(location.latitude, location.longitude, 1);
             String address = addresses.get(0).getAddressLine(0);
             String thoroughfare = addresses.get(0).getThoroughfare();
+            String featureName = addresses.get(0).getFeatureName();
             String subLocality = addresses.get(0).getSubLocality();
             String city = addresses.get(0).getLocality();
 
             if (thoroughfare != null) finalAddress += thoroughfare;
-            if (subLocality != null) finalAddress += ", " + subLocality;
+            else if (featureName!=null) finalAddress += featureName;
+            if (subLocality != null)
+                finalAddress += (finalAddress.length() > 0 ? ", " : "") + subLocality;
             if (city != null) finalAddress += ", " + city;
             if (address != null && thoroughfare == null && subLocality == null)
                 finalAddress = address;
