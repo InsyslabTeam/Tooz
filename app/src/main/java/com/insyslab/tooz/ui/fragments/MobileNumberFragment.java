@@ -31,6 +31,7 @@ import static android.Manifest.permission.READ_SMS;
 import static android.Manifest.permission.RECEIVE_SMS;
 import static com.insyslab.tooz.utils.ConstantClass.REQUEST_TYPE_001;
 import static com.insyslab.tooz.utils.ConstantClass.SIGN_IN_REQUEST_URL;
+import static com.insyslab.tooz.utils.Util.getDeviceId;
 
 /**
  * Created by TaNMay on 26/09/16.
@@ -114,7 +115,7 @@ public class MobileNumberFragment extends BaseFragment implements BaseResponseIn
         showProgressDialog(getString(R.string.loading));
 
         String requestUrl = SIGN_IN_REQUEST_URL;
-        JSONObject requestObject = new RequestBuilder().getSignInRequestPayload(tietMobileNumber.getText().toString());
+        JSONObject requestObject = new RequestBuilder().getSignInRequestPayload(tietMobileNumber.getText().toString(), getDeviceId());
 
         if (requestObject != null) {
             GenericDataHandler req1GenericDataHandler = new GenericDataHandler(this, getContext(), REQUEST_TYPE_001);

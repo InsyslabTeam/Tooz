@@ -27,7 +27,7 @@ public interface UserGroupDao {
     int deleteAllUserGroups();
 
     @Query("select * from UserGroup where id=:id")
-    LiveData<UserGroup> fetchUserGroupById(int id);
+    LiveData<UserGroup> fetchUserGroupById(String id);
 
     @Query("select * from UserGroup")
     LiveData<List<UserGroup>> fetchAllUserGroups();

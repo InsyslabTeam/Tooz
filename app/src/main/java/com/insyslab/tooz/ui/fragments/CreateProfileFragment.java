@@ -48,6 +48,7 @@ import static com.insyslab.tooz.utils.ConstantClass.REQUEST_TYPE_004;
 import static com.insyslab.tooz.utils.ConstantClass.REQUEST_TYPE_008;
 import static com.insyslab.tooz.utils.ConstantClass.UPDATE_PROFILE_PICTURE_REQUEST_URL;
 import static com.insyslab.tooz.utils.MultipartFileHelper.convertStreamToByteArray;
+import static com.insyslab.tooz.utils.Util.getDeviceId;
 
 /**
  * Created by TaNMay on 26/09/16.
@@ -97,6 +98,7 @@ public class CreateProfileFragment extends BaseFragment implements BaseResponseI
         setUpActions();
 
         user = LocalStorage.getInstance(getContext()).getUser();
+        user.setDeviceId(getDeviceId());
 
         setUpViewDetails();
 
@@ -126,7 +128,7 @@ public class CreateProfileFragment extends BaseFragment implements BaseResponseI
             tietName.setError(getString(R.string.error_empty_field));
         } else if (!Validator.isValidName(name)) {
             tietName.setError(getString(R.string.error_invalid_name));
-        } else if (user.getName() != null && !user.getName().isEmpty() && user.getName().equals(name)) {
+//        } else if (user.getName() != null && !user.getName().isEmpty() && user.getName().equals(name)) {
             openSyncContactsFragment();
         } else {
             initCreateProfileRequest();
@@ -259,11 +261,13 @@ public class CreateProfileFragment extends BaseFragment implements BaseResponseI
 
     private void onUpdateProfilePictureResponse(User success) {
         user = success;
+        user.setDeviceId(getDeviceId());
         LocalStorage.getInstance(getContext()).setUser(success);
     }
 
     private void onCreateProfileResponse(User success) {
         user = success;
+        user.setDeviceId(getDeviceId());
         LocalStorage.getInstance(getContext()).setUser(success);
         openSyncContactsFragment();
     }

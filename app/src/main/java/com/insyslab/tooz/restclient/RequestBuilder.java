@@ -3,6 +3,7 @@ package com.insyslab.tooz.restclient;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
 import com.insyslab.tooz.models.User;
+import com.insyslab.tooz.models.UserGroup;
 import com.insyslab.tooz.models.requests.ContactSyncRequest;
 import com.insyslab.tooz.models.requests.CreateGroupRequest;
 
@@ -33,14 +34,16 @@ public class RequestBuilder {
     private final String key_owner_user = "user";
     private final String key_contacts = "contacts";
     private final String key_feedback = "feedback";
+    private final String key_device_id = "deviceId";
 
     public RequestBuilder() {
     }
 
-    public JSONObject getSignInRequestPayload(String mobile) {
+    public JSONObject getSignInRequestPayload(String mobile, String deviceId) {
         JSONObject jsonObject = new JSONObject();
         try {
             jsonObject.put(key_mobile, mobile);
+            if (deviceId != null) jsonObject.put(key_device_id, deviceId);
             return jsonObject;
         } catch (JSONException e) {
             e.printStackTrace();
@@ -48,11 +51,12 @@ public class RequestBuilder {
         }
     }
 
-    public JSONObject getVerifyOtpRequestPayload(String mobile, String otp) {
+    public JSONObject getVerifyOtpRequestPayload(String mobile, String otp, String deviceId) {
         JSONObject jsonObject = new JSONObject();
         try {
             jsonObject.put(key_mobile, mobile);
             jsonObject.put(key_otp, otp);
+            if (deviceId != null) jsonObject.put(key_device_id, deviceId);
             return jsonObject;
         } catch (JSONException e) {
             e.printStackTrace();
@@ -60,8 +64,8 @@ public class RequestBuilder {
         }
     }
 
-    public JSONObject getResendOtpRequestPayload(String mobile) {
-        return getSignInRequestPayload(mobile);
+    public JSONObject getResendOtpRequestPayload(String mobile, String deviceId) {
+        return getSignInRequestPayload(mobile, deviceId);
     }
 
     public JSONObject getCreateProfileRequestPayload(String name, User user) {
@@ -88,7 +92,7 @@ public class RequestBuilder {
 
     public JSONObject getCreateReminderRequestPayload(String type, String task, String dateTime,
                                                       LatLng location, String ownerUser,
-                                                      List<User> contactsArray) {
+                                                      List<User> contactsArray, List<UserGroup> groupsArray) {
         try {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put(key_task, task);
@@ -101,7 +105,9 @@ public class RequestBuilder {
             if (location != null) jsonObject.put(key_longitude, location.longitude);
 
             if (type.equals(VAL_SEND_REMINDER)) {
-                jsonObject.put(key_contacts, getUserIdList(contactsArray));
+                jsonObject.put(key_contacts, getUserIdList(contactsArray, groupsArray));
+            } else {
+                jsonObject.put(key_contacts, new JSONArray());
             }
             return jsonObject;
         } catch (JSONException e) {
@@ -110,10 +116,16 @@ public class RequestBuilder {
         }
     }
 
-    private JSONArray getUserIdList(List<User> contactsArray) {
+    private JSONArray getUserIdList(List<User> contactsArray, List<UserGroup> groupsArray) {
         JSONArray jsonArray = new JSONArray();
-        for (int i = 0; i < contactsArray.size(); i++) {
-            jsonArray.put(contactsArray.get(i).getId());
+        if (contactsArray != null && groupsArray != null && contactsArray.size() > groupsArray.size()) {
+            for (int i = 0; i < contactsArray.size(); i++) {
+                jsonArray.put(contactsArray.get(i).getId());
+            }
+        } else if (contactsArray != null && groupsArray != null && contactsArray.size() < groupsArray.size()) {
+            for (int i = 0; i < groupsArray.size(); i++) {
+                jsonArray.put(groupsArray.get(i).getId());
+            }
         }
         return jsonArray;
     }

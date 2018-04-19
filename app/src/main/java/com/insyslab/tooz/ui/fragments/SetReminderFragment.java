@@ -21,6 +21,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.insyslab.tooz.R;
 import com.insyslab.tooz.interfaces.OnUserFetchedListener;
 import com.insyslab.tooz.models.User;
+import com.insyslab.tooz.models.UserGroup;
 import com.insyslab.tooz.models.eventbus.FragmentState;
 import com.insyslab.tooz.models.eventbus.ReminderCreated;
 import com.insyslab.tooz.models.responses.CreateReminderResponse;
@@ -42,6 +43,7 @@ import de.greenrobot.event.EventBus;
 
 import static com.insyslab.tooz.utils.AppConstants.KEY_FROM_FRAGMENT;
 import static com.insyslab.tooz.utils.AppConstants.KEY_GET_SELECTED_CONTACT_ID;
+import static com.insyslab.tooz.utils.AppConstants.KEY_GET_SELECTED_GROUP_ID;
 import static com.insyslab.tooz.utils.AppConstants.KEY_SET_REMINDER_TYPE;
 import static com.insyslab.tooz.utils.AppConstants.KEY_TO_CONTACTS_SELECTOR_BUNDLE;
 import static com.insyslab.tooz.utils.AppConstants.VAL_SEND_REMINDER;
@@ -76,8 +78,9 @@ public class SetReminderFragment extends BaseFragment implements BaseResponseInt
     private Boolean isTimeSelected = true;
 
     private List<User> selectedMembers = null;
+    private List<UserGroup> selectedGroups = null;
     private User user;
-    private String selectedUserId = null;
+    private String selectedUserId = null, selectedGroupId = null;
 
     public SetReminderFragment() {
 
@@ -98,6 +101,7 @@ public class SetReminderFragment extends BaseFragment implements BaseResponseInt
             Bundle bundle = getArguments().getBundle(ARG_PARAM1);
             fragmentType = bundle.getString(KEY_SET_REMINDER_TYPE);
             selectedUserId = bundle.getString(KEY_GET_SELECTED_CONTACT_ID);
+            selectedGroupId = bundle.getString(KEY_GET_SELECTED_GROUP_ID);
         }
         ActionsActivity.onUserFetchedListener = this;
     }
@@ -309,7 +313,13 @@ public class SetReminderFragment extends BaseFragment implements BaseResponseInt
 
         if (selectedUserId != null) {
             setUpSelectedContacts();
+        } else if (selectedGroupId !=null) {
+            setUpSelectedGroups();
         }
+    }
+
+    private void setUpSelectedGroups() {
+        ((ActionsActivity) getActivity()).getGroupFromId(selectedGroupId);
     }
 
     private void setUpSelectedContacts() {
@@ -379,7 +389,7 @@ public class SetReminderFragment extends BaseFragment implements BaseResponseInt
         String requestUrl = CREATE_REMINDER_REQUEST_URL;
         JSONObject requestObject = new RequestBuilder().getCreateReminderRequestPayload(
                 fragmentType, tietTask.getText().toString().trim(), timeSelected, latLngSelected,
-                user.getId(), selectedMembers
+                user.getId(), selectedMembers, selectedGroups
         );
 
         if (requestObject != null) {
@@ -425,7 +435,16 @@ public class SetReminderFragment extends BaseFragment implements BaseResponseInt
             contactListStr += selectedMembers.get(i).getName();
             if (i != selectedMembers.size() - 1) contactListStr += ", ";
         }
+        tietContact.setText(contactListStr);
+    }
 
+    public void onGroupsSelected(List<UserGroup> contactItemList) {
+        selectedGroups = contactItemList;
+        String contactListStr = "";
+        for (int i = 0; i < selectedGroups.size(); i++) {
+            contactListStr += selectedGroups.get(i).getName();
+            if (i != selectedGroups.size() - 1) contactListStr += ", ";
+        }
         tietContact.setText(contactListStr);
     }
 
@@ -478,5 +497,12 @@ public class SetReminderFragment extends BaseFragment implements BaseResponseInt
         List<User> list = new ArrayList<>();
         list.add(user);
         onMembersSelected(list);
+    }
+
+    @Override
+    public void onGroupFetched(UserGroup group) {
+        List<UserGroup> list = new ArrayList<>();
+        list.add(group);
+        onGroupsSelected(list);
     }
 }

@@ -14,6 +14,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.android.volley.Request;
+import com.google.gson.Gson;
 import com.insyslab.tooz.R;
 import com.insyslab.tooz.interfaces.OnRuntimePermissionsResultListener;
 import com.insyslab.tooz.models.eventbus.FragmentState;
@@ -48,6 +49,7 @@ import static com.insyslab.tooz.utils.ConstantClass.REQUEST_TYPE_004;
 import static com.insyslab.tooz.utils.ConstantClass.REQUEST_TYPE_008;
 import static com.insyslab.tooz.utils.ConstantClass.UPDATE_PROFILE_PICTURE_REQUEST_URL;
 import static com.insyslab.tooz.utils.MultipartFileHelper.convertStreamToByteArray;
+import static com.insyslab.tooz.utils.Util.getDeviceId;
 
 /**
  * Created by TaNMay on 26/09/16.
@@ -97,6 +99,8 @@ public class UpdateProfileFragment extends BaseFragment implements BaseResponseI
         setUpActions();
 
         user = LocalStorage.getInstance(getContext()).getUser();
+        user.setDeviceId(getDeviceId());
+        Log.d(TAG, "USER: " + new Gson().toJson(user));
 
         setUpProfileDetails();
 
@@ -346,6 +350,7 @@ public class UpdateProfileFragment extends BaseFragment implements BaseResponseI
 
     private void onUpdateProfilePictureResponse(User success) {
         user = success;
+        user.setDeviceId(getDeviceId());
         LocalStorage.getInstance(getContext()).setUser(success);
     }
 

@@ -15,6 +15,7 @@ import android.widget.TextView;
 import com.insyslab.tooz.R;
 import com.insyslab.tooz.interfaces.OnUserContactClickListener;
 import com.insyslab.tooz.models.User;
+import com.insyslab.tooz.models.UserGroup;
 import com.insyslab.tooz.ui.customui.CircleTransform;
 import com.squareup.picasso.Picasso;
 
@@ -24,12 +25,12 @@ import java.util.List;
 /**
  * Created by TaNMay on 19/02/17.
  */
-public class AppUserContactsAdapter extends RecyclerView.Adapter<AppUserContactsAdapter.ViewHolder> {
+public class MyGroupsAdapter extends RecyclerView.Adapter<MyGroupsAdapter.ViewHolder> {
 
     private OnUserContactClickListener onAllContactClickListener;
-    private List<User> contactItems;
+    private List<UserGroup> contactItems;
 
-    public AppUserContactsAdapter(OnUserContactClickListener onAllContactClickListener, List<User> contactItems) {
+    public MyGroupsAdapter(OnUserContactClickListener onAllContactClickListener, List<UserGroup> contactItems) {
         this.onAllContactClickListener = onAllContactClickListener;
         this.contactItems = contactItems;
     }
@@ -43,7 +44,7 @@ public class AppUserContactsAdapter extends RecyclerView.Adapter<AppUserContacts
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
-        final User contactItem = contactItems.get(position);
+        final UserGroup contactItem = contactItems.get(position);
 
         Picasso.with(holder.image.getContext())
                 .load(contactItem.getProfileImage())
@@ -73,17 +74,14 @@ public class AppUserContactsAdapter extends RecyclerView.Adapter<AppUserContacts
         PopupMenu popup = new PopupMenu(context, anchorView);
         popup.inflate(R.menu.menu_contact);
         popup.getMenu().add(1, 1, 1, "Send Reminder");
-        popup.getMenu().add(1, 2, 2, isBlocked ? "Unblock" : "Block");
+//        popup.getMenu().add(1, 2, 2, isBlocked ? "Unblock" : "Block");
         popup.setGravity(Gravity.RIGHT);
         popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
                     case 1:
-                        onAllContactClickListener.onAppUserSendReminderClick(position);
-                        break;
-                    case 2:
-                        onAllContactClickListener.onAppUserBlockClick(position);
+                        onAllContactClickListener.onMyGroupsSendReminderClick(position);
                         break;
                 }
                 return false;

@@ -20,8 +20,8 @@ import android.widget.TextView;
 
 import com.android.volley.Request;
 import com.insyslab.tooz.R;
-import com.insyslab.tooz.models.eventbus.FragmentState;
 import com.insyslab.tooz.models.User;
+import com.insyslab.tooz.models.eventbus.FragmentState;
 import com.insyslab.tooz.models.responses.Error;
 import com.insyslab.tooz.restclient.BaseResponseInterface;
 import com.insyslab.tooz.restclient.GenericDataHandler;
@@ -40,6 +40,7 @@ import static com.insyslab.tooz.utils.ConstantClass.REQUEST_TYPE_002;
 import static com.insyslab.tooz.utils.ConstantClass.REQUEST_TYPE_003;
 import static com.insyslab.tooz.utils.ConstantClass.RESEND_OTP_REQUEST_URL;
 import static com.insyslab.tooz.utils.ConstantClass.VERIFY_OTP_REQUEST_URL;
+import static com.insyslab.tooz.utils.Util.getDeviceId;
 
 /**
  * Created by TaNMay on 26/09/16.
@@ -152,7 +153,7 @@ public class OtpVerificationFragment extends BaseFragment implements BaseRespons
         showProgressDialog(getString(R.string.loading));
 
         String requestUrl = VERIFY_OTP_REQUEST_URL;
-        JSONObject requestObject = new RequestBuilder().getVerifyOtpRequestPayload(user.getMobile(), otp);
+        JSONObject requestObject = new RequestBuilder().getVerifyOtpRequestPayload(user.getMobile(), otp, getDeviceId());
 
         if (requestObject != null) {
             GenericDataHandler req1GenericDataHandler = new GenericDataHandler(this, getContext(), REQUEST_TYPE_002);
@@ -201,7 +202,7 @@ public class OtpVerificationFragment extends BaseFragment implements BaseRespons
         showProgressDialog(getString(R.string.loading));
 
         String requestUrl = RESEND_OTP_REQUEST_URL;
-        JSONObject requestObject = new RequestBuilder().getResendOtpRequestPayload(user.getMobile());
+        JSONObject requestObject = new RequestBuilder().getResendOtpRequestPayload(user.getMobile(), getDeviceId());
 
         if (requestObject != null) {
             GenericDataHandler req1GenericDataHandler = new GenericDataHandler(this, getContext(), REQUEST_TYPE_003);

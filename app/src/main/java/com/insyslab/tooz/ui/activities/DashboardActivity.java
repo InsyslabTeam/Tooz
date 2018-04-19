@@ -101,6 +101,7 @@ public class DashboardActivity extends BaseActivity implements BaseResponseInter
         fetchPastRemindersFromDb();
         fetchAppUserContactsFromDb();
         fetchNonAppUserContactsFromDb();
+        fetchUserGroupListFromDb();
 
         setUpActions();
 
@@ -660,12 +661,32 @@ public class DashboardActivity extends BaseActivity implements BaseResponseInter
         });
     }
 
+    public void fetchUserGroupListFromDb() {
+        setUserGroupList(new ArrayList<UserGroup>());
+        userGroupRepository.getAllUserGroups().observe(this, new Observer<List<UserGroup>>() {
+            @Override
+            public void onChanged(@Nullable List<UserGroup> list) {
+                setUserGroupList(list);
+                updateUserGroupList();
+            }
+        });
+    }
+
     private void updateNonAppUserContacts() {
         try {
             AllContactsFragment fragment = (AllContactsFragment) getSupportFragmentManager().findFragmentById(R.id.ad_fragment_container);
             if (fragment != null) fragment.updateNonAppUserContactsRv(getNonAppUserList());
         } catch (ClassCastException e) {
             Log.d(TAG, "ERROR: updateNonAppUserContacts - " + e.getMessage());
+        }
+    }
+
+    private void updateUserGroupList() {
+        try {
+            AllContactsFragment fragment = (AllContactsFragment) getSupportFragmentManager().findFragmentById(R.id.ad_fragment_container);
+            if (fragment != null) fragment.updateUserGroupsRv(getUserGroupList());
+        } catch (ClassCastException e) {
+            Log.d(TAG, "ERROR: updateUserGroupList - " + e.getMessage());
         }
     }
 

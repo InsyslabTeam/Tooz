@@ -17,4 +17,6 @@ public interface OnUserContactClickListener {
     void onAppUserSendReminderClick(int position);
 
     void onAppUserBlockClick(int position);
+
+    void onMyGroupsSendReminderClick(int position);
 }

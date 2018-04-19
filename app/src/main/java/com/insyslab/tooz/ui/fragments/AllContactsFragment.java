@@ -17,6 +17,7 @@ import com.android.volley.Request;
 import com.insyslab.tooz.R;
 import com.insyslab.tooz.interfaces.OnUserContactClickListener;
 import com.insyslab.tooz.models.User;
+import com.insyslab.tooz.models.UserGroup;
 import com.insyslab.tooz.models.eventbus.FragmentState;
 import com.insyslab.tooz.models.responses.BlockUserResponse;
 import com.insyslab.tooz.models.responses.Error;
@@ -26,6 +27,7 @@ import com.insyslab.tooz.restclient.GenericDataHandler;
 import com.insyslab.tooz.restclient.RequestBuilder;
 import com.insyslab.tooz.ui.activities.DashboardActivity;
 import com.insyslab.tooz.ui.adapters.AppUserContactsAdapter;
+import com.insyslab.tooz.ui.adapters.MyGroupsAdapter;
 import com.insyslab.tooz.ui.adapters.NonAppUserContactsAdapter;
 
 import org.json.JSONObject;
@@ -33,6 +35,7 @@ import org.json.JSONObject;
 import java.util.List;
 
 import static com.insyslab.tooz.utils.AppConstants.KEY_GET_SELECTED_CONTACT_ID;
+import static com.insyslab.tooz.utils.AppConstants.KEY_GET_SELECTED_GROUP_ID;
 import static com.insyslab.tooz.utils.AppConstants.VAL_SEND_REMINDER;
 import static com.insyslab.tooz.utils.ConstantClass.BLOCK_CONTACT_REQUEST_URL;
 import static com.insyslab.tooz.utils.ConstantClass.INVITE_NON_APP_USER_REQUEST_URL;
@@ -43,7 +46,8 @@ import static com.insyslab.tooz.utils.ConstantClass.REQUEST_TYPE_022;
  * Created by TaNMay on 26/09/16.
  */
 
-public class AllContactsFragment extends BaseFragment implements OnUserContactClickListener, BaseResponseInterface {
+public class AllContactsFragment extends BaseFragment implements OnUserContactClickListener,
+        BaseResponseInterface {
 
     public static final String TAG = "AllContactsFrag ==> ";
 
@@ -53,11 +57,12 @@ public class AllContactsFragment extends BaseFragment implements OnUserContactCl
     private LinearLayout noAppUserView;
     private NestedScrollView scrollContent;
     private TextView tvNcvTitle, tvNoAppUserTitle;
-    private RecyclerView appUserContactsRv, nonAppUserContactsRv;
+    private RecyclerView appUserContactsRv, nonAppUserContactsRv, myGroupsRv;
 
-    private RecyclerView.Adapter appUserContactsAdapter, nonAppUserContactsAdapter;
+    private RecyclerView.Adapter appUserContactsAdapter, nonAppUserContactsAdapter, myGroupsAdapter;
 
     private List<User> appUserContactsList, nonAppUserContactsList;
+    private List<UserGroup> myGroupsList;
     private int selectedAppUserItemIndex = -1;
 
     public AllContactsFragment() {
@@ -91,12 +96,14 @@ public class AllContactsFragment extends BaseFragment implements OnUserContactCl
         appUserContactsList = ((DashboardActivity) getActivity()).getAppUserList();
         List<User> tempList = ((DashboardActivity) getActivity()).getNonAppUserList();
         nonAppUserContactsList = tempList.subList(0, tempList.size() > 10 ? 10 : tempList.size());
+        myGroupsList = ((DashboardActivity) getActivity()).getUserGroupList();
 
         if (contactsSynced()) {
             noContentView.setVisibility(View.GONE);
             scrollContent.setVisibility(View.VISIBLE);
 
             setUpAppUserContactsRv();
+            setUpMyGroupsRv();
             setUpNonAppUserContactsRv();
         } else {
             scrollContent.setVisibility(View.GONE);
@@ -143,9 +150,17 @@ public class AllContactsFragment extends BaseFragment implements OnUserContactCl
         nonAppUserContactsRv.setAdapter(nonAppUserContactsAdapter);
     }
 
+    private void setUpMyGroupsRv() {
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
+        myGroupsAdapter = new MyGroupsAdapter(this, myGroupsList);
+        myGroupsRv.setLayoutManager(layoutManager);
+        myGroupsRv.setAdapter(myGroupsAdapter);
+    }
+
     private void initView(View rootView) {
         appUserContactsRv = rootView.findViewById(R.id.fac_app_user_contacts_rv);
         nonAppUserContactsRv = rootView.findViewById(R.id.fac_non_app_user_contacts_rv);
+        myGroupsRv = rootView.findViewById(R.id.fac_my_groups_rv);
         noContentView = rootView.findViewById(R.id.ncv_content);
         tvNcvTitle = rootView.findViewById(R.id.ncv_text);
         scrollContent = rootView.findViewById(R.id.fac_scroll_content);
@@ -181,6 +196,13 @@ public class AllContactsFragment extends BaseFragment implements OnUserContactCl
         else setUpNonAppUserContactsRv();
     }
 
+    public void updateUserGroupsRv(List<UserGroup> list) {
+        myGroupsList.clear();
+        myGroupsList.addAll(list);
+        if (myGroupsAdapter != null) myGroupsAdapter.notifyDataSetChanged();
+        else setUpMyGroupsRv();
+    }
+
     @Override
     public void onAppUserContactClick(View view) {
         int position = appUserContactsRv.getChildAdapterPosition(view);
@@ -198,12 +220,13 @@ public class AllContactsFragment extends BaseFragment implements OnUserContactCl
 
     @Override
     public void onAppUserSendReminderClick(int position) {
-        openSendReminderView(appUserContactsList.get(position));
+        openSendReminderView(appUserContactsList.get(position), null);
     }
 
-    private void openSendReminderView(User user) {
+    private void openSendReminderView(User user, UserGroup userGroup) {
         Bundle bundle = new Bundle();
-        bundle.putString(KEY_GET_SELECTED_CONTACT_ID, user.getId());
+        if (user != null) bundle.putString(KEY_GET_SELECTED_CONTACT_ID, user.getId());
+        if (userGroup != null) bundle.putString(KEY_GET_SELECTED_GROUP_ID, userGroup.getId());
         ((DashboardActivity) getActivity()).openActionsActivity(SetReminderFragment.TAG, VAL_SEND_REMINDER, bundle);
     }
 
@@ -211,6 +234,11 @@ public class AllContactsFragment extends BaseFragment implements OnUserContactCl
     public void onAppUserBlockClick(int position) {
         selectedAppUserItemIndex = position;
         initBlockUserRequest(appUserContactsList.get(position));
+    }
+
+    @Override
+    public void onMyGroupsSendReminderClick(int position) {
+        openSendReminderView(null, myGroupsList.get(position));
     }
 
     private void initBlockUserRequest(User user) {

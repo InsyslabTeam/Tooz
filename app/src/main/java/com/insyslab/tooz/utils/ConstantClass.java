@@ -49,6 +49,9 @@ public class ConstantClass {
     public static final int REQUEST_TYPE_008 = 1008;
     public static final String UPDATE_PROFILE_PICTURE_REQUEST_URL = "user/imageProfile";
 
+    public static final int REQUEST_TYPE_023 = 1023;
+    public static final String UPDATE_USER_PREFERENCES_REQUEST_URL = "userpreference/updateUserPreference";
+
     /**
      * REMINDER
      */
@@ -86,10 +89,10 @@ public class ConstantClass {
      * BLOCK/UNBLOCK
      */
     public static final int REQUEST_TYPE_018 = 1018;
-    public static final String BLOCK_CONTACT_REQUEST_URL = "";
+    public static final String BLOCK_CONTACT_REQUEST_URL = "user/blockUser";
 
     public static final int REQUEST_TYPE_019 = 1019;
-    public static final String GET_BLOCKED_CONTACTS_REQUEST_URL = "";
+    public static final String GET_BLOCKED_CONTACTS_REQUEST_URL = "user/getBlockedUser";
 
     /**
      * OTHERS
@@ -98,8 +101,13 @@ public class ConstantClass {
     public static final String DELETE_ACCOUNT_REQUEST_URL = "";
 
     public static final int REQUEST_TYPE_021 = 1021;
-    public static final String SEND_FEEDBACK_REQUEST_URL = "";
+    public static final String SEND_FEEDBACK_REQUEST_URL = "user/feedBack";
 
     public static final int REQUEST_TYPE_022 = 1022;
     public static final String INVITE_NON_APP_USER_REQUEST_URL = "";
+
+    // REQUEST TYPE 23 = defined above (line 52)
+
+    public static final int REQUEST_TYPE_024 = 1024;
+    public static final String _REQUEST_URL = "";
 }
