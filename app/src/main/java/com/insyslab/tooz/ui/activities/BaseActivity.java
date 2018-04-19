@@ -21,6 +21,7 @@ import android.widget.Toast;
 import com.insyslab.tooz.R;
 import com.insyslab.tooz.interfaces.OnRuntimePermissionsResultListener;
 import com.insyslab.tooz.models.User;
+import com.insyslab.tooz.models.UserGroup;
 import com.insyslab.tooz.rpl.PhoneContactRepository;
 import com.insyslab.tooz.rpl.ReminderRepository;
 import com.insyslab.tooz.rpl.UserGroupRepository;
@@ -68,7 +69,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected ProgressDialog mProgressDialog = null;
 
     private List<User> appUserList = new ArrayList<>(), nonAppUserList = new ArrayList<>();
-
+    private List<UserGroup> userGroupList = new ArrayList<>();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -386,6 +387,14 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     public void setNonAppUserList(List<User> list) {
         nonAppUserList = list;
+    }
+
+    public void setUserGroupList(List<UserGroup> list) {
+        userGroupList = list;
+    }
+
+    public List<UserGroup> getUserGroupList() {
+        return userGroupList;
     }
 
     public void clearRoomDatabase() {

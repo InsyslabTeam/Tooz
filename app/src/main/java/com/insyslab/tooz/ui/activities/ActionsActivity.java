@@ -17,6 +17,7 @@ import com.insyslab.tooz.interfaces.OnUserFetchedListener;
 import com.insyslab.tooz.models.PhoneContact;
 import com.insyslab.tooz.models.Reminder;
 import com.insyslab.tooz.models.User;
+import com.insyslab.tooz.models.UserGroup;
 import com.insyslab.tooz.models.eventbus.FragmentState;
 import com.insyslab.tooz.ui.fragments.AddContactFragment;
 import com.insyslab.tooz.ui.fragments.CreateGroupFragment;
@@ -30,6 +31,7 @@ import java.util.List;
 
 import static com.insyslab.tooz.utils.AppConstants.KEY_GET_REMINDER_ID;
 import static com.insyslab.tooz.utils.AppConstants.KEY_GET_SELECTED_CONTACT_ID;
+import static com.insyslab.tooz.utils.AppConstants.KEY_GET_SELECTED_GROUP_ID;
 import static com.insyslab.tooz.utils.AppConstants.KEY_SELECTED_CONTACT_BUNDLE;
 import static com.insyslab.tooz.utils.AppConstants.KEY_SET_REMINDER_TYPE;
 import static com.insyslab.tooz.utils.AppConstants.KEY_TO_ACTIONS;
@@ -72,6 +74,7 @@ public class ActionsActivity extends BaseActivity
             bundle.putString(KEY_SET_REMINDER_TYPE, fragmentType);
             if (contactBundle != null) {
                 bundle.putString(KEY_GET_SELECTED_CONTACT_ID, contactBundle.getString(KEY_GET_SELECTED_CONTACT_ID));
+                bundle.putString(KEY_GET_SELECTED_GROUP_ID, contactBundle.getString(KEY_GET_SELECTED_GROUP_ID));
             }
             if (reminderId != null) bundle.putString(KEY_GET_REMINDER_ID, reminderId);
             openThisFragment(toFragment, bundle);
@@ -258,6 +261,15 @@ public class ActionsActivity extends BaseActivity
             @Override
             public void onChanged(@Nullable User user) {
                 onUserFetchedListener.onUserFetched(user);
+            }
+        });
+    }
+
+    public void getGroupFromId(String selectedGroupId) {
+        userGroupRepository.getGroupFromId(selectedGroupId).observe(this, new Observer<UserGroup>() {
+            @Override
+            public void onChanged(@Nullable UserGroup userGroup) {
+                onUserFetchedListener.onGroupFetched(userGroup);
             }
         });
     }

@@ -58,6 +58,11 @@ public class User implements Serializable {
     @Expose
     private String profileImage;
 
+    @ColumnInfo(name = "deviceId")
+    @SerializedName("deviceId")
+    @Expose
+    private String deviceId;
+
     @ColumnInfo(name = "id")
     @SerializedName("id")
     @Expose
@@ -194,6 +199,14 @@ public class User implements Serializable {
 
     public void setSelected(Boolean selected) {
         isSelected = selected;
+    }
+
+    public String getDeviceId() {
+        return deviceId;
+    }
+
+    public void setDeviceId(String deviceId) {
+        this.deviceId = deviceId;
     }
 }
 

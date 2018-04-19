@@ -13,11 +13,15 @@ import android.util.Log;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.google.gson.Gson;
+import com.insyslab.tooz.models.Reminder;
 import com.insyslab.tooz.ui.activities.SplashActivity;
+import com.insyslab.tooz.utils.Util;
 
 import org.json.JSONObject;
 
 import java.util.Date;
+
+import static com.insyslab.tooz.utils.Util.getReminderFormatedDate;
 
 /**
  * Created by TaNMay on 18/04/17.
@@ -45,7 +49,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
             try {
                 JSONObject dataJson = new JSONObject(remoteMessage.getData());
-                handleDataMessage(dataJson);
+                JSONObject actualData = new JSONObject(dataJson.optString("data"));
+                handleDataMessage(actualData);
             } catch (Exception e) {
                 Log.e(TAG, "Exception: " + e.getMessage());
             }
@@ -78,7 +83,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
         try {
             Gson gson = new Gson();
-            PushNotificationObject pushNotificationObject = gson.fromJson(data.toString(), PushNotificationObject.class);
+            Reminder pushNotificationObject = gson.fromJson(data.toString(), Reminder.class);
 
             if (!NotificationUtils.isAppIsInBackground(getApplicationContext())) {
                 // app is in foreground, broadcast the push message
@@ -86,28 +91,35 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 //                pushNotification.putExtra("message", message);
                 LocalBroadcastManager.getInstance(this).sendBroadcast(pushNotification);
 
+                String notificationTitle = pushNotificationObject.getTask()
+                        + " - sent by "
+                        + pushNotificationObject.getUser().getName();
                 Intent resultIntent = new Intent(getApplicationContext(), SplashActivity.class);
-                showNotificationMessageWithBigImage(
+                showNotificationMessage(
                         getApplicationContext(),
-                        pushNotificationObject.getTitle(),
-                        pushNotificationObject.getMessage(),
+                        notificationTitle,
+                        getReminderFormatedDate(Util.getCalenderFormatDate(pushNotificationObject.getDate())),
                         "time_stamp",
-                        resultIntent,
-                        pushNotificationObject.getImage());
+                        resultIntent
+                );
 
                 // play notification sound
                 NotificationUtils notificationUtils = new NotificationUtils(getApplicationContext());
                 notificationUtils.playNotificationSound();
             } else {
                 // app is in background, show the notification in notification tray
+                String notificationTitle = pushNotificationObject.getTask()
+                        + " - sent by "
+                        + pushNotificationObject.getUser().getName();
+
                 Intent resultIntent = new Intent(getApplicationContext(), SplashActivity.class);
-                showNotificationMessageWithBigImage(
+                showNotificationMessage(
                         getApplicationContext(),
-                        pushNotificationObject.getTitle(),
-                        pushNotificationObject.getMessage(),
+                        notificationTitle,
+                        getReminderFormatedDate(Util.getCalenderFormatDate(pushNotificationObject.getDate())),
                         "time_stamp",
-                        resultIntent,
-                        pushNotificationObject.getImage());
+                        resultIntent
+                );
             }
         } catch (Exception e) {
             Log.e(TAG, "Exception: " + e.getMessage());

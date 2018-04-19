@@ -23,6 +23,7 @@ public class AppConstants {
 
     public static final String KEY_SELECTED_CONTACT_BUNDLE = "KEY_SELECTED_CONTACT_BUNDLE";
     public static final String KEY_GET_SELECTED_CONTACT_ID = "KEY_GET_SELECTED_CONTACT_ID";
+    public static final String KEY_GET_SELECTED_GROUP_ID = "KEY_GET_SELECTED_GROUP_ID";
 
     public static final String KEY_TO_CONTACTS_SELECTOR_BUNDLE = "KEY_TO_CONTACTS_SELECTOR_BUNDLE";
 

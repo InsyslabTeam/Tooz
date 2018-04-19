@@ -4,6 +4,7 @@ import android.arch.lifecycle.LiveData;
 import android.arch.persistence.room.Room;
 import android.os.AsyncTask;
 
+import com.insyslab.tooz.models.User;
 import com.insyslab.tooz.models.UserGroup;
 import com.insyslab.tooz.utils.ToozApplication;
 
@@ -53,6 +54,10 @@ public class UserGroupRepository {
 
     public LiveData<List<UserGroup>> getAllUserGroups() {
         return appDatabase.userGroupDao().fetchAllUserGroups();
+    }
+
+    public LiveData<UserGroup> getGroupFromId(String id) {
+        return appDatabase.userGroupDao().fetchUserGroupById(id);
     }
 
     public int clearUserGroupTable() {
