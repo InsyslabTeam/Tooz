@@ -76,7 +76,6 @@ public class SetReminderFragment extends BaseFragment implements BaseResponseInt
     private String timeSelected = null, addressSelected = null;
     private LatLng latLngSelected = null;
     private Boolean isTimeSelected = true;
-
     private List<User> selectedMembers = null;
     private List<UserGroup> selectedGroups = null;
     private User user;
@@ -313,7 +312,7 @@ public class SetReminderFragment extends BaseFragment implements BaseResponseInt
 
         if (selectedUserId != null) {
             setUpSelectedContacts();
-        } else if (selectedGroupId !=null) {
+        } else if (selectedGroupId != null) {
             setUpSelectedGroups();
         }
     }
@@ -388,8 +387,12 @@ public class SetReminderFragment extends BaseFragment implements BaseResponseInt
 
         String requestUrl = CREATE_REMINDER_REQUEST_URL;
         JSONObject requestObject = new RequestBuilder().getCreateReminderRequestPayload(
-                fragmentType, tietTask.getText().toString().trim(), timeSelected, latLngSelected,
-                user.getId(), selectedMembers, selectedGroups
+                fragmentType,
+                tietTask.getText().toString().trim(),
+                isTimeSelected ? timeSelected : null,
+                !isTimeSelected ? latLngSelected : null,
+                user.getId(),
+                selectedMembers
         );
 
         if (requestObject != null) {

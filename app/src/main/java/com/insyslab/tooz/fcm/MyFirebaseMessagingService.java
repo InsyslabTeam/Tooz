@@ -10,6 +10,7 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.google.gson.Gson;
@@ -84,21 +85,34 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         try {
             Gson gson = new Gson();
             Reminder pushNotificationObject = gson.fromJson(data.toString(), Reminder.class);
+            String notificationTitle = pushNotificationObject.getTask()
+                    + " - sent by "
+                    + pushNotificationObject.getUser().getName();
+            String notificationMsg = "";
+            if (pushNotificationObject.getDate() != null)
+                notificationMsg = "on " + getReminderFormatedDate(Util.getCalenderFormatDate(pushNotificationObject.getDate()));
+            else if (pushNotificationObject.getLatitude() != null && pushNotificationObject.getLongitude() != null) {
+                notificationMsg = "at ";
+                Double dLat = Double.parseDouble(pushNotificationObject.getLatitude());
+                Double dLng = Double.parseDouble(pushNotificationObject.getLongitude());
+                String address = Util.getShortAddressFromCoords(getApplicationContext(), new LatLng(dLat, dLng));
+                if (address.length() > 25) {
+                    notificationMsg += address.substring(0, 25) + "\n" + address.substring(25, address.length() > 50 ? 48 : address.length());
+                } else {
+                    notificationMsg += address;
+                }
+            }
 
             if (!NotificationUtils.isAppIsInBackground(getApplicationContext())) {
                 // app is in foreground, broadcast the push message
                 Intent pushNotification = new Intent(PUSH_NOTIFICATION);
 //                pushNotification.putExtra("message", message);
                 LocalBroadcastManager.getInstance(this).sendBroadcast(pushNotification);
-
-                String notificationTitle = pushNotificationObject.getTask()
-                        + " - sent by "
-                        + pushNotificationObject.getUser().getName();
                 Intent resultIntent = new Intent(getApplicationContext(), SplashActivity.class);
                 showNotificationMessage(
                         getApplicationContext(),
                         notificationTitle,
-                        getReminderFormatedDate(Util.getCalenderFormatDate(pushNotificationObject.getDate())),
+                        notificationMsg,
                         "time_stamp",
                         resultIntent
                 );
@@ -108,15 +122,11 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 notificationUtils.playNotificationSound();
             } else {
                 // app is in background, show the notification in notification tray
-                String notificationTitle = pushNotificationObject.getTask()
-                        + " - sent by "
-                        + pushNotificationObject.getUser().getName();
-
                 Intent resultIntent = new Intent(getApplicationContext(), SplashActivity.class);
                 showNotificationMessage(
                         getApplicationContext(),
                         notificationTitle,
-                        getReminderFormatedDate(Util.getCalenderFormatDate(pushNotificationObject.getDate())),
+                        notificationMsg,
                         "time_stamp",
                         resultIntent
                 );
