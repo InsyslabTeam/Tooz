@@ -3,7 +3,6 @@ package com.insyslab.tooz.restclient;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
 import com.insyslab.tooz.models.User;
-import com.insyslab.tooz.models.UserGroup;
 import com.insyslab.tooz.models.requests.ContactSyncRequest;
 import com.insyslab.tooz.models.requests.CreateGroupRequest;
 
@@ -92,7 +91,7 @@ public class RequestBuilder {
 
     public JSONObject getCreateReminderRequestPayload(String type, String task, String dateTime,
                                                       LatLng location, String ownerUser,
-                                                      List<User> contactsArray, List<UserGroup> groupsArray) {
+                                                      List<User> contactsArray) {
         try {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put(key_task, task);
@@ -101,11 +100,14 @@ public class RequestBuilder {
                 jsonObject.put(key_time, dateTime);
                 jsonObject.put(key_date, dateTime);
             }
-            if (location != null) jsonObject.put(key_latitude, location.latitude);
-            if (location != null) jsonObject.put(key_longitude, location.longitude);
+
+            if (location != null) {
+                jsonObject.put(key_latitude, location.latitude);
+                jsonObject.put(key_longitude, location.longitude);
+            }
 
             if (type.equals(VAL_SEND_REMINDER)) {
-                jsonObject.put(key_contacts, getUserIdList(contactsArray, groupsArray));
+                jsonObject.put(key_contacts, getUserIdList(contactsArray));
             } else {
                 jsonObject.put(key_contacts, new JSONArray());
             }
@@ -116,16 +118,10 @@ public class RequestBuilder {
         }
     }
 
-    private JSONArray getUserIdList(List<User> contactsArray, List<UserGroup> groupsArray) {
+    private JSONArray getUserIdList(List<User> contactsArray) {
         JSONArray jsonArray = new JSONArray();
-        if (contactsArray != null && groupsArray != null && contactsArray.size() > groupsArray.size()) {
-            for (int i = 0; i < contactsArray.size(); i++) {
-                jsonArray.put(contactsArray.get(i).getId());
-            }
-        } else if (contactsArray != null && groupsArray != null && contactsArray.size() < groupsArray.size()) {
-            for (int i = 0; i < groupsArray.size(); i++) {
-                jsonArray.put(groupsArray.get(i).getId());
-            }
+        for (int i = 0; i < contactsArray.size(); i++) {
+            jsonArray.put(contactsArray.get(i).getId());
         }
         return jsonArray;
     }
