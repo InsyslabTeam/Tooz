@@ -42,6 +42,7 @@ import java.util.List;
 import de.greenrobot.event.EventBus;
 
 import static com.insyslab.tooz.utils.AppConstants.KEY_FROM_FRAGMENT;
+import static com.insyslab.tooz.utils.AppConstants.KEY_FROM_FRAGMENT_DETAIL;
 import static com.insyslab.tooz.utils.AppConstants.KEY_GET_SELECTED_CONTACT_ID;
 import static com.insyslab.tooz.utils.AppConstants.KEY_GET_SELECTED_GROUP_ID;
 import static com.insyslab.tooz.utils.AppConstants.KEY_SET_REMINDER_TYPE;
@@ -211,6 +212,7 @@ public class SetReminderFragment extends BaseFragment implements BaseResponseInt
     private void onSelectContactsClick() {
         Bundle bundle = new Bundle();
         bundle.putString(KEY_FROM_FRAGMENT, TAG);
+        bundle.putString(KEY_FROM_FRAGMENT_DETAIL, fragmentType);
         bundle.putSerializable(KEY_TO_CONTACTS_SELECTOR_BUNDLE, (ArrayList<User>) selectedMembers);
         ((ActionsActivity) getActivity()).openThisFragment(SelectContactsFragment.TAG, bundle);
     }
@@ -223,6 +225,7 @@ public class SetReminderFragment extends BaseFragment implements BaseResponseInt
     private void openLocationSelectorFragment() {
         Bundle bundle = new Bundle();
         bundle.putString(KEY_SET_REMINDER_TYPE, fragmentType);
+        bundle.putString(KEY_FROM_FRAGMENT_DETAIL, fragmentType);
         ((ActionsActivity) getActivity()).openThisFragment(LocationSelectorFragment.TAG, bundle);
     }
 

@@ -170,7 +170,7 @@ public class ActionsActivity extends BaseActivity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        if (currentDetailFragment.equals(VAL_SEND_REMINDER))
+        if (currentDetailFragment != null && currentDetailFragment.equals(VAL_SEND_REMINDER))
             getMenuInflater().inflate(R.menu.menu_send, menu);
         else
             getMenuInflater().inflate(R.menu.menu_save, menu);
