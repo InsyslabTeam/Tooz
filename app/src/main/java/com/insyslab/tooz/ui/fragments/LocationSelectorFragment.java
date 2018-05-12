@@ -161,12 +161,12 @@ public class LocationSelectorFragment extends BaseFragment implements OnMapReady
 
     @Override
     public void onDetach() {
-        if (isSaved) {
-            FragmentState fragmentState = new FragmentState(SetReminderFragment.TAG);
-            fragmentState.setFragmentDetailedName(fragmentType);
-            updateFragment(fragmentState);
+        FragmentState fragmentState = new FragmentState(SetReminderFragment.TAG);
+        fragmentState.setFragmentDetailedName(fragmentType);
+        updateFragment(fragmentState);
+
+        if (isSaved)
             onLocationSelectedListener.onLocationSelected(selectedLocation, selectedAddress);
-        }
         super.onDetach();
     }
 

@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import static com.insyslab.tooz.utils.AppConstants.KEY_FROM_FRAGMENT;
+import static com.insyslab.tooz.utils.AppConstants.KEY_FROM_FRAGMENT_DETAIL;
 import static com.insyslab.tooz.utils.AppConstants.KEY_TO_CONTACTS_SELECTOR_BUNDLE;
 
 /**
@@ -43,7 +44,7 @@ public class SelectContactsFragment extends BaseFragment implements OnSelectCont
 
     private List<User> contactItems;
     private List<User> selectedContacts = null;
-    private String fromFragment = null;
+    private String fromFragment = null, fromFragmentDetails = null;
 
     private OnContactsSelectedListener onContactsSelectedListener;
 
@@ -65,6 +66,7 @@ public class SelectContactsFragment extends BaseFragment implements OnSelectCont
         if (getArguments() != null) {
             Bundle bundle = getArguments().getBundle(ARG_PARAM1);
             fromFragment = bundle.getString(KEY_FROM_FRAGMENT);
+            fromFragmentDetails = bundle.getString(KEY_FROM_FRAGMENT_DETAIL);
             selectedContacts = (List<User>) bundle.getSerializable(KEY_TO_CONTACTS_SELECTOR_BUNDLE);
         }
     }
@@ -139,7 +141,9 @@ public class SelectContactsFragment extends BaseFragment implements OnSelectCont
     @Override
     public void onDetach() {
         selectedContacts = getListOfSelectedContacts();
-        updateFragment(new FragmentState(fromFragment));
+        FragmentState fragmentState = new FragmentState(fromFragment);
+        fragmentState.setFragmentDetailedName(fromFragmentDetails);
+        updateFragment(fragmentState);
         onContactsSelectedListener.onContactsSelected(selectedContacts, fromFragment);
         super.onDetach();
     }

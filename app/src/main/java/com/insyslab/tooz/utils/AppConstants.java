@@ -17,6 +17,7 @@ public class AppConstants {
     public static final String KEY_TO_ACTIONS = "KEY_TO_ACTIONS";
     public static final String KEY_BUNDLE_TO_ACTIONS = "KEY_BUNDLE_TO_ACTIONS";
     public static final String KEY_FROM_FRAGMENT = "KEY_FROM_FRAGMENT";
+    public static final String KEY_FROM_FRAGMENT_DETAIL = "KEY_FROM_FRAGMENT_DETAIL";
 
     public static final String KEY_SET_REMINDER_TYPE = "KEY_SET_REMINDER_TYPE";
     public static final String KEY_GET_REMINDER_ID = "KEY_GET_REMINDER_ID";

@@ -49,7 +49,7 @@ public class ActionsActivity extends BaseActivity
 
     private Toolbar toolbar;
 
-    private String currentFragment = null, toFragment = null;
+    private String currentFragment = null, currentDetailFragment = null, toFragment = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -134,6 +134,8 @@ public class ActionsActivity extends BaseActivity
     public void onEvent(FragmentState fragmentState) {
         Log.d(TAG, fragmentState.getVisibleFragment());
         currentFragment = fragmentState.getVisibleFragment();
+        currentDetailFragment = fragmentState.getFragmentDetailedName();
+        invalidateOptionsMenu();
 
         if (fragmentState.getVisibleFragment().equals(AddContactFragment.TAG)) {
             updateToolbar("Add Contact");
@@ -168,7 +170,10 @@ public class ActionsActivity extends BaseActivity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_save, menu);
+        if (currentDetailFragment != null && currentDetailFragment.equals(VAL_SEND_REMINDER))
+            getMenuInflater().inflate(R.menu.menu_send, menu);
+        else
+            getMenuInflater().inflate(R.menu.menu_save, menu);
         return true;
     }
 
