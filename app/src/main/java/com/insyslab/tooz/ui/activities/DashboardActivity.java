@@ -29,6 +29,7 @@ import com.insyslab.tooz.models.UserGroup;
 import com.insyslab.tooz.models.eventbus.ContactAdded;
 import com.insyslab.tooz.models.eventbus.ContactSyncUpdate;
 import com.insyslab.tooz.models.eventbus.FragmentState;
+import com.insyslab.tooz.models.eventbus.GroupCreated;
 import com.insyslab.tooz.models.eventbus.ReminderCreated;
 import com.insyslab.tooz.models.requests.ContactSyncRequest;
 import com.insyslab.tooz.models.requests.Contact_;
@@ -80,7 +81,7 @@ public class DashboardActivity extends BaseActivity implements BaseResponseInter
     private FloatingActionButton fabAddContact, fabCreateGroup, fabPersonalReminder, fabSendReminder;
     private FloatingActionMenu floatingActionMenu;
 
-    private String currentFragment = null, reminderCreationType = null;
+    private String currentFragment = null;
     private boolean doubleBackToExitPressedOnce;
     private List<Reminder> upcomingRemindersList = new ArrayList<>(), pastRemindersList = new ArrayList<>();
     private Integer responseCount = 0;
@@ -310,7 +311,14 @@ public class DashboardActivity extends BaseActivity implements BaseResponseInter
 
         if (reminderCreated.isReminderCreated()) {
             initGetAllRemindersRequest();
-            reminderCreationType = reminderCreated.isPersonalReminder() ? VAL_SET_PERSONAL_REMINDER : VAL_SEND_REMINDER;
+        }
+    }
+
+    public void onEvent(GroupCreated groupCreated) {
+        Log.d(TAG, "GroupCreated: " + groupCreated.isGroupCreated());
+
+        if (groupCreated.isGroupCreated()) {
+            initGetContactGroupsRequest();
         }
     }
 

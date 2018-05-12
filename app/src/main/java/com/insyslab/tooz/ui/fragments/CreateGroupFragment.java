@@ -21,6 +21,8 @@ import com.insyslab.tooz.R;
 import com.insyslab.tooz.interfaces.OnRuntimePermissionsResultListener;
 import com.insyslab.tooz.models.User;
 import com.insyslab.tooz.models.eventbus.FragmentState;
+import com.insyslab.tooz.models.eventbus.GroupCreated;
+import com.insyslab.tooz.models.eventbus.ReminderCreated;
 import com.insyslab.tooz.models.responses.CreateGroupResponse;
 import com.insyslab.tooz.models.responses.CreateReminderResponse;
 import com.insyslab.tooz.models.responses.Error;
@@ -47,10 +49,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import de.greenrobot.event.EventBus;
+
 import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 import static android.app.Activity.RESULT_OK;
 import static com.insyslab.tooz.utils.AppConstants.KEY_FROM_FRAGMENT;
+import static com.insyslab.tooz.utils.AppConstants.VAL_SEND_REMINDER;
 import static com.insyslab.tooz.utils.ConstantClass.CREATE_GROUP_REQUEST_URL;
 import static com.insyslab.tooz.utils.ConstantClass.GROUP_PICTURE_REQUEST_URL;
 import static com.insyslab.tooz.utils.ConstantClass.REQUEST_TYPE_004;
@@ -377,7 +382,8 @@ public class CreateGroupFragment extends BaseFragment implements OnRuntimePermis
     }
 
     private void onCreateGroupResponse(CreateGroupResponse success) {
-        showToastMessage("Group created successfully!", false);
+        EventBus.getDefault().postSticky(new GroupCreated(true));
+        showToastMessage(getString(R.string.group_created_successfully), false);
         closeThisFragment();
     }
 }
