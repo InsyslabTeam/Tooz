@@ -107,7 +107,7 @@ public class RequestBuilder {
             }
 
             if (type.equals(VAL_SEND_REMINDER)) {
-                jsonObject.put(key_contacts, getUserIdList(contactsArray));
+                jsonObject.put(key_contacts, getUserIdList(contactsArray, ownerUser));
             } else {
                 jsonObject.put(key_contacts, new JSONArray());
             }
@@ -118,11 +118,12 @@ public class RequestBuilder {
         }
     }
 
-    private JSONArray getUserIdList(List<User> contactsArray) {
+    private JSONArray getUserIdList(List<User> contactsArray, String ownerUser) {
         JSONArray jsonArray = new JSONArray();
         for (int i = 0; i < contactsArray.size(); i++) {
             jsonArray.put(contactsArray.get(i).getId());
         }
+        jsonArray.put(ownerUser);
         return jsonArray;
     }
 
@@ -137,6 +138,7 @@ public class RequestBuilder {
             for (int i = 0; i < selectedMembers.size(); i++) {
                 members.add(selectedMembers.get(i).getId());
             }
+            members.add(createrId);
 
             createGroupRequest.setUsers(members);
             createGroupRequest.setUrl(imageUrl);

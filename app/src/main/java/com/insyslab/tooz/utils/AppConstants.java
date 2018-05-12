@@ -41,7 +41,8 @@ public class AppConstants {
     public static final String VAL_SET_PERSONAL_REMINDER = "SET_PERSONAL_REMINDER";
     public static final String VAL_SEND_REMINDER = "SEND_REMINDER";
 
-    public static final String VAL_OTP_NUMBER = "AM_TESTIN";
+    public static final String VAL_OTP_NUMBER_1 = "AM_TESTIN";
+    public static final String VAL_OTP_NUMBER_2 = "TM-TESTIN";
 
     public static final String VAL_REMINDER_NOTIFICATION_ACTION = "com.insyslab.tooz.utils.VAL_REMINDER_NOTIFICATION_ACTION";
 }

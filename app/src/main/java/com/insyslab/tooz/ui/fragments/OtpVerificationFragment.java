@@ -35,7 +35,8 @@ import org.json.JSONObject;
 import static com.insyslab.tooz.utils.AppConstants.KEY_OTP_MESSAGE;
 import static com.insyslab.tooz.utils.AppConstants.KEY_OTP_NUMBER;
 import static com.insyslab.tooz.utils.AppConstants.KEY_OTP_SMS;
-import static com.insyslab.tooz.utils.AppConstants.VAL_OTP_NUMBER;
+import static com.insyslab.tooz.utils.AppConstants.VAL_OTP_NUMBER_1;
+import static com.insyslab.tooz.utils.AppConstants.VAL_OTP_NUMBER_2;
 import static com.insyslab.tooz.utils.ConstantClass.REQUEST_TYPE_002;
 import static com.insyslab.tooz.utils.ConstantClass.REQUEST_TYPE_003;
 import static com.insyslab.tooz.utils.ConstantClass.RESEND_OTP_REQUEST_URL;
@@ -67,7 +68,7 @@ public class OtpVerificationFragment extends BaseFragment implements BaseRespons
                 String number = intent.getStringExtra(KEY_OTP_NUMBER);
 
                 Log.d(TAG, "OTP SMS Message: " + message + " from " + number);
-                if (number.equalsIgnoreCase(VAL_OTP_NUMBER)) {
+                if (number.equalsIgnoreCase(VAL_OTP_NUMBER_1) || number.equalsIgnoreCase(VAL_OTP_NUMBER_2)) {
                     String otpFromMessage = getOtpFromMessage(message);
                     onOtpReceived(otpFromMessage);
                 }

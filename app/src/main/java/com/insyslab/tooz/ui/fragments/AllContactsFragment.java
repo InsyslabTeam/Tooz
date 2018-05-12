@@ -56,8 +56,9 @@ public class AllContactsFragment extends BaseFragment implements OnUserContactCl
     private RelativeLayout content, noContentView;
     private LinearLayout noAppUserView;
     private NestedScrollView scrollContent;
-    private TextView tvNcvTitle, tvNoAppUserTitle;
+    private TextView tvNcvTitle, tvNoAppUserTitle, tvGroupsTitle;
     private RecyclerView appUserContactsRv, nonAppUserContactsRv, myGroupsRv;
+    private View groupsDivider;
 
     private RecyclerView.Adapter appUserContactsAdapter, nonAppUserContactsAdapter, myGroupsAdapter;
 
@@ -139,7 +140,7 @@ public class AllContactsFragment extends BaseFragment implements OnUserContactCl
             appUserContactsRv.setVisibility(View.GONE);
             noAppUserView.setVisibility(View.VISIBLE);
 
-            tvNoAppUserTitle.setText("None of your contacts use " + getString(R.string.app_name) + "! You can invite some of them here.");
+            tvNoAppUserTitle.setText("None of your contacts use " + getString(R.string.app_name) + "!\nYou can invite some of them here.");
         }
     }
 
@@ -151,10 +152,15 @@ public class AllContactsFragment extends BaseFragment implements OnUserContactCl
     }
 
     private void setUpMyGroupsRv() {
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
-        myGroupsAdapter = new MyGroupsAdapter(this, myGroupsList);
-        myGroupsRv.setLayoutManager(layoutManager);
-        myGroupsRv.setAdapter(myGroupsAdapter);
+        if (myGroupsList.size() > 0) {
+            showGroupsSec();
+            RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
+            myGroupsAdapter = new MyGroupsAdapter(this, myGroupsList);
+            myGroupsRv.setLayoutManager(layoutManager);
+            myGroupsRv.setAdapter(myGroupsAdapter);
+        } else {
+            hideGroupsSec();
+        }
     }
 
     private void initView(View rootView) {
@@ -166,10 +172,22 @@ public class AllContactsFragment extends BaseFragment implements OnUserContactCl
         scrollContent = rootView.findViewById(R.id.fac_scroll_content);
         noAppUserView = rootView.findViewById(R.id.fac_no_content);
         tvNoAppUserTitle = rootView.findViewById(R.id.fac_ncv_text);
+        tvGroupsTitle = rootView.findViewById(R.id.fac_groups_title);
+        groupsDivider = rootView.findViewById(R.id.fac_divider_2);
     }
 
     private void setUpActions() {
 
+    }
+
+    private void showGroupsSec() {
+        tvGroupsTitle.setVisibility(View.VISIBLE);
+        groupsDivider.setVisibility(View.VISIBLE);
+    }
+
+    private void hideGroupsSec() {
+        tvGroupsTitle.setVisibility(View.GONE);
+        groupsDivider.setVisibility(View.GONE);
     }
 
     @Override
