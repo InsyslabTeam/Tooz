@@ -181,7 +181,7 @@ public class ActionsActivity extends BaseActivity
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        if (id == R.id.action_save) {
+        if (id == R.id.action_save || id == R.id.action_send) {
             onToolbarSaveClick();
             return true;
         }
