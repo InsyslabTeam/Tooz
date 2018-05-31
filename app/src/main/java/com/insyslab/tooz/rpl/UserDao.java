@@ -10,10 +10,6 @@ import com.insyslab.tooz.models.User;
 
 import java.util.List;
 
-/**
- * Created by TaNMay on 27/12/17.
- */
-
 @Dao
 public interface UserDao {
 

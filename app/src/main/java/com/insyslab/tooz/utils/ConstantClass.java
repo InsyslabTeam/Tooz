@@ -1,18 +1,15 @@
 package com.insyslab.tooz.utils;
 
-/**
- * Created by TaNMay on 28/09/16.
- */
 public class ConstantClass {
 
-    public static final boolean IS_DEV = true;
+    static final boolean IS_DEV = true;
 
-    public static final String APP_NAME = "Tooz";
+//    public static final String APP_NAME = "Tooz";
 
     public static final int SPLASH_TIME_OUT = 2000;
 
-    public static final String BASE_DEV_URL = "http://35.154.234.106:1337/";
-    public static final String BASE_PROD_URL = "";
+    private static final String BASE_DEV_URL = "http://35.154.234.106:1337/";
+    private static final String BASE_PROD_URL = "";
 
     public static final String BASE_URL = IS_DEV ? BASE_DEV_URL : BASE_PROD_URL;
 
@@ -49,8 +46,8 @@ public class ConstantClass {
     public static final int REQUEST_TYPE_008 = 1008;
     public static final String UPDATE_PROFILE_PICTURE_REQUEST_URL = "user/imageProfile";
 
-    public static final int REQUEST_TYPE_023 = 1023;
-    public static final String UPDATE_USER_PREFERENCES_REQUEST_URL = "userpreference/updateUserPreference";
+//    public static final int REQUEST_TYPE_023 = 1023;
+//    public static final String UPDATE_USER_PREFERENCES_REQUEST_URL = "userpreference/updateUserPreference";
 
     /**
      * REMINDER
@@ -73,11 +70,11 @@ public class ConstantClass {
     public static final int REQUEST_TYPE_013 = 1013;
     public static final String CREATE_GROUP_REQUEST_URL = "group/addGroup";
 
-    public static final int REQUEST_TYPE_014 = 1014;
-    public static final String UPDATE_GROUP_REQUEST_URL = "group/updateGroup";
+//    public static final int REQUEST_TYPE_014 = 1014;
+//    public static final String UPDATE_GROUP_REQUEST_URL = "group/updateGroup";
 
-    public static final int REQUEST_TYPE_015 = 1015;
-    public static final String DELETE_GROUP_REQUEST_URL = "group/deleteGroup/";
+//    public static final int REQUEST_TYPE_015 = 1015;
+//    public static final String DELETE_GROUP_REQUEST_URL = "group/deleteGroup/";
 
     public static final int REQUEST_TYPE_016 = 1016;
     public static final String GET_MY_GROUPS_REQUEST_URL = "group/getMyGroups";
@@ -97,8 +94,8 @@ public class ConstantClass {
     /**
      * OTHERS
      */
-    public static final int REQUEST_TYPE_020 = 1020;
-    public static final String DELETE_ACCOUNT_REQUEST_URL = "";
+//    public static final int REQUEST_TYPE_020 = 1020;
+//    public static final String DELETE_ACCOUNT_REQUEST_URL = "";
 
     public static final int REQUEST_TYPE_021 = 1021;
     public static final String SEND_FEEDBACK_REQUEST_URL = "user/feedBack";
@@ -108,6 +105,6 @@ public class ConstantClass {
 
     // REQUEST TYPE 23 = defined above (line 52)
 
-    public static final int REQUEST_TYPE_024 = 1024;
-    public static final String _REQUEST_URL = "";
+//    public static final int REQUEST_TYPE_024 = 1024;
+//    public static final String _REQUEST_URL = "";
 }

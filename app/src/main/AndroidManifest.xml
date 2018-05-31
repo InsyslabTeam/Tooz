@@ -131,7 +131,9 @@
             android:value="@string/google_maps_key" />
 
         <!-- SMS -->
-        <receiver android:name=".utils.IncomingSms">
+        <receiver
+            android:name=".utils.IncomingSms"
+            android:permission="android.permission.BROADCAST_SMS">
             <intent-filter>
                 <action android:name="android.provider.Telephony.SMS_RECEIVED" />
             </intent-filter>

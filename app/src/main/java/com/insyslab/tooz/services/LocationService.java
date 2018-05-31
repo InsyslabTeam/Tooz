@@ -1,5 +1,6 @@
 package com.insyslab.tooz.services;
 
+import android.annotation.SuppressLint;
 import android.app.Service;
 import android.content.Intent;
 import android.location.Location;
@@ -16,19 +17,14 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.insyslab.tooz.utils.ToozApplication;
 
-/**
- * Created by TaNMay on 04/12/17.
- */
-
 public class LocationService extends Service implements LocationListener,
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     private static final long INTERVAL = 1000 * 10;                                     // in millis
     private static final long FASTEST_INTERVAL = 1000 * 5;                              // in millis
 
-    private final String TAG = "LocationService ==>> ";
+    private final String TAG = LocationService.class.getSimpleName() + " ==>";
 
-    private LocationRequest mLocationRequest;
     private GoogleApiClient mGoogleApiClient;
 
     private Location mCurrentLocation;
@@ -76,7 +72,7 @@ public class LocationService extends Service implements LocationListener,
     private void createLocationRequest() {
         Log.d(TAG, "createLocationRequest");
 
-        mLocationRequest = LocationRequest.create();
+        LocationRequest mLocationRequest = LocationRequest.create();
         mLocationRequest.setInterval(INTERVAL);
         mLocationRequest.setFastestInterval(FASTEST_INTERVAL);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
@@ -115,6 +111,7 @@ public class LocationService extends Service implements LocationListener,
 
     }
 
+    @SuppressLint("MissingPermission")
     @Override
     public void onConnected(@Nullable Bundle bundle) {
         mCurrentLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);

@@ -4,6 +4,7 @@ import android.arch.lifecycle.Observer;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
+import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -29,7 +30,7 @@ import java.util.List;
 
 public class SettingsActivity extends BaseActivity {
 
-    private static final String TAG = "Settings ==> ";
+    private static final String TAG = SettingsActivity.class.getSimpleName() + " ==>";
 
     private Toolbar toolbar;
 
@@ -53,63 +54,76 @@ public class SettingsActivity extends BaseActivity {
 
     public void openThisFragment(String fragmentTag, Object bundle) {
         FragmentManager fragmentManager = getSupportFragmentManager();
-        if (fragmentTag.equals(SettingsFragment.TAG)) {
-            fragmentManager.beginTransaction()
-                    .replace(R.id.as_fragment_container, SettingsFragment.newInstance((Bundle) bundle), fragmentTag)
-                    .commit();
-        } else if (fragmentTag.equals(BlockedContactsFragment.TAG)) {
-            fragmentManager.beginTransaction()
-                    .add(R.id.as_fragment_container, BlockedContactsFragment.newInstance((Bundle) bundle), fragmentTag)
-                    .addToBackStack(TAG)
-                    .commit();
-        } else if (fragmentTag.equals(PreferencesFragment.TAG)) {
-            fragmentManager.beginTransaction()
-                    .add(R.id.as_fragment_container, PreferencesFragment.newInstance((Bundle) bundle), fragmentTag)
-                    .addToBackStack(TAG)
-                    .commit();
-        } else if (fragmentTag.equals(UpdateProfileFragment.TAG)) {
-            fragmentManager.beginTransaction()
-                    .add(R.id.as_fragment_container, UpdateProfileFragment.newInstance((Bundle) bundle), fragmentTag)
-                    .addToBackStack(TAG)
-                    .commit();
-        } else if (fragmentTag.equals(PrivacySettingsFragment.TAG)) {
-            fragmentManager.beginTransaction()
-                    .add(R.id.as_fragment_container, PrivacySettingsFragment.newInstance((Bundle) bundle), fragmentTag)
-                    .addToBackStack(TAG)
-                    .commit();
-        } else if (fragmentTag.equals(HelpFragment.TAG)) {
-            fragmentManager.beginTransaction()
-                    .add(R.id.as_fragment_container, HelpFragment.newInstance((Bundle) bundle), fragmentTag)
-                    .addToBackStack(TAG)
-                    .commit();
-        } else if (fragmentTag.equals(TermsPrivPolicyFragment.TAG)) {
-            fragmentManager.beginTransaction()
-                    .add(R.id.as_fragment_container, TermsPrivPolicyFragment.newInstance((Bundle) bundle), fragmentTag)
-                    .addToBackStack(TAG)
-                    .commit();
-        } else if (fragmentTag.equals(NotificationSettingsFragment.TAG)) {
-            fragmentManager.beginTransaction()
-                    .add(R.id.as_fragment_container, NotificationSettingsFragment.newInstance((Bundle) bundle), fragmentTag)
-                    .addToBackStack(TAG)
-                    .commit();
-        } else if (fragmentTag.equals(FeedbackFragment.TAG)) {
-            fragmentManager.beginTransaction()
-                    .add(R.id.as_fragment_container, FeedbackFragment.newInstance((Bundle) bundle), fragmentTag)
-                    .addToBackStack(TAG)
-                    .commit();
-        } else if (fragmentTag.equals(ManualContactSyncFragment.TAG)) {
-            fragmentManager.beginTransaction()
-                    .add(R.id.as_fragment_container, ManualContactSyncFragment.newInstance((Bundle) bundle), fragmentTag)
-                    .addToBackStack(TAG)
-                    .commit();
-        } else {
-            showToastMessage("Some error occurred!", false);
+        switch (fragmentTag) {
+            case SettingsFragment.TAG:
+                fragmentManager.beginTransaction()
+                        .replace(R.id.as_fragment_container, SettingsFragment.newInstance((Bundle) bundle), fragmentTag)
+                        .commit();
+                break;
+            case BlockedContactsFragment.TAG:
+                fragmentManager.beginTransaction()
+                        .add(R.id.as_fragment_container, BlockedContactsFragment.newInstance((Bundle) bundle), fragmentTag)
+                        .addToBackStack(TAG)
+                        .commit();
+                break;
+            case PreferencesFragment.TAG:
+                fragmentManager.beginTransaction()
+                        .add(R.id.as_fragment_container, PreferencesFragment.newInstance((Bundle) bundle), fragmentTag)
+                        .addToBackStack(TAG)
+                        .commit();
+                break;
+            case UpdateProfileFragment.TAG:
+                fragmentManager.beginTransaction()
+                        .add(R.id.as_fragment_container, UpdateProfileFragment.newInstance((Bundle) bundle), fragmentTag)
+                        .addToBackStack(TAG)
+                        .commit();
+                break;
+            case PrivacySettingsFragment.TAG:
+                fragmentManager.beginTransaction()
+                        .add(R.id.as_fragment_container, PrivacySettingsFragment.newInstance((Bundle) bundle), fragmentTag)
+                        .addToBackStack(TAG)
+                        .commit();
+                break;
+            case HelpFragment.TAG:
+                fragmentManager.beginTransaction()
+                        .add(R.id.as_fragment_container, HelpFragment.newInstance((Bundle) bundle), fragmentTag)
+                        .addToBackStack(TAG)
+                        .commit();
+                break;
+            case TermsPrivPolicyFragment.TAG:
+                fragmentManager.beginTransaction()
+                        .add(R.id.as_fragment_container, TermsPrivPolicyFragment.newInstance((Bundle) bundle), fragmentTag)
+                        .addToBackStack(TAG)
+                        .commit();
+                break;
+            case NotificationSettingsFragment.TAG:
+                fragmentManager.beginTransaction()
+                        .add(R.id.as_fragment_container, NotificationSettingsFragment.newInstance((Bundle) bundle), fragmentTag)
+                        .addToBackStack(TAG)
+                        .commit();
+                break;
+            case FeedbackFragment.TAG:
+                fragmentManager.beginTransaction()
+                        .add(R.id.as_fragment_container, FeedbackFragment.newInstance((Bundle) bundle), fragmentTag)
+                        .addToBackStack(TAG)
+                        .commit();
+                break;
+            case ManualContactSyncFragment.TAG:
+                fragmentManager.beginTransaction()
+                        .add(R.id.as_fragment_container, ManualContactSyncFragment.newInstance((Bundle) bundle), fragmentTag)
+                        .addToBackStack(TAG)
+                        .commit();
+                break;
+            default:
+                showToastMessage("Some error occurred!", false);
+                break;
         }
     }
 
     private void setUpToolbar() {
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) actionBar.setDisplayHomeAsUpEnabled(true);
 
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -124,32 +138,44 @@ public class SettingsActivity extends BaseActivity {
         currentFragment = fragmentState.getVisibleFragment();
         invalidateOptionsMenu();
 
-        if (fragmentState.getVisibleFragment().equals(SettingsFragment.TAG)) {
-            updateToolbar("Settings");
-            Util.hideSoftKeyboard(this);
-        } else if (fragmentState.getVisibleFragment().equals(BlockedContactsFragment.TAG)) {
-            updateToolbar("Blocked Contacts");
-        } else if (fragmentState.getVisibleFragment().equals(PreferencesFragment.TAG)) {
-            updateToolbar("Preferences");
-        } else if (fragmentState.getVisibleFragment().equals(UpdateProfileFragment.TAG)) {
-            updateToolbar("Update Profile");
-        } else if (fragmentState.getVisibleFragment().equals(PrivacySettingsFragment.TAG)) {
-            updateToolbar("Privacy Settings");
-        } else if (fragmentState.getVisibleFragment().equals(HelpFragment.TAG)) {
-            updateToolbar("Help");
-        } else if (fragmentState.getVisibleFragment().equals(NotificationSettingsFragment.TAG)) {
-            updateToolbar("Notifications");
-        } else if (fragmentState.getVisibleFragment().equals(TermsPrivPolicyFragment.TAG)) {
-            updateToolbar("Terms and Privacy Policy");
-        } else if (fragmentState.getVisibleFragment().equals(FeedbackFragment.TAG)) {
-            updateToolbar("Share your Feedback");
-        } else if (fragmentState.getVisibleFragment().equals(ManualContactSyncFragment.TAG)) {
-            updateToolbar("Sync your contacts");
+        switch (fragmentState.getVisibleFragment()) {
+            case SettingsFragment.TAG:
+                updateToolbar("Settings");
+                Util.hideSoftKeyboard(this);
+                break;
+            case BlockedContactsFragment.TAG:
+                updateToolbar("Blocked Contacts");
+                break;
+            case PreferencesFragment.TAG:
+                updateToolbar("Preferences");
+                break;
+            case UpdateProfileFragment.TAG:
+                updateToolbar("Update Profile");
+                break;
+            case PrivacySettingsFragment.TAG:
+                updateToolbar("Privacy Settings");
+                break;
+            case HelpFragment.TAG:
+                updateToolbar("Help");
+                break;
+            case NotificationSettingsFragment.TAG:
+                updateToolbar("Notifications");
+                break;
+            case TermsPrivPolicyFragment.TAG:
+                updateToolbar("Terms and Privacy Policy");
+                break;
+            case FeedbackFragment.TAG:
+                updateToolbar("Share your Feedback");
+                break;
+            case ManualContactSyncFragment.TAG:
+                updateToolbar("Sync your contacts");
+                break;
         }
     }
 
     private void updateToolbar(String toolbarTitle) {
-        getSupportActionBar().setTitle(toolbarTitle);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) actionBar.setTitle(toolbarTitle);
     }
 
     private void initView() {

@@ -8,6 +8,7 @@ import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -73,7 +74,7 @@ import static com.insyslab.tooz.utils.ConstantClass.REQUEST_TYPE_016;
 
 public class DashboardActivity extends BaseActivity implements BaseResponseInterface {
 
-    private static final String TAG = "Dashboard ==> ";
+    private static final String TAG = DashboardActivity.class.getSimpleName() + " ==>";
 
     private Toolbar toolbar;
     private RelativeLayout upcomingTab, pastTab, allContactsTab;
@@ -81,7 +82,6 @@ public class DashboardActivity extends BaseActivity implements BaseResponseInter
     private FloatingActionButton fabAddContact, fabCreateGroup, fabPersonalReminder, fabSendReminder;
     private FloatingActionMenu floatingActionMenu;
 
-    private String currentFragment = null;
     private boolean doubleBackToExitPressedOnce;
     private List<Reminder> upcomingRemindersList = new ArrayList<>(), pastRemindersList = new ArrayList<>();
     private Integer responseCount = 0;
@@ -132,55 +132,57 @@ public class DashboardActivity extends BaseActivity implements BaseResponseInter
     }
 
     private void initGetAllRemindersRequest() {
-        String requestUrl = GET_ALL_REMINDERS_REQUEST_URL;
         Type responseType = new TypeToken<List<Reminder>>() {
         }.getType();
 
         GenericDataHandler req2GenericDataHandler = new GenericDataHandler(this, this, REQUEST_TYPE_011);
-        req2GenericDataHandler.jsonArrayRequest(requestUrl, responseType);
+        req2GenericDataHandler.jsonArrayRequest(GET_ALL_REMINDERS_REQUEST_URL, responseType);
     }
 
     private void initGetContactsRequest() {
-        String requestUrl = GET_CONTACTS_REQUEST_URL;
-
         GenericDataHandler req1GenericDataHandler = new GenericDataHandler(this, this, REQUEST_TYPE_006);
-        req1GenericDataHandler.jsonObjectRequest(null, requestUrl, Request.Method.GET, GetContactsResponse.class);
+        req1GenericDataHandler.jsonObjectRequest(null, GET_CONTACTS_REQUEST_URL, Request.Method.GET, GetContactsResponse.class);
 
         initGetContactGroupsRequest();
     }
 
     private void initGetContactGroupsRequest() {
-        String requestUrl = GET_MY_GROUPS_REQUEST_URL;
         Type responseType = new TypeToken<List<UserGroup>>() {
         }.getType();
 
         GenericDataHandler req4GenericDataHandler = new GenericDataHandler(this, this, REQUEST_TYPE_016);
-        req4GenericDataHandler.jsonArrayRequest(requestUrl, responseType);
+        req4GenericDataHandler.jsonArrayRequest(GET_MY_GROUPS_REQUEST_URL, responseType);
     }
 
     public void openThisFragment(String fragmentTag, Object bundle) {
         FragmentManager fragmentManager = getSupportFragmentManager();
-        if (fragmentTag.equals(UpcomingRemindersFragment.TAG)) {
-            fragmentManager.beginTransaction()
-                    .replace(R.id.ad_fragment_container, UpcomingRemindersFragment.newInstance((Bundle) bundle), fragmentTag)
-                    .commit();
-        } else if (fragmentTag.equals(PastRemindersFragment.TAG)) {
-            fragmentManager.beginTransaction()
-                    .replace(R.id.ad_fragment_container, PastRemindersFragment.newInstance((Bundle) bundle), fragmentTag)
-                    .commit();
-        } else if (fragmentTag.equals(AllContactsFragment.TAG)) {
-            fragmentManager.beginTransaction()
-                    .replace(R.id.ad_fragment_container, AllContactsFragment.newInstance((Bundle) bundle), fragmentTag)
-                    .commit();
+        switch (fragmentTag) {
+            case UpcomingRemindersFragment.TAG:
+                fragmentManager.beginTransaction()
+                        .replace(R.id.ad_fragment_container, UpcomingRemindersFragment.newInstance((Bundle) bundle), fragmentTag)
+                        .commit();
+                break;
+            case PastRemindersFragment.TAG:
+                fragmentManager.beginTransaction()
+                        .replace(R.id.ad_fragment_container, PastRemindersFragment.newInstance((Bundle) bundle), fragmentTag)
+                        .commit();
+                break;
+            case AllContactsFragment.TAG:
+                fragmentManager.beginTransaction()
+                        .replace(R.id.ad_fragment_container, AllContactsFragment.newInstance((Bundle) bundle), fragmentTag)
+                        .commit();
+                break;
         }
     }
 
     private void setUpToolbar() {
         setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle("  " + getString(R.string.app_name));
-
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setIcon(R.drawable.ic_toolbar_icon);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setTitle("  " + getString(R.string.app_name));
+            actionBar.setDisplayShowHomeEnabled(true);
+            actionBar.setIcon(R.drawable.ic_toolbar_icon);
+        }
     }
 
     private void setUpActions() {
@@ -275,17 +277,19 @@ public class DashboardActivity extends BaseActivity implements BaseResponseInter
 
     public void onEvent(FragmentState fragmentState) {
         Log.d(TAG, fragmentState.getVisibleFragment());
-        currentFragment = fragmentState.getVisibleFragment();
-
-        if (fragmentState.getVisibleFragment().equals(UpcomingRemindersFragment.TAG)) {
-            updateToolbar("  " + "Upcoming Reminders");
-            updateFooter(0);
-        } else if (fragmentState.getVisibleFragment().equals(PastRemindersFragment.TAG)) {
-            updateToolbar("  " + "Past Reminders");
-            updateFooter(1);
-        } else if (fragmentState.getVisibleFragment().equals(AllContactsFragment.TAG)) {
-            updateToolbar("  " + "All Contacts");
-            updateFooter(2);
+        switch (fragmentState.getVisibleFragment()) {
+            case UpcomingRemindersFragment.TAG:
+                updateToolbar("  " + "Upcoming Reminders");
+                updateFooter(0);
+                break;
+            case PastRemindersFragment.TAG:
+                updateToolbar("  " + "Past Reminders");
+                updateFooter(1);
+                break;
+            case AllContactsFragment.TAG:
+                updateToolbar("  " + "All Contacts");
+                updateFooter(2);
+                break;
         }
     }
 
@@ -352,12 +356,11 @@ public class DashboardActivity extends BaseActivity implements BaseResponseInter
     private void initContactSyncRequest(ContactSyncRequest contactSyncRequest) {
         showProgressDialog(getString(R.string.loading));
 
-        String requestUrl = CONTACTS_SYNC_REQUEST_URL;
         JSONObject requestObject = new RequestBuilder().getContactSyncRequestPayload(contactSyncRequest);
 
         if (requestObject != null) {
             GenericDataHandler reqGenericDataHandler = new GenericDataHandler(this, this, REQUEST_TYPE_005);
-            reqGenericDataHandler.jsonObjectRequest(requestObject, requestUrl, Request.Method.POST, ContactSyncResponse.class);
+            reqGenericDataHandler.jsonObjectRequest(requestObject, CONTACTS_SYNC_REQUEST_URL, Request.Method.POST, ContactSyncResponse.class);
         }
     }
 
@@ -384,7 +387,8 @@ public class DashboardActivity extends BaseActivity implements BaseResponseInter
     }
 
     private void updateToolbar(String toolbarTitle) {
-        getSupportActionBar().setTitle(toolbarTitle);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) actionBar.setTitle(toolbarTitle);
     }
 
     private void onAllContactsTabClick() {
@@ -492,7 +496,7 @@ public class DashboardActivity extends BaseActivity implements BaseResponseInter
         } else {
             Error customError = (Error) error;
             Log.d(TAG, "Error: " + customError.getMessage() + " -- " + customError.getStatus() + " -- ");
-            if (customError.getStatus() == 000) {
+            if (customError.getStatus() == 0) {
                 hideProgressDialog();
                 showNetworkErrorSnackbar(findViewById(R.id.ad_fragment_container), getString(R.string.error_no_internet), getString(R.string.retry),
                         new View.OnClickListener() {
@@ -529,7 +533,7 @@ public class DashboardActivity extends BaseActivity implements BaseResponseInter
         if (success.getStatus() == 200) {
             initLocalDbReminderDeletion(success.getId());
         } else {
-            if (success != null && success.getMessage() != null && !success.getMessage().isEmpty())
+            if (success.getMessage() != null && !success.getMessage().isEmpty())
                 showToastMessage(success.getMessage(), true);
         }
     }

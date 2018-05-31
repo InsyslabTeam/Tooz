@@ -240,7 +240,7 @@ public class CreateGroupFragment extends BaseFragment implements OnRuntimePermis
     }
 
     private void setImageInImageView(Uri resultUri) {
-        Picasso.with(getContext())
+        Picasso.get()
                 .load(resultUri)
                 .placeholder(R.drawable.ic_default_user)
                 .error(R.drawable.ic_default_user)

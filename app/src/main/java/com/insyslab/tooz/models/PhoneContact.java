@@ -7,10 +7,6 @@ import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
 import android.net.Uri;
 
-/**
- * Created by TaNMay on 24/11/17.
- */
-
 @Entity(indices = {@Index(value = "p_id", unique = true)})
 public class PhoneContact {
 

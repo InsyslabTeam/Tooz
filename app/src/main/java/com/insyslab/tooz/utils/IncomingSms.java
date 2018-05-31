@@ -13,13 +13,9 @@ import static com.insyslab.tooz.utils.AppConstants.KEY_OTP_NUMBER;
 import static com.insyslab.tooz.utils.AppConstants.KEY_OTP_SMS;
 import static com.insyslab.tooz.utils.AppConstants.KEY_SMS_PDUS;
 
-/**
- * Created by TaNMay on 12/07/17.
- */
-
 public class IncomingSms extends BroadcastReceiver {
 
-    private final String TAG = "IncomingSms ==>";
+    private final String TAG = IncomingSms.class.getSimpleName() + " ==>";
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -28,17 +24,19 @@ public class IncomingSms extends BroadcastReceiver {
             if (bundle != null) {
                 final Object[] pdusObj = (Object[]) bundle.get(KEY_SMS_PDUS);
 
-                for (int i = 0; i < pdusObj.length; i++) {
-                    SmsMessage currentMessage = SmsMessage.createFromPdu((byte[]) pdusObj[i]);
+                if (pdusObj != null) {
+                    for (Object aPdusObj : pdusObj) {
+                        SmsMessage currentMessage = SmsMessage.createFromPdu((byte[]) aPdusObj);
 
-                    String senderNum = currentMessage.getDisplayOriginatingAddress();
-                    String smsMessage = currentMessage.getDisplayMessageBody();
-                    Log.i(TAG, "SMS: " + "From: " + senderNum + "; Message: " + smsMessage);
+                        String senderNum = currentMessage.getDisplayOriginatingAddress();
+                        String smsMessage = currentMessage.getDisplayMessageBody();
+                        Log.i(TAG, "SMS: " + "From: " + senderNum + "; Message: " + smsMessage);
 
-                    Intent myIntent = new Intent(KEY_OTP_SMS);
-                    myIntent.putExtra(KEY_OTP_MESSAGE, smsMessage);
-                    myIntent.putExtra(KEY_OTP_NUMBER, senderNum);
-                    LocalBroadcastManager.getInstance(context).sendBroadcast(myIntent);
+                        Intent myIntent = new Intent(KEY_OTP_SMS);
+                        myIntent.putExtra(KEY_OTP_MESSAGE, smsMessage);
+                        myIntent.putExtra(KEY_OTP_NUMBER, senderNum);
+                        LocalBroadcastManager.getInstance(context).sendBroadcast(myIntent);
+                    }
                 }
             }
         } catch (Exception e) {

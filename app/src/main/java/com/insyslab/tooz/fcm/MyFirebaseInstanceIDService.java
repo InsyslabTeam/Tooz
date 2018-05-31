@@ -5,13 +5,9 @@ import android.util.Log;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.FirebaseInstanceIdService;
 
-/**
- * Created by TaNMay on 18/04/17.
- */
-
 public class MyFirebaseInstanceIDService extends FirebaseInstanceIdService {
 
-    private final String TAG = "FCMInstanceService ==> ";
+    private final String TAG = MyFirebaseInstanceIDService.class.getSimpleName() + " ==>";
 
     @Override
     public void onTokenRefresh() {

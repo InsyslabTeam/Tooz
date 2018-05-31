@@ -335,7 +335,7 @@ public class AddContactFragment extends BaseFragment implements OnRuntimePermiss
     }
 
     private void setImageInImageView(Uri resultUri) {
-        Picasso.with(getContext())
+        Picasso.get()
                 .load(resultUri)
                 .placeholder(R.drawable.ic_default_user)
                 .error(R.drawable.ic_default_user)

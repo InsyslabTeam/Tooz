@@ -1,7 +1,9 @@
 package com.insyslab.tooz.ui.fragments;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -9,7 +11,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.insyslab.tooz.R;
@@ -17,13 +18,9 @@ import com.insyslab.tooz.models.eventbus.FragmentState;
 import com.insyslab.tooz.ui.activities.SettingsActivity;
 import com.insyslab.tooz.utils.Util;
 
-/**
- * Created by TaNMay on 26/09/16.
- */
-
 public class PreferencesFragment extends BaseFragment {
 
-    public static final String TAG = "PreferencesFrag ==> ";
+    public static final String TAG = PreferencesFragment.class.getSimpleName() + " ==>";
 
     private static final String ARG_PARAM1 = "ARG_PARAM1";
 
@@ -31,9 +28,10 @@ public class PreferencesFragment extends BaseFragment {
     private final int ADVANCE_ALERT_TIME_LIMIT = 120;
     private final int SNOOZE_TIME_LIMIT = 120;
 
-    private LinearLayout content;
     private EditText etLocationBounds, etAdvanceTimeAlert, etSnoozeTime;
     private TextView tvLocationBoundsHint, tvAdvanceTimeAlertHint, tvSnoozeTimeHint;
+
+    private Context context;
 
     public PreferencesFragment() {
 
@@ -50,15 +48,16 @@ public class PreferencesFragment extends BaseFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            Bundle bundle = getArguments().getBundle(ARG_PARAM1);
-        }
+//        if (getArguments() != null) {
+//            Bundle bundle = getArguments().getBundle(ARG_PARAM1);
+//        }
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View layout = inflater.inflate(R.layout.fragment_preferences, container, false);
 
+        context = getContext();
         updateFragment(new FragmentState(TAG));
         initView(layout);
         setUpActions();
@@ -68,6 +67,7 @@ public class PreferencesFragment extends BaseFragment {
         return layout;
     }
 
+    @SuppressLint("SetTextI18n")
     private void setUpViewDetails() {
         etLocationBounds.setText("1500");
         etAdvanceTimeAlert.setText("120");
@@ -75,8 +75,6 @@ public class PreferencesFragment extends BaseFragment {
     }
 
     private void initView(View rootView) {
-        content = rootView.findViewById(R.id.fprf_content);
-
         etLocationBounds = rootView.findViewById(R.id.fprf_location_bounds);
         etAdvanceTimeAlert = rootView.findViewById(R.id.fprf_advance_alert);
         etSnoozeTime = rootView.findViewById(R.id.fprf_snooze_time);
@@ -102,8 +100,8 @@ public class PreferencesFragment extends BaseFragment {
             public void afterTextChanged(Editable editable) {
                 String locBounds = etLocationBounds.getText().toString();
 
-                if (locBounds != null && !locBounds.isEmpty()) {
-                    String hintPart2 = "";
+                if (!locBounds.isEmpty()) {
+                    String hintPart2;
                     Double locBoundsDouble = Double.parseDouble(locBounds);
                     if (locBoundsDouble < 1000) {
                         hintPart2 = locBounds + " meter ";
@@ -138,8 +136,8 @@ public class PreferencesFragment extends BaseFragment {
             public void afterTextChanged(Editable editable) {
                 String advTime = etAdvanceTimeAlert.getText().toString();
 
-                if (advTime != null && !advTime.isEmpty()) {
-                    String hintPart2 = "";
+                if (!advTime.isEmpty()) {
+                    String hintPart2;
                     int advTimeInt = Integer.parseInt(advTime);
                     if (advTimeInt < 60) {
                         hintPart2 = advTime + " seconds ";
@@ -181,8 +179,8 @@ public class PreferencesFragment extends BaseFragment {
             public void afterTextChanged(Editable editable) {
                 String snzTime = etSnoozeTime.getText().toString();
 
-                if (snzTime != null && !snzTime.isEmpty()) {
-                    String hintPart2 = "";
+                if (!snzTime.isEmpty()) {
+                    String hintPart2;
                     int snzTimeInt = Integer.parseInt(snzTime);
                     if (snzTimeInt < 60) {
                         hintPart2 = snzTime + " seconds ";
@@ -226,15 +224,15 @@ public class PreferencesFragment extends BaseFragment {
         String advanceTimeAlert = etAdvanceTimeAlert.getText().toString();
         String snoozeTime = etSnoozeTime.getText().toString();
 
-        if (locationBounds != null && locationBounds.isEmpty()) {
+        if (locationBounds.isEmpty()) {
             setError(tvLocationBoundsHint, getString(R.string.error_empty_field));
         } else if (Integer.parseInt(locationBounds) > LOCATION_BOUNDS_LIMIT) {
             setError(tvLocationBoundsHint, "Location bounds cannot be greater than 5000 meters!");
-        } else if (advanceTimeAlert != null && advanceTimeAlert.isEmpty()) {
+        } else if (advanceTimeAlert.isEmpty()) {
             setError(tvAdvanceTimeAlertHint, getString(R.string.error_empty_field));
         } else if (Integer.parseInt(advanceTimeAlert) > ADVANCE_ALERT_TIME_LIMIT) {
             setError(tvAdvanceTimeAlertHint, "Advance alert time cannot be greater than 120 minutes!");
-        } else if (snoozeTime != null && snoozeTime.isEmpty()) {
+        } else if (snoozeTime.isEmpty()) {
             setError(tvSnoozeTimeHint, getString(R.string.error_empty_field));
         } else if (Integer.parseInt(snoozeTime) > SNOOZE_TIME_LIMIT) {
             setError(tvSnoozeTimeHint, "Snooze time cannot be greater than 120 minutes!");
@@ -245,15 +243,17 @@ public class PreferencesFragment extends BaseFragment {
 
     private void setError(TextView textView, String errorMessage) {
         textView.setText(errorMessage);
-        textView.setTextColor(ContextCompat.getColor(getContext(), R.color.error_red));
+        textView.setTextColor(ContextCompat.getColor(context, R.color.error_red));
     }
 
     private void setHint(TextView textView, String hintMessage) {
         textView.setText(hintMessage);
-        textView.setTextColor(ContextCompat.getColor(getContext(), R.color.preferences_hint_text));
+        textView.setTextColor(ContextCompat.getColor(context, R.color.preferences_hint_text));
     }
 
     private void closeThisFragment() {
-        ((SettingsActivity) getActivity()).closeCurrentFragment();
+        if (getActivity() != null) {
+            ((SettingsActivity) getActivity()).closeCurrentFragment();
+        }
     }
 }

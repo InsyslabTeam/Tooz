@@ -4,6 +4,7 @@ import android.arch.lifecycle.Observer;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
+import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -42,21 +43,22 @@ public class ActionsActivity extends BaseActivity
         implements LocationSelectorFragment.OnLocationSelectedListener,
         SelectContactsFragment.OnContactsSelectedListener {
 
-    private static final String TAG = "Actions ==> ";
+    private static final String TAG = ActionsActivity.class.getSimpleName() + " ==>";
 
     public static OnReminderFetchedListener onReminderFetchedListener;
     public static OnUserFetchedListener onUserFetchedListener;
 
     private Toolbar toolbar;
 
-    private String currentFragment = null, currentDetailFragment = null, toFragment = null;
+    private String currentFragment = null;
+    private String currentDetailFragment = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_actions);
 
-        toFragment = getIntent().getStringExtra(KEY_TO_ACTIONS);
+        String toFragment = getIntent().getStringExtra(KEY_TO_ACTIONS);
         String fragmentType = getIntent().getStringExtra(KEY_SET_REMINDER_TYPE);
         String reminderId = getIntent().getStringExtra(KEY_GET_REMINDER_ID);
         Bundle contactBundle = getIntent().getBundleExtra(KEY_SELECTED_CONTACT_BUNDLE);
@@ -86,38 +88,46 @@ public class ActionsActivity extends BaseActivity
 
     public void openThisFragment(String fragmentTag, Object bundle) {
         FragmentManager fragmentManager = getSupportFragmentManager();
-        if (fragmentTag.equals(AddContactFragment.TAG)) {
-            fragmentManager.beginTransaction()
-                    .replace(R.id.aa_fragment_container, AddContactFragment.newInstance((Bundle) bundle), fragmentTag)
-                    .commit();
-        } else if (fragmentTag.equals(CreateGroupFragment.TAG)) {
-            fragmentManager.beginTransaction()
-                    .replace(R.id.aa_fragment_container, CreateGroupFragment.newInstance((Bundle) bundle), fragmentTag)
-                    .commit();
-        } else if (fragmentTag.equals(SetReminderFragment.TAG)) {
-            fragmentManager.beginTransaction()
-                    .replace(R.id.aa_fragment_container, SetReminderFragment.newInstance((Bundle) bundle), fragmentTag)
-                    .commit();
-        } else if (fragmentTag.equals(LocationSelectorFragment.TAG)) {
-            fragmentManager.beginTransaction()
-                    .add(R.id.aa_fragment_container, LocationSelectorFragment.newInstance((Bundle) bundle), fragmentTag)
-                    .addToBackStack(TAG)
-                    .commit();
-        } else if (fragmentTag.equals(SelectContactsFragment.TAG)) {
-            fragmentManager.beginTransaction()
-                    .add(R.id.aa_fragment_container, SelectContactsFragment.newInstance((Bundle) bundle), fragmentTag)
-                    .addToBackStack(TAG)
-                    .commit();
-        } else if (fragmentTag.equals(EditReminderFragment.TAG)) {
-            fragmentManager.beginTransaction()
-                    .replace(R.id.aa_fragment_container, EditReminderFragment.newInstance((Bundle) bundle), fragmentTag)
-                    .commit();
+        switch (fragmentTag) {
+            case AddContactFragment.TAG:
+                fragmentManager.beginTransaction()
+                        .replace(R.id.aa_fragment_container, AddContactFragment.newInstance((Bundle) bundle), fragmentTag)
+                        .commit();
+                break;
+            case CreateGroupFragment.TAG:
+                fragmentManager.beginTransaction()
+                        .replace(R.id.aa_fragment_container, CreateGroupFragment.newInstance((Bundle) bundle), fragmentTag)
+                        .commit();
+                break;
+            case SetReminderFragment.TAG:
+                fragmentManager.beginTransaction()
+                        .replace(R.id.aa_fragment_container, SetReminderFragment.newInstance((Bundle) bundle), fragmentTag)
+                        .commit();
+                break;
+            case LocationSelectorFragment.TAG:
+                fragmentManager.beginTransaction()
+                        .add(R.id.aa_fragment_container, LocationSelectorFragment.newInstance((Bundle) bundle), fragmentTag)
+                        .addToBackStack(TAG)
+                        .commit();
+                break;
+            case SelectContactsFragment.TAG:
+                fragmentManager.beginTransaction()
+                        .add(R.id.aa_fragment_container, SelectContactsFragment.newInstance((Bundle) bundle), fragmentTag)
+                        .addToBackStack(TAG)
+                        .commit();
+                break;
+            case EditReminderFragment.TAG:
+                fragmentManager.beginTransaction()
+                        .replace(R.id.aa_fragment_container, EditReminderFragment.newInstance((Bundle) bundle), fragmentTag)
+                        .commit();
+                break;
         }
     }
 
     private void setUpToolbar() {
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) actionBar.setDisplayHomeAsUpEnabled(true);
 
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -155,7 +165,9 @@ public class ActionsActivity extends BaseActivity
     }
 
     private void updateToolbar(String toolbarTitle) {
-        getSupportActionBar().setTitle(toolbarTitle);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) actionBar.setTitle(toolbarTitle);
+
     }
 
     @Override
@@ -226,15 +238,22 @@ public class ActionsActivity extends BaseActivity
 
     @Override
     public void onContactsSelected(List<User> contactItemList, String from) {
-        if (from.equals(SetReminderFragment.TAG)) {
-            SetReminderFragment fragment = (SetReminderFragment) getSupportFragmentManager().findFragmentById(R.id.aa_fragment_container);
-            fragment.onMembersSelected(contactItemList);
-        } else if (from.equals(CreateGroupFragment.TAG)) {
-            CreateGroupFragment fragment = (CreateGroupFragment) getSupportFragmentManager().findFragmentById(R.id.aa_fragment_container);
-            fragment.onMembersSelected(contactItemList);
-        } else if (from.equals(EditReminderFragment.TAG)) {
-            EditReminderFragment fragment = (EditReminderFragment) getSupportFragmentManager().findFragmentById(R.id.aa_fragment_container);
-            fragment.onMembersSelected(contactItemList);
+        switch (from) {
+            case SetReminderFragment.TAG: {
+                SetReminderFragment fragment = (SetReminderFragment) getSupportFragmentManager().findFragmentById(R.id.aa_fragment_container);
+                fragment.onMembersSelected(contactItemList);
+                break;
+            }
+            case CreateGroupFragment.TAG: {
+                CreateGroupFragment fragment = (CreateGroupFragment) getSupportFragmentManager().findFragmentById(R.id.aa_fragment_container);
+                fragment.onMembersSelected(contactItemList);
+                break;
+            }
+            case EditReminderFragment.TAG: {
+                EditReminderFragment fragment = (EditReminderFragment) getSupportFragmentManager().findFragmentById(R.id.aa_fragment_container);
+                fragment.onMembersSelected(contactItemList);
+                break;
+            }
         }
     }
 

@@ -12,9 +12,6 @@ import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
 
-/**
- * Created by TaNMay on 3/14/2016.
- */
 public class CustomRequest extends JsonRequest<JSONArray> {
 
     //protected static final String PROTOCOL_CHARSET = "utf-8";
@@ -69,8 +66,8 @@ public class CustomRequest extends JsonRequest<JSONArray> {
      * @param listener      Listener to receive the JSON response
      * @param errorListener Error listener, or null to ignore errors.
      */
-    public CustomRequest(int method, String url, JSONArray jsonRequest,
-                         Response.Listener<JSONArray> listener, Response.ErrorListener errorListener) {
+    private CustomRequest(int method, String url, JSONArray jsonRequest,
+                          Response.Listener<JSONArray> listener, Response.ErrorListener errorListener) {
         super(method, url, (jsonRequest == null) ? null : jsonRequest
                 .toString(), listener, errorListener);
     }
@@ -85,8 +82,8 @@ public class CustomRequest extends JsonRequest<JSONArray> {
      * @param listener      Listener to receive the JSON response
      * @param errorListener Error listener, or null to ignore errors.
      */
-    public CustomRequest(int method, String url, JSONObject jsonRequest,
-                         Response.Listener<JSONArray> listener, Response.ErrorListener errorListener) {
+    CustomRequest(int method, String url, JSONObject jsonRequest,
+                  Response.Listener<JSONArray> listener, Response.ErrorListener errorListener) {
         super(method, url, (jsonRequest == null) ? null : jsonRequest
                 .toString(), listener, errorListener);
     }
@@ -124,10 +121,8 @@ public class CustomRequest extends JsonRequest<JSONArray> {
                     HttpHeaderParser.parseCharset(response.headers));
             return Response.success(new JSONArray(jsonString),
                     HttpHeaderParser.parseCacheHeaders(response));
-        } catch (UnsupportedEncodingException e) {
+        } catch (UnsupportedEncodingException | JSONException e) {
             return Response.error(new ParseError(e));
-        } catch (JSONException je) {
-            return Response.error(new ParseError(je));
         }
     }
 

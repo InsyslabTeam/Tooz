@@ -15,24 +15,10 @@ import java.util.List;
 
 import static com.insyslab.tooz.utils.AppConstants.VAL_SEND_REMINDER;
 
-/**
- * Created by TaNMay on 24/11/17.
- */
-
 public class RequestBuilder {
 
     private final String key_mobile = "mobile";
-    private final String key_otp = "otp";
-    private final String key_name = "name";
 
-    private final String key_task = "task";
-    private final String key_date = "date";
-    private final String key_time = "time";
-    private final String key_latitude = "latitude";
-    private final String key_longitude = "longitude";
-    private final String key_owner_user = "user";
-    private final String key_contacts = "contacts";
-    private final String key_feedback = "feedback";
     private final String key_device_id = "deviceId";
 
     public RequestBuilder() {
@@ -51,6 +37,7 @@ public class RequestBuilder {
     }
 
     public JSONObject getVerifyOtpRequestPayload(String mobile, String otp, String deviceId) {
+        String key_otp = "otp";
         JSONObject jsonObject = new JSONObject();
         try {
             jsonObject.put(key_mobile, mobile);
@@ -68,6 +55,7 @@ public class RequestBuilder {
     }
 
     public JSONObject getCreateProfileRequestPayload(String name, User user) {
+        String key_name = "name";
         try {
             JSONObject jsonObject = new JSONObject(new Gson().toJson(user));
             jsonObject.put(key_name, name);
@@ -81,8 +69,7 @@ public class RequestBuilder {
 
     public JSONObject getContactSyncRequestPayload(ContactSyncRequest contactSyncRequest) {
         try {
-            JSONObject jsonObject = new JSONObject(new Gson().toJson(contactSyncRequest));
-            return jsonObject;
+            return new JSONObject(new Gson().toJson(contactSyncRequest));
         } catch (JSONException e) {
             e.printStackTrace();
             return null;
@@ -92,6 +79,14 @@ public class RequestBuilder {
     public JSONObject getCreateReminderRequestPayload(String type, String task, String dateTime,
                                                       LatLng location, String ownerUser,
                                                       List<User> contactsArray) {
+        String key_task = "task";
+        String key_owner_user = "user";
+        String key_date = "date";
+        String key_time = "time";
+        String key_latitude = "latitude";
+        String key_longitude = "longitude";
+        String key_contacts = "contacts";
+
         try {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put(key_task, task);
@@ -143,8 +138,7 @@ public class RequestBuilder {
             createGroupRequest.setUsers(members);
             createGroupRequest.setUrl(imageUrl);
 
-            JSONObject jsonObject = new JSONObject(new Gson().toJson(createGroupRequest));
-            return jsonObject;
+            return new JSONObject(new Gson().toJson(createGroupRequest));
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -154,6 +148,7 @@ public class RequestBuilder {
     public JSONObject getFeedbackRequestPayload(String feedbackText) {
         try {
             JSONObject jsonObject = new JSONObject();
+            String key_feedback = "feedback";
             jsonObject.put(key_feedback, feedbackText);
             return jsonObject;
         } catch (JSONException e) {

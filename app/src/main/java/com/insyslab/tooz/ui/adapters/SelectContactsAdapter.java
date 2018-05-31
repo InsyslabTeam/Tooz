@@ -1,5 +1,6 @@
 package com.insyslab.tooz.ui.adapters;
 
+import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -15,13 +16,8 @@ import com.insyslab.tooz.models.User;
 import com.insyslab.tooz.ui.customui.CircleTransform;
 import com.squareup.picasso.Picasso;
 
-import java.util.HashMap;
 import java.util.List;
 
-
-/**
- * Created by TaNMay on 19/02/17.
- */
 public class SelectContactsAdapter extends RecyclerView.Adapter<SelectContactsAdapter.ViewHolder> {
 
     private OnSelectContactItemClickListener onSelectContactItemClickListener;
@@ -32,17 +28,18 @@ public class SelectContactsAdapter extends RecyclerView.Adapter<SelectContactsAd
         this.contactItems = contactItems;
     }
 
+    @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_select_contact, parent, false);
         return new ViewHolder(v);
     }
 
     @Override
-    public void onBindViewHolder(final ViewHolder holder, final int position) {
+    public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
         User contactItem = contactItems.get(position);
 
-        Picasso.with(holder.image.getContext())
+        Picasso.get()
                 .load(contactItem.getProfileImage())
                 .placeholder(R.drawable.ic_default_user)
                 .error(R.drawable.ic_default_user)
@@ -65,7 +62,7 @@ public class SelectContactsAdapter extends RecyclerView.Adapter<SelectContactsAd
         holder.selectorSec.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                onSelectContactItemClickListener.onContactSelectorClick(position);
+                onSelectContactItemClickListener.onContactSelectorClick(holder.getAdapterPosition());
             }
         });
     }
@@ -77,9 +74,9 @@ public class SelectContactsAdapter extends RecyclerView.Adapter<SelectContactsAd
 
     class ViewHolder extends RecyclerView.ViewHolder {
 
-        public ImageView image, selector;
-        public TextView name, number;
-        public RelativeLayout selectorSec;
+        ImageView image, selector;
+        TextView name, number;
+        RelativeLayout selectorSec;
 
         public ViewHolder(View itemView) {
             super(itemView);

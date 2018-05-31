@@ -2,6 +2,7 @@ package com.insyslab.tooz.ui.fragments;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -26,17 +27,13 @@ import static com.insyslab.tooz.utils.AppConstants.KEY_FROM_FRAGMENT;
 import static com.insyslab.tooz.utils.AppConstants.KEY_FROM_FRAGMENT_DETAIL;
 import static com.insyslab.tooz.utils.AppConstants.KEY_TO_CONTACTS_SELECTOR_BUNDLE;
 
-/**
- * Created by TaNMay on 26/09/16.
- */
-
 public class SelectContactsFragment extends BaseFragment implements OnSelectContactItemClickListener {
 
-    public static final String TAG = "SelectContactsFrag ==> ";
+    public static final String TAG = SelectContactsFragment.class.getSimpleName() + " ==>";
 
     private static final String ARG_PARAM1 = "ARG_PARAM1";
 
-    private RelativeLayout content, selectAllSec;
+    private RelativeLayout content;
     private CheckBox cbSelectAll;
     private RecyclerView rvContacts;
 
@@ -65,14 +62,16 @@ public class SelectContactsFragment extends BaseFragment implements OnSelectCont
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             Bundle bundle = getArguments().getBundle(ARG_PARAM1);
-            fromFragment = bundle.getString(KEY_FROM_FRAGMENT);
-            fromFragmentDetails = bundle.getString(KEY_FROM_FRAGMENT_DETAIL);
-            selectedContacts = (List<User>) bundle.getSerializable(KEY_TO_CONTACTS_SELECTOR_BUNDLE);
+            if (bundle != null) {
+                fromFragment = bundle.getString(KEY_FROM_FRAGMENT);
+                fromFragmentDetails = bundle.getString(KEY_FROM_FRAGMENT_DETAIL);
+                selectedContacts = (List<User>) bundle.getSerializable(KEY_TO_CONTACTS_SELECTOR_BUNDLE);
+            }
         }
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View layout = inflater.inflate(R.layout.fragment_select_contacts, container, false);
 
         updateFragment(new FragmentState(TAG));
@@ -80,7 +79,8 @@ public class SelectContactsFragment extends BaseFragment implements OnSelectCont
         setUpActions();
 
         if (selectedContacts == null) selectedContacts = new ArrayList<>();
-        contactItems = ((ActionsActivity) getActivity()).getAppUserList();
+        if (getActivity() != null)
+            contactItems = ((ActionsActivity) getActivity()).getAppUserList();
         setUpContactsRv();
 
         return layout;
@@ -111,7 +111,6 @@ public class SelectContactsFragment extends BaseFragment implements OnSelectCont
     private void initView(View rootView) {
         content = rootView.findViewById(R.id.fslc_content);
         rvContacts = rootView.findViewById(R.id.fslc_contacts);
-        selectAllSec = rootView.findViewById(R.id.fslc_select_all_sec);
         cbSelectAll = rootView.findViewById(R.id.fslc_select_all);
     }
 
@@ -165,7 +164,8 @@ public class SelectContactsFragment extends BaseFragment implements OnSelectCont
     }
 
     private void closeThisFragment() {
-        getActivity().onBackPressed();
+        if (getActivity() != null)
+            getActivity().onBackPressed();
     }
 
     private List<User> getListOfSelectedContacts() {

@@ -27,18 +27,14 @@ import com.insyslab.tooz.utils.ToozApplication;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by TaNMay on 20/02/18.
- */
-
 public class GeofenceTransitionsIntentService extends IntentService implements LifecycleOwner {
 
-    private final String TAG = "GeofenceTransIS ==>>>";
+    private final String TAG = GeofenceTransitionsIntentService.class.getSimpleName() + " ==>";
 
     private LifecycleRegistry mLifecycleRegistry;
 
     private LocalReminderRepository localReminderRepository;
-    private List<LocalReminder> localReminderList;
+//    private List<LocalReminder> localReminderList;
 
     public GeofenceTransitionsIntentService() {
         super("GeofenceTransitionsIntentService");
@@ -64,25 +60,27 @@ public class GeofenceTransitionsIntentService extends IntentService implements L
         Log.d(TAG, "onHandleIntent");
 
         GeofencingEvent geofencingEvent = GeofencingEvent.fromIntent(intent);
-        if (geofencingEvent.hasError()) {
+        if (geofencingEvent != null && geofencingEvent.hasError()) {
             Log.d(TAG, "geofencingEvent.hasError()");
             return;
         }
 
-        int geofenceTransition = geofencingEvent.getGeofenceTransition();
+        int geofenceTransition = 0;
+        if (geofencingEvent != null) geofenceTransition = geofencingEvent.getGeofenceTransition();
+
 
         if (geofenceTransition == Geofence.GEOFENCE_TRANSITION_ENTER ||
                 geofenceTransition == Geofence.GEOFENCE_TRANSITION_EXIT) {
             Log.d(TAG, "Success 101!");
 
             List<Geofence> triggeringGeofences = geofencingEvent.getTriggeringGeofences();
-            getGeofenceTransitionDetails(geofenceTransition, triggeringGeofences);
+            getGeofenceTransitionDetails(triggeringGeofences);
         } else {
             Log.d(TAG, "Error 101!");
         }
     }
 
-    private void getGeofenceTransitionDetails(int geofenceTransition, List<Geofence> triggeringGeofences) {
+    private void getGeofenceTransitionDetails(List<Geofence> triggeringGeofences) {
         ArrayList<String> triggeringGeofencesIdsList = new ArrayList<>();
         for (Geofence geofence : triggeringGeofences) {
             triggeringGeofencesIdsList.add(geofence.getRequestId());
@@ -93,7 +91,7 @@ public class GeofenceTransitionsIntentService extends IntentService implements L
     }
 
     private void initGeoReminderNotification(ArrayList<String> triggeringGeofencesIdsList) {
-        localReminderList = new ArrayList<>();
+//        localReminderList = new ArrayList<>();
         localReminderRepository = new LocalReminderRepository((ToozApplication) getApplicationContext());
 
         for (int i = 0; i < triggeringGeofencesIdsList.size(); i++) {
@@ -106,7 +104,7 @@ public class GeofenceTransitionsIntentService extends IntentService implements L
         localReminderRepository.getLocalReminderFromUniqueInt(uniqueInt).observe(this, new Observer<LocalReminder>() {
             @Override
             public void onChanged(@Nullable LocalReminder localReminder) {
-                localReminderList.add(localReminder);
+//                localReminderList.add(localReminder);
 
                 sendNotificationForLocalReminder(localReminder);
             }
@@ -118,7 +116,7 @@ public class GeofenceTransitionsIntentService extends IntentService implements L
 
         NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         int id = localReminder.getUniqueInt();
-        notificationManager.notify(id, notification);
+        if (notificationManager != null) notificationManager.notify(id, notification);
     }
 
     private Notification createNotificationObject(LocalReminder rem) {

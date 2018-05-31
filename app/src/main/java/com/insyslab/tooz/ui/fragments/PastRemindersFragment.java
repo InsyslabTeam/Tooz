@@ -1,7 +1,9 @@
 package com.insyslab.tooz.ui.fragments;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -19,17 +21,13 @@ import com.insyslab.tooz.ui.adapters.PastRemindersAdapter;
 
 import java.util.List;
 
-/**
- * Created by TaNMay on 26/09/16.
- */
-
 public class PastRemindersFragment extends BaseFragment implements OnPastReminderClickListener {
 
-    public static final String TAG = "PastRemindFrag ==> ";
+    public static final String TAG = PastRemindersFragment.class.getSimpleName() + " ==>";
 
     private static final String ARG_PARAM1 = "ARG_PARAM1";
 
-    private RelativeLayout content, noContentView;
+    private RelativeLayout noContentView;
     private TextView tvNcvTitle;
     private RecyclerView pastRv;
 
@@ -52,25 +50,28 @@ public class PastRemindersFragment extends BaseFragment implements OnPastReminde
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            Bundle bundle = getArguments().getBundle(ARG_PARAM1);
-        }
+//        if (getArguments() != null) {
+//            Bundle bundle = getArguments().getBundle(ARG_PARAM1);
+//        }
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View layout = inflater.inflate(R.layout.fragment_past_reminders, container, false);
 
         updateFragment(new FragmentState(TAG));
         initView(layout);
         setUpActions();
 
-        pastReminderList = ((DashboardActivity) getActivity()).getPastRemindersList();
+        if (getActivity() != null) {
+            pastReminderList = ((DashboardActivity) getActivity()).getPastRemindersList();
+        }
         setUpPastRv();
 
         return layout;
     }
 
+    @SuppressLint("SetTextI18n")
     private void setUpPastRv() {
         if (pastReminderList != null && pastReminderList.size() > 0) {
             noContentView.setVisibility(View.GONE);
@@ -113,16 +114,6 @@ public class PastRemindersFragment extends BaseFragment implements OnPastReminde
         int position = pastRv.getChildAdapterPosition(view);
         pastReminderList.get(position).setExpanded(!pastReminderList.get(position).isExpanded());
         pastAdapter.notifyItemChanged(position);
-    }
-
-    @Override
-    public void onPastReminderEditClick(int position) {
-
-    }
-
-    @Override
-    public void onPastReminderDeleteClick(int position) {
-
     }
 
     public void updateRemindersRv(List<Reminder> list) {

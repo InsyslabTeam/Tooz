@@ -4,6 +4,7 @@ import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.content.ContextCompat;
@@ -58,13 +59,9 @@ import static com.insyslab.tooz.utils.Util.getDayOfWeekFromIndex;
 import static com.insyslab.tooz.utils.Util.getFormattedHourOrMinute;
 import static com.insyslab.tooz.utils.Util.getMonthFromIndex;
 
-/**
- * Created by TaNMay on 26/09/16.
- */
-
 public class SetReminderFragment extends BaseFragment implements BaseResponseInterface, OnUserFetchedListener {
 
-    public static final String TAG = "SetReminderFrag ==> ";
+    public static final String TAG = SetReminderFragment.class.getSimpleName() + " ==>";
 
     private static final String ARG_PARAM1 = "ARG_PARAM1";
 
@@ -74,13 +71,14 @@ public class SetReminderFragment extends BaseFragment implements BaseResponseInt
     private ImageView ivOptionTime, ivOptionLocation;
 
     private String fragmentType = null;
-    private String timeSelected = null, addressSelected = null;
+    private String timeSelected = null;
     private LatLng latLngSelected = null;
     private Boolean isTimeSelected = true;
     private List<User> selectedMembers = null;
-    private List<UserGroup> selectedGroups = null;
     private User user;
     private String selectedUserId = null, selectedGroupId = null;
+
+    private Context context;
 
     public SetReminderFragment() {
 
@@ -99,31 +97,38 @@ public class SetReminderFragment extends BaseFragment implements BaseResponseInt
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             Bundle bundle = getArguments().getBundle(ARG_PARAM1);
-            fragmentType = bundle.getString(KEY_SET_REMINDER_TYPE);
-            selectedUserId = bundle.getString(KEY_GET_SELECTED_CONTACT_ID);
-            selectedGroupId = bundle.getString(KEY_GET_SELECTED_GROUP_ID);
+            if (bundle != null) {
+                fragmentType = bundle.getString(KEY_SET_REMINDER_TYPE);
+                selectedUserId = bundle.getString(KEY_GET_SELECTED_CONTACT_ID);
+                selectedGroupId = bundle.getString(KEY_GET_SELECTED_GROUP_ID);
+            }
         }
         ActionsActivity.onUserFetchedListener = this;
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View layout = inflater.inflate(R.layout.fragment_set_reminder, container, false);
 
+        context = getContext();
         FragmentState fragmentState = new FragmentState(TAG);
         fragmentState.setFragmentDetailedName(fragmentType);
         updateFragment(fragmentState);
         initView(layout);
 
-        user = LocalStorage.getInstance(getContext()).getUser();
+        user = LocalStorage.getInstance(context).getUser();
 
-        if (fragmentType.equals(VAL_SET_PERSONAL_REMINDER)) {
-            setUpPersonalReminderView();
-        } else if (fragmentType.equals(VAL_SEND_REMINDER)) {
-            setUpSendReminderView();
-        } else {
-            showToastMessage("Some error occurred!", false);
-            getActivity().finish();
+        switch (fragmentType) {
+            case VAL_SET_PERSONAL_REMINDER:
+                setUpPersonalReminderView();
+                break;
+            case VAL_SEND_REMINDER:
+                setUpSendReminderView();
+                break;
+            default:
+                showToastMessage("Some error occurred!", false);
+                if (getActivity() != null) getActivity().finish();
+                break;
         }
 
         setUpActions();
@@ -180,12 +185,12 @@ public class SetReminderFragment extends BaseFragment implements BaseResponseInt
 
     private void updateSelectionView() {
         if (isTimeSelected) {
-            ivOptionLocation.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.ic_option_location));
-            ivOptionTime.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.ic_option_time_selected));
+            ivOptionLocation.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_option_location));
+            ivOptionTime.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_option_time_selected));
             enableTimeView();
         } else {
-            ivOptionTime.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.ic_option_time));
-            ivOptionLocation.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.ic_option_location_selected));
+            ivOptionTime.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_option_time));
+            ivOptionLocation.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_option_location_selected));
             enableLocationView();
         }
         if (fragmentType.equals(VAL_SEND_REMINDER)) enableContactsView();
@@ -214,7 +219,9 @@ public class SetReminderFragment extends BaseFragment implements BaseResponseInt
         bundle.putString(KEY_FROM_FRAGMENT, TAG);
         bundle.putString(KEY_FROM_FRAGMENT_DETAIL, fragmentType);
         bundle.putSerializable(KEY_TO_CONTACTS_SELECTOR_BUNDLE, (ArrayList<User>) selectedMembers);
-        ((ActionsActivity) getActivity()).openThisFragment(SelectContactsFragment.TAG, bundle);
+        if (getActivity() != null) {
+            ((ActionsActivity) getActivity()).openThisFragment(SelectContactsFragment.TAG, bundle);
+        }
     }
 
     private void onLocationClick() {
@@ -226,7 +233,9 @@ public class SetReminderFragment extends BaseFragment implements BaseResponseInt
         Bundle bundle = new Bundle();
         bundle.putString(KEY_SET_REMINDER_TYPE, fragmentType);
         bundle.putString(KEY_FROM_FRAGMENT_DETAIL, fragmentType);
-        ((ActionsActivity) getActivity()).openThisFragment(LocationSelectorFragment.TAG, bundle);
+        if (getActivity() != null) {
+            ((ActionsActivity) getActivity()).openThisFragment(LocationSelectorFragment.TAG, bundle);
+        }
     }
 
     private void onTimeClick() {
@@ -241,7 +250,7 @@ public class SetReminderFragment extends BaseFragment implements BaseResponseInt
         Calendar calendar = Calendar.getInstance();
 
         DatePickerDialog datePickerDialog = new DatePickerDialog(
-                getContext(),
+                context,
                 new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker datePicker, int i, int i1, int i2) {
@@ -266,7 +275,7 @@ public class SetReminderFragment extends BaseFragment implements BaseResponseInt
         final long currTime = calendar.getTimeInMillis() + 1000;
 
         TimePickerDialog timePickerDialog = new TimePickerDialog(
-                getContext(),
+                context,
                 new TimePickerDialog.OnTimeSetListener() {
                     @Override
                     public void onTimeSet(TimePicker timePicker, int i3, int i4) {
@@ -321,11 +330,14 @@ public class SetReminderFragment extends BaseFragment implements BaseResponseInt
     }
 
     private void setUpSelectedGroups() {
-        ((ActionsActivity) getActivity()).getGroupFromId(selectedGroupId);
+        if (getActivity() != null) {
+            ((ActionsActivity) getActivity()).getGroupFromId(selectedGroupId);
+        }
     }
 
     private void setUpSelectedContacts() {
-        ((ActionsActivity) getActivity()).getUserFromId(selectedUserId);
+        if (getActivity() != null)
+            ((ActionsActivity) getActivity()).getUserFromId(selectedUserId);
     }
 
     private void setUpPersonalReminderView() {
@@ -359,7 +371,6 @@ public class SetReminderFragment extends BaseFragment implements BaseResponseInt
 
     public void onLocationSet(LatLng latLng, String locationSelected) {
         latLngSelected = latLng;
-        addressSelected = locationSelected;
 
         tietLocation.setText(locationSelected);
     }
@@ -370,7 +381,7 @@ public class SetReminderFragment extends BaseFragment implements BaseResponseInt
 
         String task = tietTask.getText().toString().trim();
 
-        if (task != null && task.isEmpty()) {
+        if (task.isEmpty()) {
             tietTask.setError(getString(R.string.error_empty_field));
         } else if (isTimeSelected && timeSelected == null) {
             showToastMessage("Please select a time for the reminder!", true);
@@ -388,7 +399,6 @@ public class SetReminderFragment extends BaseFragment implements BaseResponseInt
     private void initCreateReminderRequest() {
         showProgressDialog(getString(R.string.loading));
 
-        String requestUrl = CREATE_REMINDER_REQUEST_URL;
         JSONObject requestObject = new RequestBuilder().getCreateReminderRequestPayload(
                 fragmentType,
                 tietTask.getText().toString().trim(),
@@ -399,29 +409,30 @@ public class SetReminderFragment extends BaseFragment implements BaseResponseInt
         );
 
         if (requestObject != null) {
-            GenericDataHandler req1GenericDataHandler = new GenericDataHandler(this, getContext(), REQUEST_TYPE_009);
-            req1GenericDataHandler.jsonObjectRequest(requestObject, requestUrl, Request.Method.POST, CreateReminderResponse.class);
+            GenericDataHandler req1GenericDataHandler = new GenericDataHandler(this, context, REQUEST_TYPE_009);
+            req1GenericDataHandler.jsonObjectRequest(requestObject, CREATE_REMINDER_REQUEST_URL, Request.Method.POST, CreateReminderResponse.class);
         }
     }
 
-    private String getLatitudeFromInput() {
-        String locationInput = tietLocation.getText().toString().trim();
-        if (locationInput != null && !locationInput.isEmpty()) {
-            String[] coords = locationInput.split(",");
-            return coords[0].trim();
-        } else return null;
-    }
+//    private String getLatitudeFromInput() {
+//        String locationInput = tietLocation.getText().toString().trim();
+//        if (!locationInput.isEmpty()) {
+//            String[] coords = locationInput.split(",");
+//            return coords[0].trim();
+//        } else return null;
+//    }
 
-    private String getLongitudeFromInput() {
-        String locationInput = tietLocation.getText().toString().trim();
-        if (locationInput != null && !locationInput.isEmpty()) {
-            String[] coords = locationInput.split(",");
-            return coords[1].trim();
-        } else return null;
-    }
+//    private String getLongitudeFromInput() {
+//        String locationInput = tietLocation.getText().toString().trim();
+//        if (!locationInput.isEmpty()) {
+//            String[] coords = locationInput.split(",");
+//            return coords[1].trim();
+//        } else return null;
+//    }
 
     private void closeThisFragment() {
-        getActivity().onBackPressed();
+        if (getActivity() != null)
+            getActivity().onBackPressed();
     }
 
     @Override
@@ -436,22 +447,21 @@ public class SetReminderFragment extends BaseFragment implements BaseResponseInt
 
     public void onMembersSelected(List<User> contactItemList) {
         selectedMembers = contactItemList;
-        String contactListStr = "";
+        StringBuilder contactListStr = new StringBuilder();
         for (int i = 0; i < selectedMembers.size(); i++) {
-            contactListStr += selectedMembers.get(i).getName();
-            if (i != selectedMembers.size() - 1) contactListStr += ", ";
+            contactListStr.append(selectedMembers.get(i).getName());
+            if (i != selectedMembers.size() - 1) contactListStr.append(", ");
         }
-        tietContact.setText(contactListStr);
+        tietContact.setText(contactListStr.toString());
     }
 
     public void onGroupsSelected(List<UserGroup> contactItemList) {
-        selectedGroups = contactItemList;
-        String contactListStr = "";
-        for (int i = 0; i < selectedGroups.size(); i++) {
-            contactListStr += selectedGroups.get(i).getName();
-            if (i != selectedGroups.size() - 1) contactListStr += ", ";
+        StringBuilder contactListStr = new StringBuilder();
+        for (int i = 0; i < contactItemList.size(); i++) {
+            contactListStr.append(contactItemList.get(i).getName());
+            if (i != contactItemList.size() - 1) contactListStr.append(", ");
         }
-        tietContact.setText(contactListStr);
+        tietContact.setText(contactListStr.toString());
     }
 
     @Override
@@ -460,7 +470,7 @@ public class SetReminderFragment extends BaseFragment implements BaseResponseInt
         if (error == null) {
             switch (requestCode) {
                 case REQUEST_TYPE_009:
-                    onCreateReminderResponse((CreateReminderResponse) success);
+                    onCreateReminderResponse();
                     break;
                 default:
                     showToastMessage("ERROR " + requestCode + "!", false);
@@ -469,7 +479,7 @@ public class SetReminderFragment extends BaseFragment implements BaseResponseInt
         } else {
             Error customError = (Error) error;
             Log.d(TAG, "Error: " + customError.getMessage() + " -- " + customError.getStatus() + " -- ");
-            if (customError.getStatus() == 000) {
+            if (customError.getStatus() == 0) {
                 hideProgressDialog();
                 showNetworkErrorSnackbar(content, getString(R.string.error_no_internet), getString(R.string.retry),
                         new View.OnClickListener() {
@@ -490,7 +500,7 @@ public class SetReminderFragment extends BaseFragment implements BaseResponseInt
         }
     }
 
-    private void onCreateReminderResponse(CreateReminderResponse success) {
+    private void onCreateReminderResponse() {
         EventBus.getDefault().postSticky(new ReminderCreated(true, !fragmentType.equals(VAL_SEND_REMINDER)));
         if (fragmentType.equals(VAL_SEND_REMINDER))
             showToastMessage("Reminder sent to " + selectedMembers.size() + " contact(s)!", true);

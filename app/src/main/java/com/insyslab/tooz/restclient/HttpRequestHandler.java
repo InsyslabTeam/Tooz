@@ -29,26 +29,23 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.reflect.Type;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
 import static com.insyslab.tooz.utils.ConstantClass.API_KEY;
 
-/**
- * Created by TaNMay on 06/10/17.
- */
+class HttpRequestHandler {
 
-public class HttpRequestHandler {
-
-    private static final String TAG = "HttpRequestHandler ==> ";
+    private static final String TAG = HttpRequestHandler.class.getSimpleName() + " ==>";
 
     private static ConnectivityManager mCM;
 
-    public static void makeJsonObjectRequest(JSONObject jsonObject, String url, final String token,
-                                             Integer method, final SuccessListener listener,
-                                             final Type responseType, Context context) {
+    static void makeJsonObjectRequest(JSONObject jsonObject, String url, final String token,
+                                      Integer method, final SuccessListener listener,
+                                      final Type responseType, Context context) {
         if (hasInternetAccess(context)) {
-            Log.d(TAG, "Make  JSON Object Request -");
+            Log.d(TAG, "Make JSON Object Request -");
             Log.d(TAG, "Token: " + token);
             Log.d(TAG, "Request URL: " + url);
             Log.d(TAG, "Request Object: " + getObjectInStringFormat(jsonObject));
@@ -100,7 +97,7 @@ public class HttpRequestHandler {
                     }) {
                 public java.util.Map<String, String> getHeaders()
                         throws AuthFailureError {
-                    HashMap<String, String> headers = new HashMap<String, String>();
+                    HashMap<String, String> headers = new HashMap<>();
                     headers.put("token", token);
                     headers.put("apikey", API_KEY);
                     headers.put("Content-Type", "application/json");
@@ -114,13 +111,13 @@ public class HttpRequestHandler {
             ));
             ToozApplication.getInstance().addToRequestQueue(jsonObjectRequest, TAG);
         } else {
-            Error customError = new Error("No internet connection!", 000);
+            Error customError = new Error("No internet connection!", 0);
             listener.onError(customError);
         }
     }
 
-    public static void makeJsonArrayRequest(String url, final String token, final SuccessListener listener,
-                                            final Type responseType, Context context) {
+    static void makeJsonArrayRequest(String url, final String token, final SuccessListener listener,
+                                     final Type responseType, Context context) {
         if (hasInternetAccess(context)) {
             Log.d(TAG, "Make JSON Array Request -");
             Log.d(TAG, "Token: " + token);
@@ -171,7 +168,7 @@ public class HttpRequestHandler {
                     }) {
                 public java.util.Map<String, String> getHeaders()
                         throws AuthFailureError {
-                    HashMap<String, String> headers = new HashMap<String, String>();
+                    HashMap<String, String> headers = new HashMap<>();
                     headers.put("token", token);
                     headers.put("apikey", API_KEY);
                     headers.put("Content-Type", "application/json");
@@ -185,13 +182,13 @@ public class HttpRequestHandler {
             ));
             ToozApplication.getInstance().addToRequestQueue(jsonArrayRequest);
         } else {
-            Error customError = new Error("No internet connection!", 000);
+            Error customError = new Error("No internet connection!", 0);
             listener.onError(customError);
         }
     }
 
-    public static void makeCustomRequest(JSONObject jObject, String url, final String token, Integer method,
-                                         final SuccessListener listener, final Type responseType, Context context) {
+    static void makeCustomRequest(JSONObject jObject, String url, final String token, Integer method,
+                                  final SuccessListener listener, final Type responseType, Context context) {
         if (hasInternetAccess(context)) {
             Log.d(TAG, "Make Custom Request -");
             Log.d(TAG, "Token: " + token);
@@ -245,7 +242,7 @@ public class HttpRequestHandler {
                     }) {
                 public java.util.Map<String, String> getHeaders()
                         throws com.android.volley.AuthFailureError {
-                    HashMap<String, String> headers = new HashMap<String, String>();
+                    HashMap<String, String> headers = new HashMap<>();
                     headers.put("token", token);
                     headers.put("apikey", API_KEY);
                     headers.put("Content-Type", "application/json");
@@ -259,13 +256,13 @@ public class HttpRequestHandler {
             ));
             ToozApplication.getInstance().addToRequestQueue(customRequest);
         } else {
-            Error customError = new Error("No internet connection!", 000);
+            Error customError = new Error("No internet connection!", 0);
             listener.onError(customError);
         }
     }
 
-    public static void makeStringRequest(String url, final String token, int method, final SuccessListener listener,
-                                         Context context) {
+    static void makeStringRequest(String url, final String token, int method, final SuccessListener listener,
+                                  Context context) {
         if (hasInternetAccess(context)) {
             Log.d(TAG, "Make String Request -");
             Log.d(TAG, "Token: " + token);
@@ -317,7 +314,7 @@ public class HttpRequestHandler {
                     }) {
                 public java.util.Map<String, String> getHeaders()
                         throws AuthFailureError {
-                    HashMap<String, String> headers = new HashMap<String, String>();
+                    HashMap<String, String> headers = new HashMap<>();
                     headers.put("token", token);
                     headers.put("apikey", API_KEY);
                     return headers;
@@ -330,15 +327,15 @@ public class HttpRequestHandler {
             ));
             ToozApplication.getInstance().addToRequestQueue(stringRequest, TAG);
         } else {
-            Error customError = new Error("No internet connection!", 000);
+            Error customError = new Error("No internet connection!", 0);
             listener.onError(customError);
         }
     }
 
-    public static void makeMultipartRequest(String url, final String token, int method, final SuccessListener listener,
-                                            final Map<String, VolleyMultipartRequest.DataPart> partMap,
-                                            final Map<String, String> paramsMap, final Type responseType,
-                                            Context context, final Boolean isStringResponse) {
+    static void makeMultipartRequest(String url, final String token, int method, final SuccessListener listener,
+                                     final Map<String, VolleyMultipartRequest.DataPart> partMap,
+                                     final Map<String, String> paramsMap, final Type responseType,
+                                     Context context, final Boolean isStringResponse) {
         if (hasInternetAccess(context)) {
             Log.d(TAG, "Make Multipart Request -");
             Log.d(TAG, "Token: " + token);
@@ -352,7 +349,7 @@ public class HttpRequestHandler {
                     new Response.Listener<NetworkResponse>() {
                         @Override
                         public void onResponse(NetworkResponse response) {
-                            Log.d(TAG, "Response: " + response.data + " -- " + new String(response.data));
+                            Log.d(TAG, "Response: " + Arrays.toString(response.data) + " -- " + new String(response.data));
                             if (!isStringResponse)
                                 listener.onSuccess(null, null, response.statusCode + "", responseType);
                             else
@@ -407,7 +404,7 @@ public class HttpRequestHandler {
 
                 public java.util.Map<String, String> getHeaders()
                         throws com.android.volley.AuthFailureError {
-                    HashMap<String, String> headers = new HashMap<String, String>();
+                    HashMap<String, String> headers = new HashMap<>();
                     headers.put("token", token);
                     headers.put("apikey", API_KEY);
                     return headers;
@@ -426,7 +423,7 @@ public class HttpRequestHandler {
             multipartRequest.setRetryPolicy(new DefaultRetryPolicy(300000, 10, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
             ToozApplication.getInstance().addToRequestQueue(multipartRequest);
         } else {
-            Error customError = new Error("No internet connection!", 000);
+            Error customError = new Error("No internet connection!", 0);
             listener.onError(customError);
         }
     }
@@ -464,7 +461,9 @@ public class HttpRequestHandler {
     private static boolean hasInternetAccess(Context context) {
         if (mCM == null)
             mCM = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo netInfo = mCM.getActiveNetworkInfo();
+        NetworkInfo netInfo = null;
+        if (mCM != null) netInfo = mCM.getActiveNetworkInfo();
+
         return netInfo != null && netInfo.isConnectedOrConnecting();
     }
 

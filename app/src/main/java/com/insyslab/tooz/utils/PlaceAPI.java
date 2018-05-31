@@ -14,10 +14,6 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 
-/**
- * Created by TaNMay on 06/12/17.
- */
-
 public class PlaceAPI {
 
     private static final String TAG = "PlaceAPI ==> ";
@@ -41,7 +37,7 @@ public class PlaceAPI {
 //            sb.append("&types=(cities)");
             sb.append("&components=country:in");
             sb.append("&language=en");
-            sb.append("&input=" + URLEncoder.encode(input, "utf8"));
+            sb.append("&input=").append(URLEncoder.encode(input, "utf8"));
 
             Log.d(TAG, "URL: " + sb.toString());
             URL url = new URL(sb.toString());
@@ -56,10 +52,10 @@ public class PlaceAPI {
             }
         } catch (MalformedURLException e) {
             Log.e(TAG, "Error processing Places API URL", e);
-            return resultList;
+            return null;
         } catch (IOException e) {
             Log.e(TAG, "Error connecting to Places API", e);
-            return resultList;
+            return null;
         } finally {
             if (conn != null) {
                 conn.disconnect();
@@ -74,7 +70,7 @@ public class PlaceAPI {
             JSONArray predsJsonArray = jsonObj.getJSONArray("predictions");
 
             // Extract the Place descriptions from the results
-            resultList = new ArrayList<String>(predsJsonArray.length());
+            resultList = new ArrayList<>(predsJsonArray.length());
             for (int i = 0; i < predsJsonArray.length(); i++) {
                 resultList.add(predsJsonArray.getJSONObject(i).getString("description"));
             }

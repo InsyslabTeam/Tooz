@@ -10,6 +10,7 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
@@ -44,15 +45,11 @@ import static android.Manifest.permission.RECEIVE_SMS;
 import static android.Manifest.permission.WRITE_CONTACTS;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 
-/**
- * Created by TaNMay on 12/10/17.
- */
-
 public abstract class BaseActivity extends AppCompatActivity {
 
     public static OnRuntimePermissionsResultListener onRuntimePermissionsResultListener;
 
-    private final String TAG = "Base ==> ";
+    private final String TAG = BaseActivity.class.getSimpleName() + " ==>";
 
     private final int REQUEST_SMS_PERMISSION_CODE = 1;
     private final int REQUEST_CONTACTS_PERMISSION_CODE = 2;
@@ -85,10 +82,10 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
     protected void showToastMessage(String message, boolean isLong) {
-        Toast toast = null;
+        Toast toast;
 
-        if (isLong) toast = toast.makeText(this, message, Toast.LENGTH_LONG);
-        else toast = toast.makeText(this, message, Toast.LENGTH_SHORT);
+        if (isLong) toast = Toast.makeText(this, message, Toast.LENGTH_LONG);
+        else toast = Toast.makeText(this, message, Toast.LENGTH_SHORT);
 
         toast.show();
     }
@@ -98,11 +95,11 @@ public abstract class BaseActivity extends AppCompatActivity {
         if (view != null) {
             Snackbar snackbar = null;
 
-            if (isLong) snackbar = snackbar.make(view, message, Snackbar.LENGTH_LONG);
-            else if (!isLong) snackbar = snackbar.make(view, message, Snackbar.LENGTH_SHORT);
+            if (isLong) snackbar = Snackbar.make(view, message, Snackbar.LENGTH_LONG);
+            else if (!isLong) snackbar = Snackbar.make(view, message, Snackbar.LENGTH_SHORT);
 
-            if (action != null && isDismissed == true) {
-                final Snackbar finalSnackbar = snackbar.make(view, message, Snackbar.LENGTH_INDEFINITE);
+            if (action != null && isDismissed) {
+                final Snackbar finalSnackbar = Snackbar.make(view, message, Snackbar.LENGTH_INDEFINITE);
                 snackbar = snackbar.setAction(action, new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -110,7 +107,7 @@ public abstract class BaseActivity extends AppCompatActivity {
                     }
                 });
             } else if (action != null)
-                snackbar = snackbar.make(view, message, Snackbar.LENGTH_INDEFINITE).setAction(action, onClickListener);
+                snackbar = Snackbar.make(view, message, Snackbar.LENGTH_INDEFINITE).setAction(action, onClickListener);
 
             snackbar.show();
         }
@@ -164,7 +161,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
         switch (requestCode) {
             case REQUEST_SMS_PERMISSION_CODE:
                 if (grantResults.length > 0) {
@@ -363,10 +360,12 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     public boolean isMyServiceRunning(Class<?> serviceClass) {
         ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
-        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
-            if (serviceClass.getName().equals(service.service.getClassName())) {
-                Log.d(TAG, "isMyServiceRunning? " + true);
-                return true;
+        if (manager != null) {
+            for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+                if (serviceClass.getName().equals(service.service.getClassName())) {
+                    Log.d(TAG, "isMyServiceRunning? " + true);
+                    return true;
+                }
             }
         }
         Log.i(TAG, "isMyServiceRunning? " + false);
@@ -389,12 +388,12 @@ public abstract class BaseActivity extends AppCompatActivity {
         nonAppUserList = list;
     }
 
-    public void setUserGroupList(List<UserGroup> list) {
-        userGroupList = list;
-    }
-
     public List<UserGroup> getUserGroupList() {
         return userGroupList;
+    }
+
+    public void setUserGroupList(List<UserGroup> list) {
+        userGroupList = list;
     }
 
     public void clearRoomDatabase() {

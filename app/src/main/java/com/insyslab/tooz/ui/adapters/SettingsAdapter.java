@@ -1,5 +1,6 @@
 package com.insyslab.tooz.ui.adapters;
 
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,10 +13,6 @@ import com.insyslab.tooz.models.SettingsItem;
 
 import java.util.List;
 
-
-/**
- * Created by TaNMay on 19/02/17.
- */
 public class SettingsAdapter extends RecyclerView.Adapter<SettingsAdapter.ViewHolder> {
 
     private OnSettingItemClickListener onSettingItemClickListener;
@@ -26,8 +23,9 @@ public class SettingsAdapter extends RecyclerView.Adapter<SettingsAdapter.ViewHo
         this.settingsItems = settingsItems;
     }
 
+    @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         final View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_settings, parent, false);
         v.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -35,12 +33,11 @@ public class SettingsAdapter extends RecyclerView.Adapter<SettingsAdapter.ViewHo
                 onSettingItemClickListener.onSettingItemClick(v);
             }
         });
-        ViewHolder viewHolder = new ViewHolder(v);
-        return viewHolder;
+        return new ViewHolder(v);
     }
 
     @Override
-    public void onBindViewHolder(final ViewHolder holder, final int position) {
+    public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
         SettingsItem settingsItem = settingsItems.get(position);
 
         holder.title.setText(settingsItem.getSetting());
@@ -53,7 +50,7 @@ public class SettingsAdapter extends RecyclerView.Adapter<SettingsAdapter.ViewHo
 
     class ViewHolder extends RecyclerView.ViewHolder {
 
-        public TextView title;
+        TextView title;
 
         public ViewHolder(View itemView) {
             super(itemView);

@@ -9,10 +9,6 @@ import com.insyslab.tooz.utils.ToozApplication;
 
 import java.util.List;
 
-/**
- * Created by TaNMay on 20/12/17.
- */
-
 public class LocalReminderRepository {
 
     private AppDatabase appDatabase;
@@ -44,7 +40,7 @@ public class LocalReminderRepository {
         return appDatabase.localReminderDao().fetchLocalReminderByUniqueInt(uniqueInt);
     }
 
-    public int clearLocalReminderTable() {
-        return appDatabase.localReminderDao().deleteAllLocalReminders();
-    }
+//    public int clearLocalReminderTable() {
+//        return appDatabase.localReminderDao().deleteAllLocalReminders();
+//    }
 }

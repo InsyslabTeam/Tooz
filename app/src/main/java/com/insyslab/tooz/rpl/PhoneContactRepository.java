@@ -10,10 +10,6 @@ import com.insyslab.tooz.utils.ToozApplication;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by TaNMay on 20/12/17.
- */
-
 public class PhoneContactRepository {
 
     private AppDatabase appDatabase;
@@ -70,9 +66,9 @@ public class PhoneContactRepository {
         }.execute();
     }
 
-    public LiveData<List<PhoneContact>> getAllPhoneContacts() {
-        return appDatabase.phoneContactDao().fetchAllPhoneContacts();
-    }
+//    public LiveData<List<PhoneContact>> getAllPhoneContacts() {
+//        return appDatabase.phoneContactDao().fetchAllPhoneContacts();
+//    }
 
     public LiveData<List<PhoneContact>> getSyncedPhoneContacts() {
         return appDatabase.phoneContactDao().fetchPhoneContacts(true);
@@ -82,7 +78,7 @@ public class PhoneContactRepository {
         return appDatabase.phoneContactDao().fetchPhoneContacts(false);
     }
 
-    public int clearPhoneContactTable() {
-        return appDatabase.phoneContactDao().deleteAllPhoneContacts();
+    public void clearPhoneContactTable() {
+        appDatabase.phoneContactDao().deleteAllPhoneContacts();
     }
 }

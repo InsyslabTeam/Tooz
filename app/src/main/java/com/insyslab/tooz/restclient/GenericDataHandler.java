@@ -16,10 +16,6 @@ import java.util.Map;
 import static com.insyslab.tooz.utils.ConstantClass.BASE_URL;
 import static com.insyslab.tooz.utils.Util.DEFAULT_DATE_FORMAT;
 
-/**
- * Created by TaNMay on 06/10/17.
- */
-
 public class GenericDataHandler implements SuccessListener {
 
     private BaseResponseInterface baseResponseInterface;
@@ -43,13 +39,13 @@ public class GenericDataHandler implements SuccessListener {
         HttpRequestHandler.makeJsonArrayRequest(BASE_URL + url, token, this, responseType, context);
     }
 
-    public void customRequest(JSONObject request, String url, Integer method, Type responseType) {
-        HttpRequestHandler.makeCustomRequest(request, BASE_URL + url, token, method, this, responseType, context);
-    }
+//    public void customRequest(JSONObject request, String url, Integer method, Type responseType) {
+//        HttpRequestHandler.makeCustomRequest(request, BASE_URL + url, token, method, this, responseType, context);
+//    }
 
-    public void stringRequest(String url, Integer method) {
-        HttpRequestHandler.makeStringRequest(BASE_URL + url, token, method, this, context);
-    }
+//    public void stringRequest(String url, Integer method) {
+//        HttpRequestHandler.makeStringRequest(BASE_URL + url, token, method, this, context);
+//    }
 
     public void multipartRequest(String url, Integer method, Map<String, VolleyMultipartRequest.DataPart> partMap, Map<String, String> paramsMap, Type responseType) {
         HttpRequestHandler.makeMultipartRequest(BASE_URL + url, token, method, this, partMap, paramsMap, responseType, context, responseType == String.class);

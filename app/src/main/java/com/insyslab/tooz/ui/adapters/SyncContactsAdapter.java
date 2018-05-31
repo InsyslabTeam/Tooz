@@ -1,5 +1,6 @@
 package com.insyslab.tooz.ui.adapters;
 
+import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -17,10 +18,6 @@ import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
-
-/**
- * Created by TaNMay on 19/02/17.
- */
 public class SyncContactsAdapter extends RecyclerView.Adapter<SyncContactsAdapter.ViewHolder> {
 
     private OnSyncContactItemClickListener onSyncContactItemClickListener;
@@ -31,17 +28,18 @@ public class SyncContactsAdapter extends RecyclerView.Adapter<SyncContactsAdapte
         this.phoneContacts = phoneContacts;
     }
 
+    @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_sync_contact, parent, false);
         return new ViewHolder(v);
     }
 
     @Override
-    public void onBindViewHolder(final ViewHolder holder, final int position) {
+    public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
         final PhoneContact phoneContact = phoneContacts.get(position);
 
-        Picasso.with(holder.image.getContext())
+        Picasso.get()
                 .load(phoneContact.getContactImageUri())
                 .placeholder(R.drawable.ic_default_user)
                 .error(R.drawable.ic_default_user)
@@ -61,13 +59,13 @@ public class SyncContactsAdapter extends RecyclerView.Adapter<SyncContactsAdapte
             @Override
             public void onClick(View view) {
                 setSelectionAs(!phoneContact.getSelected(), holder.selector);
-                onSyncContactItemClickListener.onContactSelectorClick(position);
+                onSyncContactItemClickListener.onContactSelectorClick(holder.getAdapterPosition());
             }
         });
     }
 
     private void setSelectionAs(Boolean selected, ImageView selector) {
-        if (selected){
+        if (selected) {
             selector.setImageDrawable(ContextCompat.getDrawable(selector.getContext(), R.drawable.ic_checkbox_selected));
         } else {
             selector.setImageDrawable(ContextCompat.getDrawable(selector.getContext(), R.drawable.ic_checkbox_not_selected));
@@ -81,9 +79,9 @@ public class SyncContactsAdapter extends RecyclerView.Adapter<SyncContactsAdapte
 
     class ViewHolder extends RecyclerView.ViewHolder {
 
-        public ImageView image, selector;
-        public TextView name, number;
-        public RelativeLayout selectorSec;
+        ImageView image, selector;
+        TextView name, number;
+        RelativeLayout selectorSec;
 
         public ViewHolder(View itemView) {
             super(itemView);

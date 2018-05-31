@@ -287,7 +287,7 @@ public class CreateProfileFragment extends BaseFragment implements BaseResponseI
     }
 
     private void setImageInImageView(Uri resultUri) {
-        Picasso.with(getContext())
+        Picasso.get()
                 .load(resultUri)
                 .placeholder(R.drawable.ic_default_user)
                 .error(R.drawable.ic_default_user)
@@ -300,7 +300,7 @@ public class CreateProfileFragment extends BaseFragment implements BaseResponseI
     }
 
     private void setImageInImageView(String url) {
-        Picasso.with(getContext())
+        Picasso.get()
                 .load(url)
                 .placeholder(R.drawable.ic_user)
                 .error(R.drawable.ic_default_user)

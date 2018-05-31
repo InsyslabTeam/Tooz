@@ -1,5 +1,7 @@
 package com.insyslab.tooz.ui.adapters;
 
+import android.annotation.SuppressLint;
+import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -16,10 +18,6 @@ import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
-
-/**
- * Created by TaNMay on 19/02/17.
- */
 public class BlockedContactsAdapter extends RecyclerView.Adapter<BlockedContactsAdapter.ViewHolder> {
 
     private OnBlockedContactsClickListener onBlockedContactsClickListener;
@@ -30,18 +28,19 @@ public class BlockedContactsAdapter extends RecyclerView.Adapter<BlockedContacts
         this.contactItems = contactItems;
     }
 
+    @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         final View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_blocked_contact, parent, false);
-        ViewHolder viewHolder = new ViewHolder(v);
-        return viewHolder;
+        return new ViewHolder(v);
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
-    public void onBindViewHolder(final ViewHolder holder, final int position) {
+    public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
         User contactItem = contactItems.get(position);
 
-        Picasso.with(holder.image.getContext())
+        Picasso.get()
                 .load("abcdefghijklmnopqrstuvwxyz")
                 .placeholder(R.drawable.ic_default_user)
                 .error(R.drawable.ic_default_user)
@@ -63,7 +62,7 @@ public class BlockedContactsAdapter extends RecyclerView.Adapter<BlockedContacts
         holder.unblock.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                onBlockedContactsClickListener.onUnblockClick(position);
+                onBlockedContactsClickListener.onUnblockClick(holder.getAdapterPosition());
             }
         });
 
@@ -78,9 +77,9 @@ public class BlockedContactsAdapter extends RecyclerView.Adapter<BlockedContacts
 
     class ViewHolder extends RecyclerView.ViewHolder {
 
-        public TextView name, number, unblock;
-        public ImageView image;
-        public View divider;
+        TextView name, number, unblock;
+        ImageView image;
+        View divider;
 
         public ViewHolder(View itemView) {
             super(itemView);

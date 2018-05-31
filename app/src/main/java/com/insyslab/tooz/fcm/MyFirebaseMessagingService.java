@@ -24,16 +24,9 @@ import java.util.Date;
 
 import static com.insyslab.tooz.utils.Util.getReminderFormatedDate;
 
-/**
- * Created by TaNMay on 18/04/17.
- */
-
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
-    private final String TAG = "FCM_Service ==> ";
-
-    private final String KEY_PUSH_MESSAGE = "KEY_PUSH_MESSAGE";
-    private final String PUSH_NOTIFICATION = "PUSH_NOTIFICATION";
+    private final String TAG = MyFirebaseMessagingService.class.getSimpleName() + " ==>";
 
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
@@ -60,6 +53,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
     private void sendNotification(String messageBody, String title, String content) {
         Intent intent = new Intent(this, SplashActivity.class);
+        String KEY_PUSH_MESSAGE = "KEY_PUSH_MESSAGE";
         intent.putExtra(KEY_PUSH_MESSAGE, content);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT);
@@ -76,7 +70,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         int randomNonRepeatedNumber = (int) ((new Date().getTime() / 1000L) % Integer.MAX_VALUE);
 
         NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.notify(randomNonRepeatedNumber, notificationBuilder.build());
+        if (notificationManager != null)
+            notificationManager.notify(randomNonRepeatedNumber, notificationBuilder.build());
     }
 
     private void handleDataMessage(JSONObject data) {
@@ -105,6 +100,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
             if (!NotificationUtils.isAppIsInBackground(getApplicationContext())) {
                 // app is in foreground, broadcast the push message
+                String PUSH_NOTIFICATION = "PUSH_NOTIFICATION";
                 Intent pushNotification = new Intent(PUSH_NOTIFICATION);
 //                pushNotification.putExtra("message", message);
                 LocalBroadcastManager.getInstance(this).sendBroadcast(pushNotification);
@@ -136,12 +132,12 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         }
     }
 
-    private void showNotificationMessageWithBigImage(Context context, String title, String message,
-                                                     String timeStamp, Intent intent, String imageUrl) {
-        NotificationUtils notificationUtils = new NotificationUtils(context);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        notificationUtils.showNotificationMessage(title, message, timeStamp, intent, imageUrl);
-    }
+//    private void showNotificationMessageWithBigImage(Context context, String title, String message,
+//                                                     String timeStamp, Intent intent, String imageUrl) {
+//        NotificationUtils notificationUtils = new NotificationUtils(context);
+//        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+//        notificationUtils.showNotificationMessage(title, message, timeStamp, intent, imageUrl);
+//    }
 
     private void showNotificationMessage(Context context, String title, String message,
                                          String timeStamp, Intent intent) {

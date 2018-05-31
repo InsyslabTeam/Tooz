@@ -97,7 +97,7 @@ public class ExpandableList {
    * @param groupIndex representing the index of a group within {@link #groups}
    * @return the index of a group within the {@link #getVisibleItemCount()}
    */
-  public int getFlattenedGroupIndex(int groupIndex) {
+  private int getFlattenedGroupIndex(int groupIndex) {
     int runningTotal = 0;
 
     for (int i = 0; i < groupIndex; i++) {
@@ -140,7 +140,7 @@ public class ExpandableList {
    * {@link ExpandableListPosition} representation.
    * @return The flat list position for the given child
    */
-  public int getFlattenedChildIndex(ExpandableListPosition listPosition) {
+  private int getFlattenedChildIndex(ExpandableListPosition listPosition) {
     int groupIndex = listPosition.groupPos;
     int childIndex = listPosition.childPos;
     int runningTotal = 0;
