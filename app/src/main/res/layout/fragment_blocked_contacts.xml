@@ -32,8 +32,8 @@
                 android:id="@+id/fbc_blocked_contacts"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:nestedScrollingEnabled="false"
-                android:layout_marginTop="4dp" />
+                android:layout_marginTop="4dp"
+                android:nestedScrollingEnabled="false" />
         </LinearLayout>
     </android.support.v4.widget.NestedScrollView>
 </RelativeLayout>

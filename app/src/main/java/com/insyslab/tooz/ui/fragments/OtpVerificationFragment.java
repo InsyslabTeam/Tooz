@@ -67,7 +67,7 @@ public class OtpVerificationFragment extends BaseFragment implements BaseRespons
                 String message = intent.getStringExtra(KEY_OTP_MESSAGE);
                 String number = intent.getStringExtra(KEY_OTP_NUMBER);
 
-                Log.d(TAG, "OTP SMS Message: " + message + " from " + number);
+//                Log.d(TAG, "OTP SMS Message: " + message + " from " + number);
                 if (number.equalsIgnoreCase(VAL_OTP_NUMBER_1) || number.equalsIgnoreCase(VAL_OTP_NUMBER_2)) {
                     String otpFromMessage = getOtpFromMessage(message);
                     onOtpReceived(otpFromMessage);
@@ -233,7 +233,8 @@ public class OtpVerificationFragment extends BaseFragment implements BaseRespons
                 } else if (nextEditText == null) {
                     if (getInputOtp().length() == 4)
                         onProceedClick();
-                } else Log.d(TAG, "Some OTP input error!");
+                }
+//                else Log.d(TAG, "Some OTP input error!");
             }
 
             @Override
@@ -286,7 +287,7 @@ public class OtpVerificationFragment extends BaseFragment implements BaseRespons
             }
         } else {
             Error customError = (Error) error;
-            Log.d(TAG, "Error: " + customError.getMessage() + " -- " + customError.getStatus() + " -- ");
+//            Log.d(TAG, "Error: " + customError.getMessage() + " -- " + customError.getStatus() + " -- ");
             if (customError.getStatus() == 000) {
                 hideProgressDialog();
                 showNetworkErrorSnackbar(content, getString(R.string.error_no_internet), getString(R.string.retry),

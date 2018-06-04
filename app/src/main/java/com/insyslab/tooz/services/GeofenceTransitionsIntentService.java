@@ -57,11 +57,11 @@ public class GeofenceTransitionsIntentService extends IntentService implements L
 
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
-        Log.d(TAG, "onHandleIntent");
+//        Log.d(TAG, "onHandleIntent");
 
         GeofencingEvent geofencingEvent = GeofencingEvent.fromIntent(intent);
         if (geofencingEvent != null && geofencingEvent.hasError()) {
-            Log.d(TAG, "geofencingEvent.hasError()");
+//            Log.d(TAG, "geofencingEvent.hasError()");
             return;
         }
 
@@ -71,12 +71,12 @@ public class GeofenceTransitionsIntentService extends IntentService implements L
 
         if (geofenceTransition == Geofence.GEOFENCE_TRANSITION_ENTER ||
                 geofenceTransition == Geofence.GEOFENCE_TRANSITION_EXIT) {
-            Log.d(TAG, "Success 101!");
+//            Log.d(TAG, "Success 101!");
 
             List<Geofence> triggeringGeofences = geofencingEvent.getTriggeringGeofences();
             getGeofenceTransitionDetails(triggeringGeofences);
         } else {
-            Log.d(TAG, "Error 101!");
+//            Log.d(TAG, "Error 101!");
         }
     }
 

@@ -8,7 +8,6 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.content.ContextCompat;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -304,7 +303,7 @@ public class SetReminderFragment extends BaseFragment implements BaseResponseInt
         String month = getMonthFromIndex(cal.get(Calendar.MONTH));
         String day = getDayOfWeekFromIndex(cal.get(Calendar.DAY_OF_WEEK));
         String meridian = getAmPmFromIndex(cal.get(Calendar.AM_PM));
-        String hour = getFormattedHourOrMinute(cal.get(Calendar.HOUR));
+        String hour = getFormattedHourOrMinute(cal.get(Calendar.HOUR_OF_DAY));
         String minute = getFormattedHourOrMinute(cal.get(Calendar.MINUTE));
 
         String dateTime = date + " " + month + " (" + day + "),"
@@ -456,12 +455,14 @@ public class SetReminderFragment extends BaseFragment implements BaseResponseInt
     }
 
     public void onGroupsSelected(List<UserGroup> contactItemList) {
-        StringBuilder contactListStr = new StringBuilder();
+        List<User> userList = new ArrayList<>();
         for (int i = 0; i < contactItemList.size(); i++) {
-            contactListStr.append(contactItemList.get(i).getName());
-            if (i != contactItemList.size() - 1) contactListStr.append(", ");
+            for (int j = 0; j < contactItemList.get(i).getUsers().size(); j++) {
+                if (!contactItemList.get(i).getUsers().get(j).getId().equals(user.getId()))
+                    userList.add(contactItemList.get(i).getUsers().get(j));
+            }
         }
-        tietContact.setText(contactListStr.toString());
+        onMembersSelected(userList);
     }
 
     @Override
@@ -478,7 +479,7 @@ public class SetReminderFragment extends BaseFragment implements BaseResponseInt
             }
         } else {
             Error customError = (Error) error;
-            Log.d(TAG, "Error: " + customError.getMessage() + " -- " + customError.getStatus() + " -- ");
+//            Log.d(TAG, "Error: " + customError.getMessage() + " -- " + customError.getStatus() + " -- ");
             if (customError.getStatus() == 0) {
                 hideProgressDialog();
                 showNetworkErrorSnackbar(content, getString(R.string.error_no_internet), getString(R.string.retry),

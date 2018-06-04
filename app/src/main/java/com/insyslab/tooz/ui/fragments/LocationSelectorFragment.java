@@ -98,7 +98,7 @@ public class LocationSelectorFragment extends BaseFragment implements OnMapReady
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
                 String clickedItem = (String) adapterView.getItemAtPosition(position);
-                Log.d(TAG, "clickedItem: " + clickedItem);
+//                Log.d(TAG, "clickedItem: " + clickedItem);
                 Util.hideSoftKeyboard(getActivity());
                 onPlaceAutocompleteSelected(clickedItem);
             }
@@ -175,7 +175,7 @@ public class LocationSelectorFragment extends BaseFragment implements OnMapReady
         mMap = googleMap;
         mMap.getUiSettings().setMyLocationButtonEnabled(true);
         Location currentLocation = ToozApplication.getInstance().getLastLocation();
-        Log.d(TAG, "Location: " + (currentLocation != null ? "not null" : "null"));
+//        Log.d(TAG, "Location: " + (currentLocation != null ? "not null" : "null"));
 
         updateLocation(currentLocation);
     }

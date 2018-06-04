@@ -363,12 +363,12 @@ public abstract class BaseActivity extends AppCompatActivity {
         if (manager != null) {
             for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
                 if (serviceClass.getName().equals(service.service.getClassName())) {
-                    Log.d(TAG, "isMyServiceRunning? " + true);
+//                    Log.d(TAG, "isMyServiceRunning? " + true);
                     return true;
                 }
             }
         }
-        Log.i(TAG, "isMyServiceRunning? " + false);
+//        Log.i(TAG, "isMyServiceRunning? " + false);
         return false;
     }
 

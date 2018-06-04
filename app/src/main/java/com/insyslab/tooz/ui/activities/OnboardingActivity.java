@@ -74,7 +74,7 @@ public class OnboardingActivity extends BaseActivity implements OnRuntimePermiss
     }
 
     public void onEvent(FragmentState fragmentState) {
-        Log.d(TAG, fragmentState.getVisibleFragment());
+//        Log.d(TAG, fragmentState.getVisibleFragment());
         currentFragment = fragmentState.getVisibleFragment();
 
     }

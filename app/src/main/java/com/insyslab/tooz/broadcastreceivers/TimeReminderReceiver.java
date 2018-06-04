@@ -16,7 +16,7 @@ public class TimeReminderReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        Log.d(TAG, "onReceive");
+//        Log.d(TAG, "onReceive");
 
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         if (intent != null) {

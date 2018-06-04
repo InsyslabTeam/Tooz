@@ -15,7 +15,7 @@ public class ReminderServiceRestartReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        Log.d(TAG, "onReceive");
+//        Log.d(TAG, "onReceive");
 
         if (Objects.equals(intent.getAction(), "android.intent.action.BOOT_COMPLETED")) {
             startReminderSchedulingService(context);

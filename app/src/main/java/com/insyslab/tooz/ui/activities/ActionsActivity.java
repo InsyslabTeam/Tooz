@@ -6,7 +6,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -67,6 +66,7 @@ public class ActionsActivity extends BaseActivity
         setUpToolbar();
 
         fetchAppUserContactsFromDb();
+        fetchUserGroupListFromDb();
 
         setUpActions();
 
@@ -88,39 +88,38 @@ public class ActionsActivity extends BaseActivity
 
     public void openThisFragment(String fragmentTag, Object bundle) {
         FragmentManager fragmentManager = getSupportFragmentManager();
-        switch (fragmentTag) {
-            case AddContactFragment.TAG:
-                fragmentManager.beginTransaction()
-                        .replace(R.id.aa_fragment_container, AddContactFragment.newInstance((Bundle) bundle), fragmentTag)
-                        .commit();
-                break;
-            case CreateGroupFragment.TAG:
-                fragmentManager.beginTransaction()
-                        .replace(R.id.aa_fragment_container, CreateGroupFragment.newInstance((Bundle) bundle), fragmentTag)
-                        .commit();
-                break;
-            case SetReminderFragment.TAG:
-                fragmentManager.beginTransaction()
-                        .replace(R.id.aa_fragment_container, SetReminderFragment.newInstance((Bundle) bundle), fragmentTag)
-                        .commit();
-                break;
-            case LocationSelectorFragment.TAG:
-                fragmentManager.beginTransaction()
-                        .add(R.id.aa_fragment_container, LocationSelectorFragment.newInstance((Bundle) bundle), fragmentTag)
-                        .addToBackStack(TAG)
-                        .commit();
-                break;
-            case SelectContactsFragment.TAG:
-                fragmentManager.beginTransaction()
-                        .add(R.id.aa_fragment_container, SelectContactsFragment.newInstance((Bundle) bundle), fragmentTag)
-                        .addToBackStack(TAG)
-                        .commit();
-                break;
-            case EditReminderFragment.TAG:
-                fragmentManager.beginTransaction()
-                        .replace(R.id.aa_fragment_container, EditReminderFragment.newInstance((Bundle) bundle), fragmentTag)
-                        .commit();
-                break;
+        if (fragmentTag.equals(AddContactFragment.TAG)) {
+            fragmentManager.beginTransaction()
+                    .replace(R.id.aa_fragment_container, AddContactFragment.newInstance((Bundle) bundle), fragmentTag)
+                    .commit();
+
+        } else if (fragmentTag.equals(CreateGroupFragment.TAG)) {
+            fragmentManager.beginTransaction()
+                    .replace(R.id.aa_fragment_container, CreateGroupFragment.newInstance((Bundle) bundle), fragmentTag)
+                    .commit();
+
+        } else if (fragmentTag.equals(SetReminderFragment.TAG)) {
+            fragmentManager.beginTransaction()
+                    .replace(R.id.aa_fragment_container, SetReminderFragment.newInstance((Bundle) bundle), fragmentTag)
+                    .commit();
+
+        } else if (fragmentTag.equals(LocationSelectorFragment.TAG)) {
+            fragmentManager.beginTransaction()
+                    .add(R.id.aa_fragment_container, LocationSelectorFragment.newInstance((Bundle) bundle), fragmentTag)
+                    .addToBackStack(TAG)
+                    .commit();
+
+        } else if (fragmentTag.equals(SelectContactsFragment.TAG)) {
+            fragmentManager.beginTransaction()
+                    .add(R.id.aa_fragment_container, SelectContactsFragment.newInstance((Bundle) bundle), fragmentTag)
+                    .addToBackStack(TAG)
+                    .commit();
+
+        } else if (fragmentTag.equals(EditReminderFragment.TAG)) {
+            fragmentManager.beginTransaction()
+                    .replace(R.id.aa_fragment_container, EditReminderFragment.newInstance((Bundle) bundle), fragmentTag)
+                    .commit();
+
         }
     }
 
@@ -142,7 +141,7 @@ public class ActionsActivity extends BaseActivity
     }
 
     public void onEvent(FragmentState fragmentState) {
-        Log.d(TAG, fragmentState.getVisibleFragment());
+//        Log.d(TAG, fragmentState.getVisibleFragment());
         currentFragment = fragmentState.getVisibleFragment();
         currentDetailFragment = fragmentState.getFragmentDetailedName();
         invalidateOptionsMenu();
@@ -184,6 +183,8 @@ public class ActionsActivity extends BaseActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         if (currentDetailFragment != null && currentDetailFragment.equals(VAL_SEND_REMINDER))
             getMenuInflater().inflate(R.menu.menu_send, menu);
+        else if (currentFragment != null && currentFragment.equals(SelectContactsFragment.TAG))
+            getMenuInflater().inflate(R.menu.menu_done, menu);
         else
             getMenuInflater().inflate(R.menu.menu_save, menu);
         return true;
@@ -193,7 +194,7 @@ public class ActionsActivity extends BaseActivity
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        if (id == R.id.action_save || id == R.id.action_send) {
+        if (id == R.id.action_save || id == R.id.action_send || id == R.id.action_done) {
             onToolbarSaveClick();
             return true;
         }
@@ -202,31 +203,30 @@ public class ActionsActivity extends BaseActivity
     }
 
     private void onToolbarSaveClick() {
-        switch (currentFragment) {
-            case AddContactFragment.TAG:
-                AddContactFragment fragment1 = (AddContactFragment) getSupportFragmentManager().findFragmentById(R.id.aa_fragment_container);
-                fragment1.onSaveClick();
-                break;
-            case SetReminderFragment.TAG:
-                SetReminderFragment fragment2 = (SetReminderFragment) getSupportFragmentManager().findFragmentById(R.id.aa_fragment_container);
-                fragment2.onSaveClick();
-                break;
-            case LocationSelectorFragment.TAG:
-                LocationSelectorFragment fragment3 = (LocationSelectorFragment) getSupportFragmentManager().findFragmentById(R.id.aa_fragment_container);
-                fragment3.onSaveClick();
-                break;
-            case CreateGroupFragment.TAG:
-                CreateGroupFragment fragment4 = (CreateGroupFragment) getSupportFragmentManager().findFragmentById(R.id.aa_fragment_container);
-                fragment4.onSaveClick();
-                break;
-            case SelectContactsFragment.TAG:
-                SelectContactsFragment fragment5 = (SelectContactsFragment) getSupportFragmentManager().findFragmentById(R.id.aa_fragment_container);
-                fragment5.onSaveClick();
-                break;
-            case EditReminderFragment.TAG:
-                EditReminderFragment fragment6 = (EditReminderFragment) getSupportFragmentManager().findFragmentById(R.id.aa_fragment_container);
-                fragment6.onSaveClick();
-                break;
+        if (currentFragment.equals(AddContactFragment.TAG)) {
+            AddContactFragment fragment1 = (AddContactFragment) getSupportFragmentManager().findFragmentById(R.id.aa_fragment_container);
+            fragment1.onSaveClick();
+
+        } else if (currentFragment.equals(SetReminderFragment.TAG)) {
+            SetReminderFragment fragment2 = (SetReminderFragment) getSupportFragmentManager().findFragmentById(R.id.aa_fragment_container);
+            fragment2.onSaveClick();
+
+        } else if (currentFragment.equals(LocationSelectorFragment.TAG)) {
+            LocationSelectorFragment fragment3 = (LocationSelectorFragment) getSupportFragmentManager().findFragmentById(R.id.aa_fragment_container);
+            fragment3.onSaveClick();
+
+        } else if (currentFragment.equals(CreateGroupFragment.TAG)) {
+            CreateGroupFragment fragment4 = (CreateGroupFragment) getSupportFragmentManager().findFragmentById(R.id.aa_fragment_container);
+            fragment4.onSaveClick();
+
+        } else if (currentFragment.equals(SelectContactsFragment.TAG)) {
+            SelectContactsFragment fragment5 = (SelectContactsFragment) getSupportFragmentManager().findFragmentById(R.id.aa_fragment_container);
+            fragment5.onSaveClick();
+
+        } else if (currentFragment.equals(EditReminderFragment.TAG)) {
+            EditReminderFragment fragment6 = (EditReminderFragment) getSupportFragmentManager().findFragmentById(R.id.aa_fragment_container);
+            fragment6.onSaveClick();
+
         }
     }
 
@@ -238,22 +238,15 @@ public class ActionsActivity extends BaseActivity
 
     @Override
     public void onContactsSelected(List<User> contactItemList, String from) {
-        switch (from) {
-            case SetReminderFragment.TAG: {
-                SetReminderFragment fragment = (SetReminderFragment) getSupportFragmentManager().findFragmentById(R.id.aa_fragment_container);
-                fragment.onMembersSelected(contactItemList);
-                break;
-            }
-            case CreateGroupFragment.TAG: {
-                CreateGroupFragment fragment = (CreateGroupFragment) getSupportFragmentManager().findFragmentById(R.id.aa_fragment_container);
-                fragment.onMembersSelected(contactItemList);
-                break;
-            }
-            case EditReminderFragment.TAG: {
-                EditReminderFragment fragment = (EditReminderFragment) getSupportFragmentManager().findFragmentById(R.id.aa_fragment_container);
-                fragment.onMembersSelected(contactItemList);
-                break;
-            }
+        if (from.equals(SetReminderFragment.TAG)) {
+            SetReminderFragment fragment = (SetReminderFragment) getSupportFragmentManager().findFragmentById(R.id.aa_fragment_container);
+            fragment.onMembersSelected(contactItemList);
+        } else if (from.equals(CreateGroupFragment.TAG)) {
+            CreateGroupFragment fragment = (CreateGroupFragment) getSupportFragmentManager().findFragmentById(R.id.aa_fragment_container);
+            fragment.onMembersSelected(contactItemList);
+        } else if (from.equals(EditReminderFragment.TAG)) {
+            EditReminderFragment fragment = (EditReminderFragment) getSupportFragmentManager().findFragmentById(R.id.aa_fragment_container);
+            fragment.onMembersSelected(contactItemList);
         }
     }
 
@@ -263,6 +256,16 @@ public class ActionsActivity extends BaseActivity
             @Override
             public void onChanged(@Nullable List<User> list) {
                 setAppUserList(list);
+            }
+        });
+    }
+
+    public void fetchUserGroupListFromDb() {
+        setUserGroupList(new ArrayList<UserGroup>());
+        userGroupRepository.getAllUserGroups().observe(this, new Observer<List<UserGroup>>() {
+            @Override
+            public void onChanged(@Nullable List<UserGroup> list) {
+                setUserGroupList(list);
             }
         });
     }

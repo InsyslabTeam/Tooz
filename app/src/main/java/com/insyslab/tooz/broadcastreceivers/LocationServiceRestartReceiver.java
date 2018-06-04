@@ -13,7 +13,7 @@ public class LocationServiceRestartReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        Log.d(TAG, "onReceive");
+//        Log.d(TAG, "onReceive");
         context.startService(new Intent(context, LocationService.class));
     }
 }

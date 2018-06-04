@@ -221,10 +221,10 @@ public class AllContactsFragment extends BaseFragment implements OnUserContactCl
         else setUpMyGroupsRv();
     }
 
-    @Override
-    public void onAppUserContactClick(View view) {
-        int position = appUserContactsRv.getChildAdapterPosition(view);
-    }
+//    @Override
+//    public void onAppUserContactClick(View view) {
+//        int position = appUserContactsRv.getChildAdapterPosition(view);
+//    }
 
     @Override
     public void onNonAppUserContactClick(View view) {
@@ -245,7 +245,9 @@ public class AllContactsFragment extends BaseFragment implements OnUserContactCl
         Bundle bundle = new Bundle();
         if (user != null) bundle.putString(KEY_GET_SELECTED_CONTACT_ID, user.getId());
         if (userGroup != null) bundle.putString(KEY_GET_SELECTED_GROUP_ID, userGroup.getId());
-        ((DashboardActivity) getActivity()).openActionsActivity(SetReminderFragment.TAG, VAL_SEND_REMINDER, bundle);
+        if (getActivity() != null) {
+            ((DashboardActivity) getActivity()).openActionsActivity(SetReminderFragment.TAG, VAL_SEND_REMINDER, bundle);
+        }
     }
 
     @Override
@@ -300,7 +302,7 @@ public class AllContactsFragment extends BaseFragment implements OnUserContactCl
             }
         } else {
             Error customError = (Error) error;
-            Log.d(TAG, "Error: " + customError.getMessage() + " -- " + customError.getStatus() + " -- ");
+//            Log.d(TAG, "Error: " + customError.getMessage() + " -- " + customError.getStatus() + " -- ");
             if (customError.getStatus() == 000) {
                 hideProgressDialog();
                 showNetworkErrorSnackbar(content, getString(R.string.error_no_internet), getString(R.string.retry),

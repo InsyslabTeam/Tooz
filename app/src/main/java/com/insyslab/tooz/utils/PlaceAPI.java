@@ -25,7 +25,7 @@ public class PlaceAPI {
     private static final String API_KEY = "AIzaSyBMV44Zxl_G-xfZQ4iscj0EEbDH1KvAbG8";
 
     public ArrayList<String> autocomplete(String input) {
-        Log.d(TAG, "autocomplete");
+//        Log.d(TAG, "autocomplete");
 
         ArrayList<String> resultList = null;
         HttpURLConnection conn = null;
@@ -39,7 +39,7 @@ public class PlaceAPI {
             sb.append("&language=en");
             sb.append("&input=").append(URLEncoder.encode(input, "utf8"));
 
-            Log.d(TAG, "URL: " + sb.toString());
+//            Log.d(TAG, "URL: " + sb.toString());
             URL url = new URL(sb.toString());
             conn = (HttpURLConnection) url.openConnection();
             InputStreamReader in = new InputStreamReader(conn.getInputStream());
@@ -63,7 +63,7 @@ public class PlaceAPI {
         }
 
         try {
-            Log.d(TAG, jsonResults.toString());
+//            Log.d(TAG, jsonResults.toString());
 
             // Create a JSON object hierarchy from the results
             JSONObject jsonObj = new JSONObject(jsonResults.toString());

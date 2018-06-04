@@ -12,7 +12,7 @@ import static com.insyslab.tooz.utils.Util.DEFAULT_DATE_FORMAT;
 public class TimestampConverter {
 
     @TypeConverter
-    static Date fromTimestamp(String value) {
+    public static Date fromTimestamp(String value) {
         SimpleDateFormat df = new SimpleDateFormat(DEFAULT_DATE_FORMAT, Locale.getDefault());
 
         if (value != null) {
@@ -27,7 +27,7 @@ public class TimestampConverter {
     }
 
     @TypeConverter
-    static String toTimestamp(Date date) {
+    public static String toTimestamp(Date date) {
         SimpleDateFormat df = new SimpleDateFormat(DEFAULT_DATE_FORMAT, Locale.getDefault());
         if (date != null) return df.format(date);
         else return null;

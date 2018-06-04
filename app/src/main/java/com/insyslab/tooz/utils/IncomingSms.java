@@ -40,7 +40,7 @@ public class IncomingSms extends BroadcastReceiver {
                 }
             }
         } catch (Exception e) {
-            Log.d(TAG, "SMS ERROR: " + "Exception smsReceiver " + e);
+//            Log.d(TAG, "SMS ERROR: " + "Exception smsReceiver " + e);
         }
     }
 }

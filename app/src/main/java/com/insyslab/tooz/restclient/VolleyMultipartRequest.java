@@ -91,7 +91,7 @@ public class VolleyMultipartRequest extends Request<NetworkResponse> {
             // close multipart form data after text and file data
             dos.writeBytes(twoHyphens + boundary + twoHyphens + lineEnd);
 
-            Log.d("Volley ==> ", "VolleyMultipartRequest.getBody");
+//            Log.d("Volley ==> ", "VolleyMultipartRequest.getBody");
             return bos.toByteArray();
         } catch (IOException e) {
             e.printStackTrace();

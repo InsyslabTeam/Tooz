@@ -329,7 +329,7 @@ public class AddContactFragment extends BaseFragment implements OnRuntimePermiss
                 setImageInImageView(resultUri);
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                 Exception error = result.getError();
-                Log.d(TAG, "Error occurred: " + error.getMessage());
+//                Log.d(TAG, "Error occurred: " + error.getMessage());
             }
         }
     }

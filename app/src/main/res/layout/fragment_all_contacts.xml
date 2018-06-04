@@ -54,10 +54,10 @@
                 android:background="@drawable/ic_gradient_divider" />
 
             <TextView
+                android:id="@+id/fac_groups_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/all_contacts_invite_friends"
-                android:id="@+id/fac_groups_title"
                 android:text="@string/groups"
                 android:textColor="@color/black"
                 android:textSize="@dimen/all_contacts_invite_friends_text" />
@@ -67,6 +67,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:nestedScrollingEnabled="false" />
+
             <View
                 android:id="@+id/fac_divider_2"
                 android:layout_width="match_parent"

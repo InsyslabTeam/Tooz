@@ -230,7 +230,7 @@ public class CreateProfileFragment extends BaseFragment implements BaseResponseI
             }
         } else {
             Error customError = (Error) error;
-            Log.d(TAG, "Error: " + customError.getMessage() + " -- " + customError.getStatus() + " -- ");
+//            Log.d(TAG, "Error: " + customError.getMessage() + " -- " + customError.getStatus() + " -- ");
             if (customError.getStatus() == 000) {
                 hideProgressDialog();
                 showNetworkErrorSnackbar(content, getString(R.string.error_no_internet), getString(R.string.retry),
@@ -256,7 +256,7 @@ public class CreateProfileFragment extends BaseFragment implements BaseResponseI
     }
 
     private void onUpdateProfilePictureResponse(String success) {
-        Log.d(TAG, "onUpdateProfilePictureResponse: " + success);
+//        Log.d(TAG, "onUpdateProfilePictureResponse: " + success);
     }
 
     private void onUpdateProfilePictureResponse(User success) {
@@ -281,7 +281,7 @@ public class CreateProfileFragment extends BaseFragment implements BaseResponseI
                 setImageInImageView(resultUri);
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                 Exception error = result.getError();
-                Log.d(TAG, "Error occurred: " + error.getMessage());
+//                Log.d(TAG, "Error occurred: " + error.getMessage());
             }
         }
     }
@@ -370,6 +370,6 @@ public class CreateProfileFragment extends BaseFragment implements BaseResponseI
 
     @Override
     public void onLocationPermissionsResult(boolean granted) {
-        Log.d(TAG, "onLocationPermissionsResult");
+//        Log.d(TAG, "onLocationPermissionsResult");
     }
 }

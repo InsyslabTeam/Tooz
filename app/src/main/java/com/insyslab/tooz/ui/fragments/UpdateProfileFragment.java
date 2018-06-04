@@ -99,7 +99,7 @@ public class UpdateProfileFragment extends BaseFragment implements BaseResponseI
 
         user = LocalStorage.getInstance(context).getUser();
         user.setDeviceId(getDeviceId());
-        Log.d(TAG, "USER: " + new Gson().toJson(user));
+//        Log.d(TAG, "USER: " + new Gson().toJson(user));
 
         setUpProfileDetails();
 
@@ -252,7 +252,7 @@ public class UpdateProfileFragment extends BaseFragment implements BaseResponseI
                 setImageInImageView(resultUri);
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                 Exception error = result.getError();
-                Log.d(TAG, "Error occurred: " + error.getMessage());
+//                Log.d(TAG, "Error occurred: " + error.getMessage());
             }
         }
     }
@@ -311,7 +311,7 @@ public class UpdateProfileFragment extends BaseFragment implements BaseResponseI
             }
         } else {
             Error customError = (Error) error;
-            Log.d(TAG, "Error: " + customError.getMessage() + " -- " + customError.getStatus() + " -- ");
+//            Log.d(TAG, "Error: " + customError.getMessage() + " -- " + customError.getStatus() + " -- ");
             if (customError.getStatus() == 0) {
                 hideProgressDialog();
                 showNetworkErrorSnackbar(content, getString(R.string.error_no_internet), getString(R.string.retry),
@@ -337,7 +337,7 @@ public class UpdateProfileFragment extends BaseFragment implements BaseResponseI
     }
 
     private void onUpdateProfilePictureResponse(String success) {
-        Log.d(TAG, "onUpdateProfilePictureResponse: " + success);
+//        Log.d(TAG, "onUpdateProfilePictureResponse: " + success);
     }
 
 //    private void onUpdateProfilePictureResponse(User success) {

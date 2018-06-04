@@ -193,7 +193,7 @@ public class SettingsFragment extends BaseFragment implements OnSettingItemClick
                 initLogoutRequest();
                 break;
             default:
-                Log.d(TAG, "Some fragment error!");
+//                Log.d(TAG, "Some fragment error!");
                 break;
         }
     }
@@ -262,7 +262,7 @@ public class SettingsFragment extends BaseFragment implements OnSettingItemClick
             }
         } else {
             Error customError = (Error) error;
-            Log.d(TAG, "Error: " + customError.getMessage() + " -- " + customError.getStatus() + " -- ");
+//            Log.d(TAG, "Error: " + customError.getMessage() + " -- " + customError.getStatus() + " -- ");
             if (customError.getStatus() == 0) {
                 hideProgressDialog();
                 showNetworkErrorSnackbar(content, getString(R.string.error_no_internet), getString(R.string.retry),

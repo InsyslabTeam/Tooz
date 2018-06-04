@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/fragment_background">
+
+    <ImageView
+        android:id="@+id/islg_image"
+        android:layout_width="@dimen/sync_contacts_item_image"
+        android:layout_height="@dimen/sync_contacts_item_image"
+        android:layout_margin="@dimen/sync_contacts_item_margin" />
+
+    <RelativeLayout
+        android:id="@+id/islg_selector_sec"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/islg_image"
+        android:layout_alignParentRight="true"
+        android:layout_alignTop="@id/islg_image"
+        android:paddingLeft="@dimen/default_padding"
+        android:paddingRight="@dimen/default_padding">
+
+        <ImageView
+            android:id="@+id/islg_selector"
+            android:layout_width="@dimen/sync_contacts_selector"
+            android:layout_height="@dimen/sync_contacts_selector"
+            android:layout_centerVertical="true" />
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/islg_name"
+        style="@style/SinglelineText"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/sync_contacts_item_image"
+        android:layout_margin="@dimen/sync_contacts_item_margin"
+        android:layout_toLeftOf="@id/islg_selector_sec"
+        android:gravity="center_vertical"
+        android:layout_toRightOf="@id/islg_image"
+        android:textColor="@color/black"
+        android:textSize="@dimen/sync_contacts_contact_name" />
+
+    <View
+        android:id="@+id/islg_divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@id/islg_image"
+        android:background="@drawable/ic_gradient_divider" />
+</RelativeLayout>

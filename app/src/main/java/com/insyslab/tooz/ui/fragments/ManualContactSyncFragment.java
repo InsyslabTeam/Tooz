@@ -59,7 +59,7 @@ import static com.insyslab.tooz.utils.ConstantClass.REQUEST_TYPE_005;
 public class ManualContactSyncFragment extends BaseFragment implements OnSyncContactItemClickListener,
         OnRuntimePermissionsResultListener, BaseResponseInterface {
 
-    public static final String TAG = "ManualSyncFrag ==> ";
+    public static final String TAG = ManualContactSyncFragment.class.getSimpleName() + " ==>";
 
     private static final String ARG_PARAM1 = "ARG_PARAM1";
 
@@ -155,7 +155,7 @@ public class ManualContactSyncFragment extends BaseFragment implements OnSyncCon
             } while (cursor.moveToNext());
         }
 
-        Log.d(TAG, "Contacts Synced!");
+//        Log.d(TAG, "Contacts Synced!");
         setUpContactsRv();
     }
 
@@ -265,7 +265,7 @@ public class ManualContactSyncFragment extends BaseFragment implements OnSyncCon
 
     @Override
     public void onSmsPermissionsResult(boolean granted) {
-        Log.d(TAG, "Some error occurred!");
+//        Log.d(TAG, "Some error occurred!");
     }
 
     @Override
@@ -312,7 +312,7 @@ public class ManualContactSyncFragment extends BaseFragment implements OnSyncCon
             }
         } else {
             Error customError = (Error) error;
-            Log.d(TAG, "Error: " + customError.getMessage() + " -- " + customError.getStatus() + " -- ");
+//            Log.d(TAG, "Error: " + customError.getMessage() + " -- " + customError.getStatus() + " -- ");
             if (customError.getStatus() == 000) {
                 hideProgressDialog();
                 showNetworkErrorSnackbar(content, getString(R.string.error_no_internet), getString(R.string.retry),

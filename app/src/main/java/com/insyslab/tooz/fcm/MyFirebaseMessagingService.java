@@ -30,16 +30,16 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
-        Log.d(TAG, "From: " + remoteMessage.getFrom());
+//        Log.d(TAG, "From: " + remoteMessage.getFrom());
 
         if (remoteMessage.getNotification() != null && remoteMessage.getData().size() == 0) {
-            Log.d(TAG, "Push Notification has only notification object!");
+//            Log.d(TAG, "Push Notification has only notification object!");
             sendNotification(remoteMessage.getNotification().getBody(), remoteMessage.getNotification().getTitle(), "content_value");
         }
 
         if (remoteMessage.getData().size() > 0) {
-            Log.d(TAG, "Push Notification has data object!");
-            Log.d(TAG, "Data: " + remoteMessage.getData().toString());
+//            Log.d(TAG, "Push Notification has data object!");
+//            Log.d(TAG, "Data: " + remoteMessage.getData().toString());
 
             try {
                 JSONObject dataJson = new JSONObject(remoteMessage.getData());
@@ -75,7 +75,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     }
 
     private void handleDataMessage(JSONObject data) {
-        Log.d(TAG, "Data Object: " + data.toString());
+//        Log.d(TAG, "Data Object: " + data.toString());
 
         try {
             Gson gson = new Gson();

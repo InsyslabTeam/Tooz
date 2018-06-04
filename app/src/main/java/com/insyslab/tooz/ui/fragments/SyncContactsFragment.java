@@ -158,7 +158,7 @@ public class SyncContactsFragment extends BaseFragment implements OnSyncContactI
             @Override
             protected void onPostExecute(Void aVoid) {
                 super.onPostExecute(aVoid);
-                Log.d(TAG, "Contacts Synced!");
+//                Log.d(TAG, "Contacts Synced!");
                 setUpContactsRv();
             }
         }.execute();
@@ -292,7 +292,7 @@ public class SyncContactsFragment extends BaseFragment implements OnSyncContactI
 
     @Override
     public void onSmsPermissionsResult(boolean granted) {
-        Log.d(TAG, "Some error occurred!");
+//        Log.d(TAG, "Some error occurred!");
     }
 
     @Override
@@ -322,7 +322,7 @@ public class SyncContactsFragment extends BaseFragment implements OnSyncContactI
 
     @Override
     public void onLocationPermissionsResult(boolean granted) {
-        Log.d(TAG, "onLocationPermissionsResult");
+//        Log.d(TAG, "onLocationPermissionsResult");
     }
 
     @Override
@@ -339,7 +339,7 @@ public class SyncContactsFragment extends BaseFragment implements OnSyncContactI
             }
         } else {
             Error customError = (Error) error;
-            Log.d(TAG, "Error: " + customError.getMessage() + " -- " + customError.getStatus() + " -- ");
+//            Log.d(TAG, "Error: " + customError.getMessage() + " -- " + customError.getStatus() + " -- ");
             if (customError.getStatus() == 0) {
                 hideProgressDialog();
                 showNetworkErrorSnackbar(content, getString(R.string.error_no_internet), getString(R.string.retry),

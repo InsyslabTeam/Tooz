@@ -156,22 +156,21 @@ public class DashboardActivity extends BaseActivity implements BaseResponseInter
 
     public void openThisFragment(String fragmentTag, Object bundle) {
         FragmentManager fragmentManager = getSupportFragmentManager();
-        switch (fragmentTag) {
-            case UpcomingRemindersFragment.TAG:
-                fragmentManager.beginTransaction()
-                        .replace(R.id.ad_fragment_container, UpcomingRemindersFragment.newInstance((Bundle) bundle), fragmentTag)
-                        .commit();
-                break;
-            case PastRemindersFragment.TAG:
-                fragmentManager.beginTransaction()
-                        .replace(R.id.ad_fragment_container, PastRemindersFragment.newInstance((Bundle) bundle), fragmentTag)
-                        .commit();
-                break;
-            case AllContactsFragment.TAG:
-                fragmentManager.beginTransaction()
-                        .replace(R.id.ad_fragment_container, AllContactsFragment.newInstance((Bundle) bundle), fragmentTag)
-                        .commit();
-                break;
+        if (fragmentTag.equals(UpcomingRemindersFragment.TAG)) {
+            fragmentManager.beginTransaction()
+                    .replace(R.id.ad_fragment_container, UpcomingRemindersFragment.newInstance((Bundle) bundle), fragmentTag)
+                    .commit();
+
+        } else if (fragmentTag.equals(PastRemindersFragment.TAG)) {
+            fragmentManager.beginTransaction()
+                    .replace(R.id.ad_fragment_container, PastRemindersFragment.newInstance((Bundle) bundle), fragmentTag)
+                    .commit();
+
+        } else if (fragmentTag.equals(AllContactsFragment.TAG)) {
+            fragmentManager.beginTransaction()
+                    .replace(R.id.ad_fragment_container, AllContactsFragment.newInstance((Bundle) bundle), fragmentTag)
+                    .commit();
+
         }
     }
 
@@ -276,25 +275,24 @@ public class DashboardActivity extends BaseActivity implements BaseResponseInter
     }
 
     public void onEvent(FragmentState fragmentState) {
-        Log.d(TAG, fragmentState.getVisibleFragment());
-        switch (fragmentState.getVisibleFragment()) {
-            case UpcomingRemindersFragment.TAG:
-                updateToolbar("  " + "Upcoming Reminders");
-                updateFooter(0);
-                break;
-            case PastRemindersFragment.TAG:
-                updateToolbar("  " + "Past Reminders");
-                updateFooter(1);
-                break;
-            case AllContactsFragment.TAG:
-                updateToolbar("  " + "All Contacts");
-                updateFooter(2);
-                break;
+//        Log.d(TAG, fragmentState.getVisibleFragment());
+        if (fragmentState.getVisibleFragment().equals(UpcomingRemindersFragment.TAG)) {
+            updateToolbar("  " + "Upcoming Reminders");
+            updateFooter(0);
+
+        } else if (fragmentState.getVisibleFragment().equals(PastRemindersFragment.TAG)) {
+            updateToolbar("  " + "Past Reminders");
+            updateFooter(1);
+
+        } else if (fragmentState.getVisibleFragment().equals(AllContactsFragment.TAG)) {
+            updateToolbar("  " + "All Contacts");
+            updateFooter(2);
+
         }
     }
 
     public void onEvent(ContactSyncUpdate contactSyncUpdate) {
-        Log.d(TAG, "Contact Update: " + contactSyncUpdate.isContactSynced());
+//        Log.d(TAG, "Contact Update: " + contactSyncUpdate.isContactSynced());
 
         if (contactSyncUpdate.isContactSynced()) {
             initGetContactsRequest();
@@ -302,7 +300,7 @@ public class DashboardActivity extends BaseActivity implements BaseResponseInter
     }
 
     public void onEvent(ContactAdded contactAdded) {
-        Log.d(TAG, "Contact Added: " + contactAdded.isContactAdded());
+//        Log.d(TAG, "Contact Added: " + contactAdded.isContactAdded());
 
         if (contactAdded.isContactAdded()) {
             initContactSyncProcess();
@@ -310,7 +308,7 @@ public class DashboardActivity extends BaseActivity implements BaseResponseInter
     }
 
     public void onEvent(ReminderCreated reminderCreated) {
-        Log.d(TAG, "ReminderCreated: " + reminderCreated.isReminderCreated());
+//        Log.d(TAG, "ReminderCreated: " + reminderCreated.isReminderCreated());
 
         if (reminderCreated.isReminderCreated()) {
             initGetAllRemindersRequest();
@@ -318,7 +316,7 @@ public class DashboardActivity extends BaseActivity implements BaseResponseInter
     }
 
     public void onEvent(GroupCreated groupCreated) {
-        Log.d(TAG, "GroupCreated: " + groupCreated.isGroupCreated());
+//        Log.d(TAG, "GroupCreated: " + groupCreated.isGroupCreated());
 
         if (groupCreated.isGroupCreated()) {
             initGetContactGroupsRequest();
@@ -464,7 +462,7 @@ public class DashboardActivity extends BaseActivity implements BaseResponseInter
     @Override
     protected void onDestroy() {
         stopService(locationServiceIntent);
-        Log.i(TAG, "onDestroy!");
+//        Log.i(TAG, "onDestroy!");
         super.onDestroy();
 
     }
@@ -604,7 +602,7 @@ public class DashboardActivity extends BaseActivity implements BaseResponseInter
             if (fragment != null) fragment.updateRemindersRv(upcomingRemindersList);
         } catch (ClassCastException e) {
 //            e.printStackTrace();
-            Log.d(TAG, "ERROR: updateUpcomingReminders - " + e.getMessage());
+//            Log.d(TAG, "ERROR: updateUpcomingReminders - " + e.getMessage());
         }
     }
 
@@ -628,7 +626,7 @@ public class DashboardActivity extends BaseActivity implements BaseResponseInter
             if (fragment != null) fragment.updateRemindersRv(pastRemindersList);
         } catch (ClassCastException e) {
 //            e.printStackTrace();
-            Log.d(TAG, "ERROR: updatePastReminders - " + e.getMessage());
+//            Log.d(TAG, "ERROR: updatePastReminders - " + e.getMessage());
         }
     }
 
@@ -656,7 +654,7 @@ public class DashboardActivity extends BaseActivity implements BaseResponseInter
             AllContactsFragment fragment = (AllContactsFragment) getSupportFragmentManager().findFragmentById(R.id.ad_fragment_container);
             if (fragment != null) fragment.updateAppUserContactsRv(getAppUserList());
         } catch (ClassCastException e) {
-            Log.d(TAG, "ERROR: updateAppUserContacts - " + e.getMessage());
+//            Log.d(TAG, "ERROR: updateAppUserContacts - " + e.getMessage());
         }
     }
 
@@ -688,7 +686,7 @@ public class DashboardActivity extends BaseActivity implements BaseResponseInter
             AllContactsFragment fragment = (AllContactsFragment) getSupportFragmentManager().findFragmentById(R.id.ad_fragment_container);
             if (fragment != null) fragment.updateNonAppUserContactsRv(getNonAppUserList());
         } catch (ClassCastException e) {
-            Log.d(TAG, "ERROR: updateNonAppUserContacts - " + e.getMessage());
+//            Log.d(TAG, "ERROR: updateNonAppUserContacts - " + e.getMessage());
         }
     }
 
@@ -697,7 +695,7 @@ public class DashboardActivity extends BaseActivity implements BaseResponseInter
             AllContactsFragment fragment = (AllContactsFragment) getSupportFragmentManager().findFragmentById(R.id.ad_fragment_container);
             if (fragment != null) fragment.updateUserGroupsRv(getUserGroupList());
         } catch (ClassCastException e) {
-            Log.d(TAG, "ERROR: updateUserGroupList - " + e.getMessage());
+//            Log.d(TAG, "ERROR: updateUserGroupList - " + e.getMessage());
         }
     }
 

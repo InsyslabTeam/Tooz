@@ -14,12 +14,17 @@ import android.widget.RelativeLayout;
 
 import com.insyslab.tooz.R;
 import com.insyslab.tooz.interfaces.OnSelectContactItemClickListener;
+import com.insyslab.tooz.interfaces.OnSelectGroupItemClickListener;
 import com.insyslab.tooz.models.User;
+import com.insyslab.tooz.models.UserGroup;
 import com.insyslab.tooz.models.eventbus.FragmentState;
 import com.insyslab.tooz.ui.activities.ActionsActivity;
 import com.insyslab.tooz.ui.adapters.SelectContactsAdapter;
+import com.insyslab.tooz.ui.adapters.SelectGroupsAdapter;
+import com.insyslab.tooz.utils.LocalStorage;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
@@ -27,7 +32,7 @@ import static com.insyslab.tooz.utils.AppConstants.KEY_FROM_FRAGMENT;
 import static com.insyslab.tooz.utils.AppConstants.KEY_FROM_FRAGMENT_DETAIL;
 import static com.insyslab.tooz.utils.AppConstants.KEY_TO_CONTACTS_SELECTOR_BUNDLE;
 
-public class SelectContactsFragment extends BaseFragment implements OnSelectContactItemClickListener {
+public class SelectContactsFragment extends BaseFragment implements OnSelectContactItemClickListener, OnSelectGroupItemClickListener {
 
     public static final String TAG = SelectContactsFragment.class.getSimpleName() + " ==>";
 
@@ -35,13 +40,16 @@ public class SelectContactsFragment extends BaseFragment implements OnSelectCont
 
     private RelativeLayout content;
     private CheckBox cbSelectAll;
-    private RecyclerView rvContacts;
+    private RecyclerView rvContacts, rvGroups;
 
-    private RecyclerView.Adapter contactsAdapter;
+    private RecyclerView.Adapter contactsAdapter, groupsAdapter;
 
     private List<User> contactItems;
+    private List<UserGroup> groupItems;
     private List<User> selectedContacts = null;
+    private List<UserGroup> selectedGroups = null;
     private String fromFragment = null, fromFragmentDetails = null;
+    private User user;
 
     private OnContactsSelectedListener onContactsSelectedListener;
 
@@ -78,9 +86,14 @@ public class SelectContactsFragment extends BaseFragment implements OnSelectCont
         initView(layout);
         setUpActions();
 
+        user = LocalStorage.getInstance(getContext()).getUser();
+
         if (selectedContacts == null) selectedContacts = new ArrayList<>();
-        if (getActivity() != null)
+        if (selectedGroups == null) selectedGroups = new ArrayList<>();
+        if (getActivity() != null) {
             contactItems = ((ActionsActivity) getActivity()).getAppUserList();
+            groupItems = ((ActionsActivity) getActivity()).getUserGroupList();
+        }
         setUpContactsRv();
 
         return layout;
@@ -93,6 +106,17 @@ public class SelectContactsFragment extends BaseFragment implements OnSelectCont
         contactsAdapter = new SelectContactsAdapter(this, contactItems);
         rvContacts.setLayoutManager(layoutManager);
         rvContacts.setAdapter(contactsAdapter);
+
+        setUpGroupsRv();
+    }
+
+    private void setUpGroupsRv() {
+        if (selectedGroups.size() > 0) getUpgradedGroupList();
+
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
+        groupsAdapter = new SelectGroupsAdapter(this, groupItems);
+        rvGroups.setLayoutManager(layoutManager);
+        rvGroups.setAdapter(groupsAdapter);
     }
 
     private void getUpgradedContactList() {
@@ -108,9 +132,23 @@ public class SelectContactsFragment extends BaseFragment implements OnSelectCont
         }
     }
 
+    private void getUpgradedGroupList() {
+        HashMap<String, UserGroup> hashMap = new HashMap<>();
+        for (int i = 0; i < selectedGroups.size(); i++) {
+            hashMap.put(selectedGroups.get(i).getId(), selectedGroups.get(i));
+        }
+
+        for (int i = 0; i < groupItems.size(); i++) {
+            if (hashMap.get(groupItems.get(i).getId()) != null) {
+                groupItems.get(i).setSelected(true);
+            }
+        }
+    }
+
     private void initView(View rootView) {
         content = rootView.findViewById(R.id.fslc_content);
         rvContacts = rootView.findViewById(R.id.fslc_contacts);
+        rvGroups = rootView.findViewById(R.id.fslc_groups);
         cbSelectAll = rootView.findViewById(R.id.fslc_select_all);
     }
 
@@ -125,10 +163,10 @@ public class SelectContactsFragment extends BaseFragment implements OnSelectCont
     }
 
     private void modifySelection(boolean isSelected) {
-        for (int i = 0; i < contactItems.size(); i++) {
-            contactItems.get(i).setSelected(isSelected);
-        }
+        for (int i = 0; i < contactItems.size(); i++) contactItems.get(i).setSelected(isSelected);
         contactsAdapter.notifyDataSetChanged();
+        for (int i = 0; i < groupItems.size(); i++) groupItems.get(i).setSelected(isSelected);
+        groupsAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -169,10 +207,27 @@ public class SelectContactsFragment extends BaseFragment implements OnSelectCont
     }
 
     private List<User> getListOfSelectedContacts() {
-        List<User> list = new ArrayList<>();
+        HashMap<String, User> hashMap = new HashMap<>();
+        List<User> list;
         for (int i = 0; i < contactItems.size(); i++) {
-            if (contactItems.get(i).isSelected()) list.add(contactItems.get(i));
+            if (contactItems.get(i).isSelected()) {
+                if (!contactItems.get(i).getId().equals(user.getId()))
+                    hashMap.put(contactItems.get(i).getId(), contactItems.get(i));
+            }
         }
+
+        for (int i = 0; i < groupItems.size(); i++) {
+            if (groupItems.get(i).isSelected()) {
+                for (int j = 0; j < groupItems.get(i).getUsers().size(); j++) {
+                    if (!groupItems.get(i).getUsers().get(j).getId().equals(user.getId())) {
+                        hashMap.put(groupItems.get(i).getUsers().get(j).getId(), groupItems.get(i).getUsers().get(j));
+                    }
+                }
+            }
+        }
+
+        Collection<User> values = hashMap.values();
+        list = new ArrayList<>(values);
         return list;
     }
 
@@ -180,6 +235,12 @@ public class SelectContactsFragment extends BaseFragment implements OnSelectCont
     public void onContactSelectorClick(int position) {
         contactItems.get(position).setSelected(!contactItems.get(position).isSelected());
         contactsAdapter.notifyItemChanged(position);
+    }
+
+    @Override
+    public void onGroupSelectorClick(int position) {
+        groupItems.get(position).setSelected(!groupItems.get(position).isSelected());
+        groupsAdapter.notifyItemChanged(position);
     }
 
     public interface OnContactsSelectedListener {
