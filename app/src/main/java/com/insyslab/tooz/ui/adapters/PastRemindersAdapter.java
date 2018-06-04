@@ -1,5 +1,7 @@
 package com.insyslab.tooz.ui.adapters;
 
+import android.annotation.SuppressLint;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.view.LayoutInflater;
@@ -18,24 +20,19 @@ import java.util.List;
 import static com.insyslab.tooz.utils.Util.getReminderFormatedDate;
 import static com.insyslab.tooz.utils.Util.getReminderFormatedTime;
 
-
-/**
- * Created by TaNMay on 19/02/17.
- */
 public class PastRemindersAdapter extends RecyclerView.Adapter<PastRemindersAdapter.ViewHolder> {
 
     private OnPastReminderClickListener onPastReminderClickListener;
     private List<Reminder> reminders;
-    private Calendar currentTime;
 
     public PastRemindersAdapter(OnPastReminderClickListener onPastReminderClickListener, List<Reminder> reminders) {
         this.onPastReminderClickListener = onPastReminderClickListener;
         this.reminders = reminders;
-        currentTime = Calendar.getInstance();
     }
 
+    @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         final View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_past_reminder, parent, false);
         v.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -43,12 +40,12 @@ public class PastRemindersAdapter extends RecyclerView.Adapter<PastRemindersAdap
                 onPastReminderClickListener.onPastReminderClick(view);
             }
         });
-        ViewHolder viewHolder = new ViewHolder(v);
-        return viewHolder;
+        return new ViewHolder(v);
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
-    public void onBindViewHolder(final ViewHolder holder, final int position) {
+    public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
         Reminder reminder = reminders.get(position);
 
         if (reminder.isExpanded()) {
@@ -93,10 +90,8 @@ public class PastRemindersAdapter extends RecyclerView.Adapter<PastRemindersAdap
 
     class ViewHolder extends RecyclerView.ViewHolder {
 
-        public TextView task, date, time, status, setter;
-        //        public LinearLayout optionsSec;
-//        public RelativeLayout editSec, deleteSec;
         public View divider;
+        TextView task, date, time, status, setter;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -107,9 +102,6 @@ public class PastRemindersAdapter extends RecyclerView.Adapter<PastRemindersAdap
             status = itemView.findViewById(R.id.ipr_status);
             setter = itemView.findViewById(R.id.ipr_setter);
             divider = itemView.findViewById(R.id.ipr_divider);
-//            optionsSec = itemView.findViewById(R.id.ipr_options_sec);
-//            editSec = itemView.findViewById(R.id.ipr_edit_sec);
-//            deleteSec = itemView.findViewById(R.id.ipr_delete_sec);
         }
     }
 }

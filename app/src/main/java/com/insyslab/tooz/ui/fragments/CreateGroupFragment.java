@@ -234,13 +234,13 @@ public class CreateGroupFragment extends BaseFragment implements OnRuntimePermis
                 setImageInImageView(resultUri);
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                 Exception error = result.getError();
-                Log.d(TAG, "Error occurred: " + error.getMessage());
+//                Log.d(TAG, "Error occurred: " + error.getMessage());
             }
         }
     }
 
     private void setImageInImageView(Uri resultUri) {
-        Picasso.with(getContext())
+        Picasso.get()
                 .load(resultUri)
                 .placeholder(R.drawable.ic_default_user)
                 .error(R.drawable.ic_default_user)
@@ -343,7 +343,7 @@ public class CreateGroupFragment extends BaseFragment implements OnRuntimePermis
             }
         } else {
             Error customError = (Error) error;
-            Log.d(TAG, "Error: " + customError.getMessage() + " -- " + customError.getStatus() + " -- ");
+//            Log.d(TAG, "Error: " + customError.getMessage() + " -- " + customError.getStatus() + " -- ");
             if (customError.getStatus() == 000) {
                 hideProgressDialog();
                 showNetworkErrorSnackbar(content, getString(R.string.error_no_internet), getString(R.string.retry),

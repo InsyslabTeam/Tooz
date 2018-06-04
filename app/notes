@@ -1,22 +1,33 @@
+Highest Priority
+> Search option in sync contacts
+> Reminders are not retained on logging again
+> Groups are not retained on logging again
+> Personal reminders are not showing
+
+High Priority
+> The mobile number can be an international number, please comply.
+> Can we restrict or inform user, not to put zero before the number.
+> Search option on the sync contact page
+> Contacts should be alphabetically sorted
+> The name displayed on the select contact page is must be same as the one saved in contact.
+> Is it possible to make the time as roller. Time selection is not very intutive. AM/PM is very confusing
+> Edit/Delete icon should be shown only one reminder at a time.
+> Delete option for past reminder, from own phone.
+> Invite is not working in all contacts screen
+> Fix database upgrade issues
+
 Next in Line
-> test with lots of contacts
-> create group
-> show groups in contacts
 > notification settings
-> feedback
+> feedback, send feedback to email id
 > privacy options
 
 Longer term
+> add/upload attachment
 > completed option in reminders
 > location and time based filters
 > priority options in reminders
 > change number for account
 > share app with non app users
 > delete account
-
-
-
-
-
 
 Privacy options - My contacts, My contacts except, Only share with

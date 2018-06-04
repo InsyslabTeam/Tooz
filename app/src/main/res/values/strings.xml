@@ -5,7 +5,7 @@
     <!--Onboarding-->
     <string name="mobile_number">Mobile Number</string>
     <string name="sign_in_footer_text">By signing up, you confirm that you have read and agreed to our \n Privacy Policy and Terms and Conditions!</string>
-    <string name="sign_in_mobile_number_hint">We will send you a one-time SMS message to verify your number. Carrier charges may apply.</string>
+    <string name="sign_in_mobile_number_hint">We will send you a one-time SMS message to verify your number.</string>
     <string name="sign_in">Sign In</string>
     <string name="otp_mobile_number_hint">Waiting to automatically detect an SMS sent to</string>
     <string name="otp_manual_input_hint">Enter the OTP below in case we fail to detect the SMS automatically.</string>
@@ -87,4 +87,5 @@
     <string name="groups">Groups</string>
     <string name="group_created_successfully">Group created successfully!</string>
     <string name="send">SEND</string>
+    <string name="done">DONE</string>
 </resources>

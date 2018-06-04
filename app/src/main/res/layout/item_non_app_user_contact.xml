@@ -32,10 +32,10 @@
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:background="@drawable/ic_blue_button"
-                android:paddingTop="8dp"
                 android:paddingBottom="8dp"
                 android:paddingLeft="16dp"
                 android:paddingRight="16dp"
+                android:paddingTop="8dp"
                 android:text="@string/invite"
                 android:textColor="@color/white" />
         </RelativeLayout>
@@ -47,8 +47,8 @@
             android:layout_height="wrap_content"
             android:layout_alignBottom="@id/inauc_image"
             android:layout_alignTop="@id/inauc_image"
-            android:layout_toRightOf="@id/inauc_image"
             android:layout_toLeftOf="@id/inauc_invite_sec"
+            android:layout_toRightOf="@id/inauc_image"
             android:gravity="center_vertical"
             android:textColor="@color/black"
             android:textSize="16sp" />

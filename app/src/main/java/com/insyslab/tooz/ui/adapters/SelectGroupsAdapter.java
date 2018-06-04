@@ -11,36 +11,36 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.insyslab.tooz.R;
-import com.insyslab.tooz.interfaces.OnSelectContactItemClickListener;
-import com.insyslab.tooz.models.User;
+import com.insyslab.tooz.interfaces.OnSelectGroupItemClickListener;
+import com.insyslab.tooz.models.UserGroup;
 import com.insyslab.tooz.ui.customui.CircleTransform;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
-public class SelectContactsAdapter extends RecyclerView.Adapter<SelectContactsAdapter.ViewHolder> {
+public class SelectGroupsAdapter extends RecyclerView.Adapter<SelectGroupsAdapter.ViewHolder> {
 
-    private OnSelectContactItemClickListener onSelectContactItemClickListener;
-    private List<User> contactItems;
+    private OnSelectGroupItemClickListener onSelectGroupItemClickListener;
+    private List<UserGroup> groupItems;
 
-    public SelectContactsAdapter(OnSelectContactItemClickListener onSelectContactItemClickListener, List<User> contactItems) {
-        this.onSelectContactItemClickListener = onSelectContactItemClickListener;
-        this.contactItems = contactItems;
+    public SelectGroupsAdapter(OnSelectGroupItemClickListener onSelectGroupItemClickListener, List<UserGroup> groupItems) {
+        this.onSelectGroupItemClickListener = onSelectGroupItemClickListener;
+        this.groupItems = groupItems;
     }
 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_select_contact, parent, false);
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_select_group, parent, false);
         return new ViewHolder(v);
     }
 
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
-        User contactItem = contactItems.get(position);
+        UserGroup groupItem = groupItems.get(position);
 
         Picasso.get()
-                .load(contactItem.getProfileImage())
+                .load(groupItem.getProfileImage())
                 .placeholder(R.drawable.ic_default_user)
                 .error(R.drawable.ic_default_user)
                 .resize(100, 100)
@@ -48,12 +48,10 @@ public class SelectContactsAdapter extends RecyclerView.Adapter<SelectContactsAd
                 .transform(new CircleTransform())
                 .into(holder.image);
 
-        if (contactItem.getName() != null)
-            holder.name.setText(contactItem.getName());
-        if (contactItem.getMobile() != null)
-            holder.number.setText(contactItem.getMobile());
+        if (groupItem.getName() != null)
+            holder.name.setText(groupItem.getName());
 
-        if (contactItem.isSelected()) {
+        if (groupItem.isSelected()) {
             holder.selector.setImageDrawable(ContextCompat.getDrawable(holder.selector.getContext(), R.drawable.ic_checkbox_selected));
         } else {
             holder.selector.setImageDrawable(ContextCompat.getDrawable(holder.selector.getContext(), R.drawable.ic_checkbox_not_selected));
@@ -62,30 +60,29 @@ public class SelectContactsAdapter extends RecyclerView.Adapter<SelectContactsAd
         holder.selectorSec.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                onSelectContactItemClickListener.onContactSelectorClick(holder.getAdapterPosition());
+                onSelectGroupItemClickListener.onGroupSelectorClick(holder.getAdapterPosition());
             }
         });
     }
 
     @Override
     public int getItemCount() {
-        return contactItems.size();
+        return groupItems.size();
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
 
         ImageView image, selector;
-        TextView name, number;
+        TextView name;
         RelativeLayout selectorSec;
 
         public ViewHolder(View itemView) {
             super(itemView);
 
-            image = itemView.findViewById(R.id.islc_image);
-            name = itemView.findViewById(R.id.islc_name);
-            number = itemView.findViewById(R.id.islc_number);
-            selector = itemView.findViewById(R.id.islc_selector);
-            selectorSec = itemView.findViewById(R.id.islc_selector_sec);
+            image = itemView.findViewById(R.id.islg_image);
+            name = itemView.findViewById(R.id.islg_name);
+            selector = itemView.findViewById(R.id.islg_selector);
+            selectorSec = itemView.findViewById(R.id.islg_selector_sec);
         }
     }
 }

@@ -5,18 +5,15 @@ import android.arch.persistence.room.TypeConverter;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 import static com.insyslab.tooz.utils.Util.DEFAULT_DATE_FORMAT;
-
-/**
- * Created by TaNMay on 18/01/18.
- */
 
 public class TimestampConverter {
 
     @TypeConverter
     public static Date fromTimestamp(String value) {
-        SimpleDateFormat df = new SimpleDateFormat(DEFAULT_DATE_FORMAT);
+        SimpleDateFormat df = new SimpleDateFormat(DEFAULT_DATE_FORMAT, Locale.getDefault());
 
         if (value != null) {
             try {
@@ -31,7 +28,7 @@ public class TimestampConverter {
 
     @TypeConverter
     public static String toTimestamp(Date date) {
-        SimpleDateFormat df = new SimpleDateFormat(DEFAULT_DATE_FORMAT);
+        SimpleDateFormat df = new SimpleDateFormat(DEFAULT_DATE_FORMAT, Locale.getDefault());
         if (date != null) return df.format(date);
         else return null;
     }

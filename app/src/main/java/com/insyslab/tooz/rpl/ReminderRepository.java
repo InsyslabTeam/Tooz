@@ -10,10 +10,6 @@ import com.insyslab.tooz.utils.ToozApplication;
 import java.util.Date;
 import java.util.List;
 
-/**
- * Created by TaNMay on 20/12/17.
- */
-
 public class ReminderRepository {
 
     private AppDatabase appDatabase;
@@ -37,9 +33,9 @@ public class ReminderRepository {
         }.execute();
     }
 
-    public LiveData<List<Reminder>> getAllReminder() {
-        return appDatabase.reminderDao().fetchAllReminders();
-    }
+//    public LiveData<List<Reminder>> getAllReminder() {
+//        return appDatabase.reminderDao().fetchAllReminders();
+//    }
 
     public LiveData<List<Reminder>> getUpcomingReminders(Date date) {
         return appDatabase.reminderDao().fetchUpcomingReminders(date);
@@ -53,11 +49,11 @@ public class ReminderRepository {
         return appDatabase.reminderDao().fetchPastReminders(date);
     }
 
-    public int deleteReminder(String id) {
-        return appDatabase.reminderDao().deleteReminder(id);
+    public void deleteReminder(String id) {
+        appDatabase.reminderDao().deleteReminder(id);
     }
 
-    public int clearReminderTable() {
-        return appDatabase.reminderDao().deleteAllReminders();
+    public void clearReminderTable() {
+        appDatabase.reminderDao().deleteAllReminders();
     }
 }

@@ -1,9 +1,5 @@
 package com.insyslab.tooz.restclient;
 
-/**
- * Created by TaNMay on 16/06/17.
- */
-
 import android.util.Log;
 
 import com.android.volley.AuthFailureError;
@@ -21,13 +17,8 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
-/**
- * Custom request to make multipart header and upload file.
- * <p>
- * Sketch Project Studio
- * Created by Angga on 27/04/2016 12.05.
- */
 public class VolleyMultipartRequest extends Request<NetworkResponse> {
+
     private final String twoHyphens = "--";
     private final String lineEnd = "\r\n";
     private final String boundary = "apiclient-" + System.currentTimeMillis();
@@ -61,9 +52,9 @@ public class VolleyMultipartRequest extends Request<NetworkResponse> {
      * @param listener      on success event handler
      * @param errorListener on error event handler
      */
-    public VolleyMultipartRequest(int method, String url,
-                                  Response.Listener<NetworkResponse> listener,
-                                  Response.ErrorListener errorListener) {
+    VolleyMultipartRequest(int method, String url,
+                           Response.Listener<NetworkResponse> listener,
+                           Response.ErrorListener errorListener) {
         super(method, url, errorListener);
         this.mListener = listener;
         this.mErrorListener = errorListener;
@@ -100,7 +91,7 @@ public class VolleyMultipartRequest extends Request<NetworkResponse> {
             // close multipart form data after text and file data
             dos.writeBytes(twoHyphens + boundary + twoHyphens + lineEnd);
 
-            Log.d("Volley ==> ", "VolleyMultipartRequest.getBody");
+//            Log.d("Volley ==> ", "VolleyMultipartRequest.getBody");
             return bos.toByteArray();
         } catch (IOException e) {
             e.printStackTrace();
@@ -265,7 +256,7 @@ public class VolleyMultipartRequest extends Request<NetworkResponse> {
          *
          * @return file name
          */
-        public String getFileName() {
+        String getFileName() {
             return fileName;
         }
 

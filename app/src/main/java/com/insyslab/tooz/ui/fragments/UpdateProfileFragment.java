@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputEditText;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,8 +18,8 @@ import com.android.volley.Request;
 import com.google.gson.Gson;
 import com.insyslab.tooz.R;
 import com.insyslab.tooz.interfaces.OnRuntimePermissionsResultListener;
-import com.insyslab.tooz.models.eventbus.FragmentState;
 import com.insyslab.tooz.models.User;
+import com.insyslab.tooz.models.eventbus.FragmentState;
 import com.insyslab.tooz.models.responses.Error;
 import com.insyslab.tooz.restclient.BaseResponseInterface;
 import com.insyslab.tooz.restclient.GenericDataHandler;
@@ -35,7 +36,6 @@ import com.theartofdev.edmodo.cropper.CropImage;
 
 import org.json.JSONObject;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -51,14 +51,10 @@ import static com.insyslab.tooz.utils.ConstantClass.UPDATE_PROFILE_PICTURE_REQUE
 import static com.insyslab.tooz.utils.MultipartFileHelper.convertStreamToByteArray;
 import static com.insyslab.tooz.utils.Util.getDeviceId;
 
-/**
- * Created by TaNMay on 26/09/16.
- */
-
 public class UpdateProfileFragment extends BaseFragment implements BaseResponseInterface,
         OnRuntimePermissionsResultListener {
 
-    public static final String TAG = "UpdateProfileFrag ==> ";
+    public static final String TAG = UpdateProfileFragment.class.getSimpleName() + " ==>";
 
     private static final String ARG_PARAM1 = "ARG_PARAM1";
 
@@ -68,6 +64,8 @@ public class UpdateProfileFragment extends BaseFragment implements BaseResponseI
     private TextView tvProfilePicHint;
 
     private User user;
+
+    private Context context;
 
     public UpdateProfileFragment() {
 
@@ -84,23 +82,24 @@ public class UpdateProfileFragment extends BaseFragment implements BaseResponseI
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            Bundle bundle = getArguments().getBundle(ARG_PARAM1);
-        }
+//        if (getArguments() != null) {
+//            Bundle bundle = getArguments().getBundle(ARG_PARAM1);
+//        }
         SettingsActivity.onRuntimePermissionsResultListener = this;
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View layout = inflater.inflate(R.layout.fragment_update_profile, container, false);
 
+        context = getContext();
         updateFragment(new FragmentState(TAG));
         initView(layout);
         setUpActions();
 
-        user = LocalStorage.getInstance(getContext()).getUser();
+        user = LocalStorage.getInstance(context).getUser();
         user.setDeviceId(getDeviceId());
-        Log.d(TAG, "USER: " + new Gson().toJson(user));
+//        Log.d(TAG, "USER: " + new Gson().toJson(user));
 
         setUpProfileDetails();
 
@@ -133,7 +132,7 @@ public class UpdateProfileFragment extends BaseFragment implements BaseResponseI
     }
 
     private void setImageInImageView(String url) {
-        Picasso.with(getContext())
+        Picasso.get()
                 .load(url)
                 .placeholder(R.drawable.ic_user)
                 .error(R.drawable.ic_default_user)
@@ -161,20 +160,17 @@ public class UpdateProfileFragment extends BaseFragment implements BaseResponseI
     }
 
     private boolean verifyStoragePermissions() {
-        if (Util.verifyPermission(getContext(), READ_EXTERNAL_STORAGE)
-                && Util.verifyPermission(getContext(), WRITE_EXTERNAL_STORAGE))
-            return true;
-        else return false;
+        return Util.verifyPermission(context, READ_EXTERNAL_STORAGE) && Util.verifyPermission(context, WRITE_EXTERNAL_STORAGE);
     }
 
     private void initRuntimeStoragePermissions() {
-        ((BaseActivity) getActivity()).requestStoragePermissions();
+        if (getActivity() != null) ((BaseActivity) getActivity()).requestStoragePermissions();
     }
 
     private void initImageSelector() {
         CropImage.activity()
                 .setAspectRatio(1, 1)
-                .start(getContext(), this);
+                .start(context, this);
     }
 
     public void onSaveClick() {
@@ -184,11 +180,11 @@ public class UpdateProfileFragment extends BaseFragment implements BaseResponseI
         String name = tietName.getText().toString();
         String number = tietNumber.getText().toString();
 
-        if (name != null && name.isEmpty()) {
+        if (name.isEmpty()) {
             tietName.setError(getString(R.string.error_empty_field));
         } else if (!Validator.isValidName(name)) {
             tietName.setError(getString(R.string.error_invalid_name));
-        } else if (number != null && number.isEmpty()) {
+        } else if (number.isEmpty()) {
             tietNumber.setError(getString(R.string.error_empty_field));
         } else if (!Validator.isValidMobileNumber(number)) {
             tietNumber.setError(getString(R.string.error_invalid_mobile_number));
@@ -198,7 +194,7 @@ public class UpdateProfileFragment extends BaseFragment implements BaseResponseI
     }
 
     private void closeThisFragment() {
-        ((SettingsActivity) getActivity()).closeCurrentFragment();
+        if (getActivity() != null) ((SettingsActivity) getActivity()).closeCurrentFragment();
     }
 
     @Override
@@ -256,13 +252,13 @@ public class UpdateProfileFragment extends BaseFragment implements BaseResponseI
                 setImageInImageView(resultUri);
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                 Exception error = result.getError();
-                Log.d(TAG, "Error occurred: " + error.getMessage());
+//                Log.d(TAG, "Error occurred: " + error.getMessage());
             }
         }
     }
 
     private void setImageInImageView(Uri resultUri) {
-        Picasso.with(getContext())
+        Picasso.get()
                 .load(resultUri)
                 .placeholder(R.drawable.ic_default_user)
                 .error(R.drawable.ic_default_user)
@@ -277,25 +273,21 @@ public class UpdateProfileFragment extends BaseFragment implements BaseResponseI
     private void initUploadProfilePicture(Uri uri) {
         showProgressDialog(getString(R.string.loading));
 
-        String requestUrl = UPDATE_PROFILE_PICTURE_REQUEST_URL;
         Map<String, VolleyMultipartRequest.DataPart> partMap = getByteDataParams(uri);
-        Map<String, String> paramsMap = null;
 
-        GenericDataHandler req1GenericDataHandler = new GenericDataHandler(this, getContext(), REQUEST_TYPE_008);
-        req1GenericDataHandler.multipartRequest(requestUrl, Request.Method.POST, partMap, paramsMap, User.class);
+        GenericDataHandler req1GenericDataHandler = new GenericDataHandler(this, context, REQUEST_TYPE_008);
+        req1GenericDataHandler.multipartRequest(UPDATE_PROFILE_PICTURE_REQUEST_URL, Request.Method.POST, partMap, null, User.class);
     }
 
     private Map<String, VolleyMultipartRequest.DataPart> getByteDataParams(Uri uri) {
         Map<String, VolleyMultipartRequest.DataPart> params = new HashMap<>();
-        InputStream inputStream = null;
+        InputStream inputStream;
         String imageName = user.getMobile() + "_" + System.currentTimeMillis() + ".jpg";
 
         try {
-            inputStream = getContext().getContentResolver().openInputStream(uri);
+            inputStream = context.getContentResolver().openInputStream(uri);
             byte[] byteFile = convertStreamToByteArray(inputStream);
             params.put("media", new VolleyMultipartRequest.DataPart(imageName, byteFile, "image/jpeg"));
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -319,8 +311,8 @@ public class UpdateProfileFragment extends BaseFragment implements BaseResponseI
             }
         } else {
             Error customError = (Error) error;
-            Log.d(TAG, "Error: " + customError.getMessage() + " -- " + customError.getStatus() + " -- ");
-            if (customError.getStatus() == 000) {
+//            Log.d(TAG, "Error: " + customError.getMessage() + " -- " + customError.getStatus() + " -- ");
+            if (customError.getStatus() == 0) {
                 hideProgressDialog();
                 showNetworkErrorSnackbar(content, getString(R.string.error_no_internet), getString(R.string.retry),
                         new View.OnClickListener() {
@@ -345,30 +337,29 @@ public class UpdateProfileFragment extends BaseFragment implements BaseResponseI
     }
 
     private void onUpdateProfilePictureResponse(String success) {
-        Log.d(TAG, "onUpdateProfilePictureResponse: " + success);
+//        Log.d(TAG, "onUpdateProfilePictureResponse: " + success);
     }
 
-    private void onUpdateProfilePictureResponse(User success) {
-        user = success;
-        user.setDeviceId(getDeviceId());
-        LocalStorage.getInstance(getContext()).setUser(success);
-    }
+//    private void onUpdateProfilePictureResponse(User success) {
+//        user = success;
+//        user.setDeviceId(getDeviceId());
+//        LocalStorage.getInstance(context).setUser(success);
+//    }
 
     private void onUpdateProfileResponse(User success) {
         user = success;
-        LocalStorage.getInstance(getContext()).setUser(success);
+        LocalStorage.getInstance(context).setUser(success);
         closeThisFragment();
     }
 
     private void initUpdateProfileRequest() {
         showProgressDialog(getString(R.string.loading));
 
-        String requestUrl = CREATE_PROFILE_REQUEST_URL;
         JSONObject requestObject = new RequestBuilder().getCreateProfileRequestPayload(tietName.getText().toString(), user);
 
         if (requestObject != null) {
-            GenericDataHandler req1GenericDataHandler = new GenericDataHandler(this, getContext(), REQUEST_TYPE_004);
-            req1GenericDataHandler.jsonObjectRequest(requestObject, requestUrl, Request.Method.POST, User.class);
+            GenericDataHandler req1GenericDataHandler = new GenericDataHandler(this, context, REQUEST_TYPE_004);
+            req1GenericDataHandler.jsonObjectRequest(requestObject, CREATE_PROFILE_REQUEST_URL, Request.Method.POST, User.class);
         }
     }
 

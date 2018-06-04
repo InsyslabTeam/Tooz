@@ -7,17 +7,13 @@ import android.util.Log;
 
 import com.insyslab.tooz.services.LocationService;
 
-/**
- * Created by TaNMay on 04/12/17.
- */
-
 public class LocationServiceRestartReceiver extends BroadcastReceiver {
 
-    private final String TAG = "LocRestartReceiver ==>> ";
+    private final String TAG = LocationServiceRestartReceiver.class.getSimpleName() + " ==>";
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        Log.d(TAG, "onReceive");
+//        Log.d(TAG, "onReceive");
         context.startService(new Intent(context, LocationService.class));
     }
 }

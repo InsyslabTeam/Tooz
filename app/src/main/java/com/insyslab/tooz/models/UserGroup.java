@@ -5,12 +5,17 @@ import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
+import android.arch.persistence.room.TypeConverters;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.insyslab.tooz.models.responses.Token;
+import com.insyslab.tooz.rpl.UserListConverter;
+
+import java.util.ArrayList;
 
 @Entity(indices = {@Index(value = "id", unique = true)})
+@TypeConverters({UserListConverter.class})
 public class UserGroup {
 
     @PrimaryKey(autoGenerate = true)
@@ -73,6 +78,12 @@ public class UserGroup {
     private Boolean isBlocked = false;
 
     private Boolean isSelected = false;
+
+    @ColumnInfo(name = "users")
+    @TypeConverters({UserListConverter.class})
+    @SerializedName("users")
+    @Expose
+    private ArrayList<User> users = new ArrayList<>();
 
     public String getMobile() {
         return mobile;
@@ -192,6 +203,14 @@ public class UserGroup {
 
     public void setSelected(Boolean selected) {
         isSelected = selected;
+    }
+
+    public ArrayList<User> getUsers() {
+        return users;
+    }
+
+    public void setUsers(ArrayList<User> users) {
+        this.users = users;
     }
 }
 

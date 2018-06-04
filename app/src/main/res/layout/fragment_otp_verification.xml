@@ -3,16 +3,16 @@
     android:id="@+id/fov_content"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:clickable="true"
     android:background="@color/colorPrimary"
+    android:clickable="true"
     android:orientation="vertical">
 
     <LinearLayout
         android:id="@+id/fov_header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/onboarding_bigger_spacing"
         android:layout_alignParentTop="true"
+        android:layout_marginBottom="@dimen/onboarding_bigger_spacing"
         android:orientation="vertical"
         android:padding="@dimen/default_padding">
 

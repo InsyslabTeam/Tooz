@@ -3,21 +3,14 @@ package com.insyslab.tooz.utils;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
-import android.content.res.TypedArray;
 import android.location.Address;
 import android.location.Geocoder;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.iid.FirebaseInstanceId;
-import com.insyslab.tooz.R;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.IOException;
 import java.text.DateFormatSymbols;
@@ -27,20 +20,15 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.TimeZone;
-
-/**
- * Created by TaNMay on 21/02/17.
- */
 
 public class Util {
 
     public static final String DEFAULT_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
-    private static final String REQUIRED_DATE_FORMAT = "dd-MM-yyyy";
+//    private static final String REQUIRED_DATE_FORMAT = "dd-MM-yyyy";
 
-    private static ConnectivityManager mCM;
+//    private static ConnectivityManager mCM;
 
-    private final String TAG = "Util ==>";
+//    private final String TAG = Util.class.getSimpleName() + " ==>";
 
     public static void hideSoftKeyboard(Activity activity) {
         if (activity != null) {
@@ -49,34 +37,35 @@ public class Util {
             if (view == null) {
                 view = new View(activity);
             }
-            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+            if (imm != null)
+                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
     }
 
-    public static void showSoftKeyboard(Activity activity) {
-        InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
-        View view = activity.getCurrentFocus();
-        if (view == null) {
-            view = new View(activity);
-        }
-        imm.showSoftInputFromInputMethod(view.getWindowToken(), 0);
-    }
+//    public static void showSoftKeyboard(Activity activity) {
+//        InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
+//        View view = activity.getCurrentFocus();
+//        if (view == null) {
+//            view = new View(activity);
+//        }
+//        if (imm != null) imm.showSoftInputFromInputMethod(view.getWindowToken(), 0);
+//    }
 
-    public static int getToolbarHeight(Context context) {
-        final TypedArray styledAttributes = context.getTheme().obtainStyledAttributes(
-                new int[]{R.attr.actionBarSize});
-        int toolbarHeight = (int) styledAttributes.getDimension(0, 0);
-        styledAttributes.recycle();
+//    public static int getToolbarHeight(Context context) {
+//        final TypedArray styledAttributes = context.getTheme().obtainStyledAttributes(
+//                new int[]{R.attr.actionBarSize});
+//        int toolbarHeight = (int) styledAttributes.getDimension(0, 0);
+//        styledAttributes.recycle();
+//
+//        return toolbarHeight;
+//    }
 
-        return toolbarHeight;
-    }
-
-    public static boolean hasInternetAccess(Context context) {
-        if (mCM == null)
-            mCM = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo netInfo = mCM.getActiveNetworkInfo();
-        return netInfo != null && netInfo.isConnectedOrConnecting();
-    }
+//    public static boolean hasInternetAccess(Context context) {
+//        if (mCM == null)
+//            mCM = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+//        NetworkInfo netInfo = mCM.getActiveNetworkInfo();
+//        return netInfo != null && netInfo.isConnectedOrConnecting();
+//    }
 
     public static String getDateInDefaultDateFormat(Calendar calendar) {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(DEFAULT_DATE_FORMAT, Locale.getDefault());
@@ -89,19 +78,19 @@ public class Util {
         return calendar;
     }
 
-    public static String getDateFromGmtToIst(String gmtDate) {
-        SimpleDateFormat sdf = new SimpleDateFormat(DEFAULT_DATE_FORMAT);
-        SimpleDateFormat output = new SimpleDateFormat(REQUIRED_DATE_FORMAT);
-        Date date = null;
-        try {
-            date = sdf.parse(gmtDate);
-            sdf.setTimeZone(TimeZone.getTimeZone("IST"));
-            return output.format(date);
-        } catch (ParseException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
+//    public static String getDateFromGmtToIst(String gmtDate) {
+//        SimpleDateFormat sdf = new SimpleDateFormat(DEFAULT_DATE_FORMAT);
+//        SimpleDateFormat output = new SimpleDateFormat(REQUIRED_DATE_FORMAT);
+//        Date date = null;
+//        try {
+//            date = sdf.parse(gmtDate);
+//            sdf.setTimeZone(TimeZone.getTimeZone("IST"));
+//            return output.format(date);
+//        } catch (ParseException e) {
+//            e.printStackTrace();
+//            return null;
+//        }
+//    }
 
     public static String getDayOfWeekFromIndex(Integer intDay) {
         return new DateFormatSymbols().getWeekdays()[intDay].substring(0, 3).toUpperCase();
@@ -136,22 +125,21 @@ public class Util {
         return FirebaseInstanceId.getInstance().getToken();
     }
 
-    public static JSONObject getJsonObjectFromString(String objectString) {
-        try {
-            return new JSONObject(objectString);
-        } catch (JSONException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
+//    public static JSONObject getJsonObjectFromString(String objectString) {
+//        try {
+//            return new JSONObject(objectString);
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//            return null;
+//        }
+//    }
 
     public static String getToTwoDecimalPlaces(Double original) {
-        String formattedAmount = String.format("%.2f", original) + "";
-        return formattedAmount;
+        return String.format(Locale.getDefault(), "%.2f", original) + "";
     }
 
     public static long getTimeInMilliSeconds(String timeStamp) {
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
         try {
             Date date = format.parse(timeStamp);
             return date.getTime();
@@ -202,7 +190,7 @@ public class Util {
 
                 if (timeDiffInHour >= 24) {
                     Long timeDiffInDays = timeDiffInHour / 24;
-                    Long remHour = timeDiffInHour % 24;
+//                    Long remHour = timeDiffInHour % 24;
 
                     return timeDiffInDays + " day" + (timeDiffInDays > 1 ? "s " : " ");
                 } else {
@@ -269,7 +257,7 @@ public class Util {
             String city = addresses.get(0).getLocality();
 
             if (thoroughfare != null) finalAddress += thoroughfare;
-            else if (featureName!=null) finalAddress += featureName;
+            else if (featureName != null) finalAddress += featureName;
             if (subLocality != null)
                 finalAddress += (finalAddress.length() > 0 ? ", " : "") + subLocality;
             if (city != null) finalAddress += ", " + city;
@@ -290,13 +278,12 @@ public class Util {
                 Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2)) *
                         Math.sin(dLng / 2) * Math.sin(dLng / 2);
         Double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        Double dist = earthRadius * c;
 
-        return dist;
+        return earthRadius * c;
     }
 
     public static String getFormattedDistance(Double distanceInMeter) {
-        String formattedDist = "";
+        String formattedDist;
         if (distanceInMeter > 999) {
             Double distanceInKm = distanceInMeter / 1000;
             formattedDist = getToTwoDecimalPlaces(distanceInKm) + "km";

@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -25,8 +26,8 @@ import com.google.gson.GsonBuilder;
 import com.insyslab.tooz.R;
 import com.insyslab.tooz.interfaces.OnRuntimePermissionsResultListener;
 import com.insyslab.tooz.interfaces.OnSyncContactItemClickListener;
-import com.insyslab.tooz.models.eventbus.FragmentState;
 import com.insyslab.tooz.models.PhoneContact;
+import com.insyslab.tooz.models.eventbus.FragmentState;
 import com.insyslab.tooz.models.requests.ContactSyncRequest;
 import com.insyslab.tooz.models.requests.Contact_;
 import com.insyslab.tooz.models.responses.ContactSyncResponse;
@@ -50,10 +51,6 @@ import static android.Manifest.permission.WRITE_CONTACTS;
 import static com.insyslab.tooz.utils.ConstantClass.CONTACTS_SYNC_REQUEST_URL;
 import static com.insyslab.tooz.utils.ConstantClass.REQUEST_TYPE_005;
 
-/**
- * Created by TaNMay on 26/09/16.
- */
-
 public class SyncContactsFragment extends BaseFragment implements OnSyncContactItemClickListener,
         OnRuntimePermissionsResultListener, BaseResponseInterface {
 
@@ -61,17 +58,14 @@ public class SyncContactsFragment extends BaseFragment implements OnSyncContactI
 
     private static final String ARG_PARAM1 = "ARG_PARAM1";
 
-    private RelativeLayout content, selectAllSec;
+    private RelativeLayout content;
     private TextView tvSkip, tvSync;
     private CheckBox cbSelectAll;
     private RecyclerView rvContacts;
 
     private RecyclerView.Adapter contactsAdapter;
-    private LinearLayoutManager layoutManager;
 
     private List<PhoneContact> phoneContacts;
-
-    private Gson gson;
 
     public SyncContactsFragment() {
 
@@ -88,14 +82,14 @@ public class SyncContactsFragment extends BaseFragment implements OnSyncContactI
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            Bundle bundle = getArguments().getBundle(ARG_PARAM1);
-        }
+//        if (getArguments() != null) {
+//            Bundle bundle = getArguments().getBundle(ARG_PARAM1);
+//        }
         OnboardingActivity.onRuntimePermissionsResultListener = this;
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View layout = inflater.inflate(R.layout.fragment_sync_contacts, container, false);
 
         updateFragment(new FragmentState(TAG));
@@ -127,7 +121,7 @@ public class SyncContactsFragment extends BaseFragment implements OnSyncContactI
 
             @Override
             protected Void doInBackground(Void... voids) {
-                gson = new GsonBuilder()
+                Gson gson = new GsonBuilder()
                         .registerTypeAdapter(Uri.class, new UriDeserializer())
                         .create();
 
@@ -164,18 +158,19 @@ public class SyncContactsFragment extends BaseFragment implements OnSyncContactI
             @Override
             protected void onPostExecute(Void aVoid) {
                 super.onPostExecute(aVoid);
-                Log.d(TAG, "Contacts Synced!");
+//                Log.d(TAG, "Contacts Synced!");
                 setUpContactsRv();
             }
         }.execute();
     }
 
     private void initPhoneContactDbUpdate() {
-        ((OnboardingActivity) getActivity()).initLocalDbPhoneContactsUpdate(phoneContacts);
+        if (getActivity() != null)
+            ((OnboardingActivity) getActivity()).initLocalDbPhoneContactsUpdate(phoneContacts);
     }
 
     private void setUpContactsRv() {
-        layoutManager = new LinearLayoutManager(getContext());
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         contactsAdapter = new SyncContactsAdapter(this, phoneContacts);
         rvContacts.setLayoutManager(layoutManager);
         rvContacts.setAdapter(contactsAdapter);
@@ -183,14 +178,12 @@ public class SyncContactsFragment extends BaseFragment implements OnSyncContactI
     }
 
     private boolean verifyContactsPermissions() {
-        if (Util.verifyPermission(getContext(), READ_CONTACTS)
-                && Util.verifyPermission(getContext(), WRITE_CONTACTS))
-            return true;
-        else return false;
+        return Util.verifyPermission(getContext(), READ_CONTACTS)
+                && Util.verifyPermission(getContext(), WRITE_CONTACTS);
     }
 
     private void initRuntimePermissions() {
-        ((BaseActivity) getActivity()).requestContactsPermissions();
+        if (getActivity() != null) ((BaseActivity) getActivity()).requestContactsPermissions();
     }
 
     private void initView(View rootView) {
@@ -198,7 +191,6 @@ public class SyncContactsFragment extends BaseFragment implements OnSyncContactI
         tvSkip = rootView.findViewById(R.id.fsc_skip);
         tvSync = rootView.findViewById(R.id.fsc_sync);
         rvContacts = rootView.findViewById(R.id.fsc_contacts);
-        selectAllSec = rootView.findViewById(R.id.fsc_select_all_sec);
         cbSelectAll = rootView.findViewById(R.id.fsc_select_all);
     }
 
@@ -273,17 +265,18 @@ public class SyncContactsFragment extends BaseFragment implements OnSyncContactI
     private void initContactSyncRequest(ContactSyncRequest contactSyncRequest) {
         showProgressDialog(getString(R.string.loading));
 
-        String requestUrl = CONTACTS_SYNC_REQUEST_URL;
         JSONObject requestObject = new RequestBuilder().getContactSyncRequestPayload(contactSyncRequest);
 
         if (requestObject != null) {
             GenericDataHandler reqGenericDataHandler = new GenericDataHandler(this, getContext(), REQUEST_TYPE_005);
-            reqGenericDataHandler.jsonObjectRequest(requestObject, requestUrl, Request.Method.POST, ContactSyncResponse.class);
+            reqGenericDataHandler.jsonObjectRequest(requestObject, CONTACTS_SYNC_REQUEST_URL, Request.Method.POST, ContactSyncResponse.class);
         }
     }
 
     private void onSkipClick() {
-        ((OnboardingActivity) getActivity()).initProceedToDashboard();
+        if (getActivity() != null) {
+            ((OnboardingActivity) getActivity()).initProceedToDashboard();
+        }
     }
 
     @Override
@@ -299,7 +292,7 @@ public class SyncContactsFragment extends BaseFragment implements OnSyncContactI
 
     @Override
     public void onSmsPermissionsResult(boolean granted) {
-        Log.d(TAG, "Some error occurred!");
+//        Log.d(TAG, "Some error occurred!");
     }
 
     @Override
@@ -329,7 +322,7 @@ public class SyncContactsFragment extends BaseFragment implements OnSyncContactI
 
     @Override
     public void onLocationPermissionsResult(boolean granted) {
-        Log.d(TAG, "onLocationPermissionsResult");
+//        Log.d(TAG, "onLocationPermissionsResult");
     }
 
     @Override
@@ -346,8 +339,8 @@ public class SyncContactsFragment extends BaseFragment implements OnSyncContactI
             }
         } else {
             Error customError = (Error) error;
-            Log.d(TAG, "Error: " + customError.getMessage() + " -- " + customError.getStatus() + " -- ");
-            if (customError.getStatus() == 000) {
+//            Log.d(TAG, "Error: " + customError.getMessage() + " -- " + customError.getStatus() + " -- ");
+            if (customError.getStatus() == 0) {
                 hideProgressDialog();
                 showNetworkErrorSnackbar(content, getString(R.string.error_no_internet), getString(R.string.retry),
                         new View.OnClickListener() {

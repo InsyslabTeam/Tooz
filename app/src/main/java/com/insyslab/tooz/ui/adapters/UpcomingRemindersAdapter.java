@@ -1,6 +1,8 @@
 package com.insyslab.tooz.ui.adapters;
 
+import android.annotation.SuppressLint;
 import android.location.Location;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.view.LayoutInflater;
@@ -25,10 +27,6 @@ import static com.insyslab.tooz.utils.Util.getReminderFormatedDate;
 import static com.insyslab.tooz.utils.Util.getReminderFormatedTime;
 import static com.insyslab.tooz.utils.Util.getReminderRemainingTime;
 
-
-/**
- * Created by TaNMay on 19/02/17.
- */
 public class UpcomingRemindersAdapter extends RecyclerView.Adapter<UpcomingRemindersAdapter.ViewHolder> {
 
     private OnUpcomingReminderClickListener onUpcomingReminderClickListener;
@@ -43,8 +41,9 @@ public class UpcomingRemindersAdapter extends RecyclerView.Adapter<UpcomingRemin
         currentLocation = ToozApplication.getInstance().getLastLocation();
     }
 
+    @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_upcoming_reminder, parent, false);
         v.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -52,12 +51,12 @@ public class UpcomingRemindersAdapter extends RecyclerView.Adapter<UpcomingRemin
                 onUpcomingReminderClickListener.onUpcomingReminderClick(view);
             }
         });
-        ViewHolder viewHolder = new ViewHolder(v);
-        return viewHolder;
+        return new ViewHolder(v);
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
-    public void onBindViewHolder(final ViewHolder holder, final int position) {
+    public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
         Reminder reminder = reminders.get(position);
 
         if (reminder.isExpanded()) {
@@ -99,14 +98,14 @@ public class UpcomingRemindersAdapter extends RecyclerView.Adapter<UpcomingRemin
         holder.editSec.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                onUpcomingReminderClickListener.onUpcomingReminderEditClick(position);
+                onUpcomingReminderClickListener.onUpcomingReminderEditClick(holder.getAdapterPosition());
             }
         });
 
         holder.deleteSec.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                onUpcomingReminderClickListener.onUpcomingReminderDeleteClick(position);
+                onUpcomingReminderClickListener.onUpcomingReminderDeleteClick(holder.getAdapterPosition());
             }
         });
     }
@@ -118,10 +117,10 @@ public class UpcomingRemindersAdapter extends RecyclerView.Adapter<UpcomingRemin
 
     class ViewHolder extends RecyclerView.ViewHolder {
 
-        public TextView task, date, time, remainingTime, setter;
-        public LinearLayout optionsSec;
-        public RelativeLayout editSec, deleteSec;
-        public View divider;
+        View divider;
+        TextView task, date, time, remainingTime, setter;
+        LinearLayout optionsSec;
+        RelativeLayout editSec, deleteSec;
 
         public ViewHolder(View itemView) {
             super(itemView);

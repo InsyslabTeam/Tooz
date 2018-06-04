@@ -7,9 +7,6 @@ import android.graphics.Paint;
 
 import com.squareup.picasso.Transformation;
 
-/**
- * Created by TaNMay on 04/07/17.
- */
 public class CircleTransform implements Transformation {
 
     @Override

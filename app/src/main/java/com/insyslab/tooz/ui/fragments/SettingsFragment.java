@@ -1,11 +1,13 @@
 package com.insyslab.tooz.ui.fragments;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -18,8 +20,8 @@ import android.widget.TextView;
 import com.android.volley.Request;
 import com.insyslab.tooz.R;
 import com.insyslab.tooz.interfaces.OnSettingItemClickListener;
-import com.insyslab.tooz.models.eventbus.FragmentState;
 import com.insyslab.tooz.models.SettingsItem;
+import com.insyslab.tooz.models.eventbus.FragmentState;
 import com.insyslab.tooz.models.responses.Error;
 import com.insyslab.tooz.models.responses.LogoutResponse;
 import com.insyslab.tooz.restclient.BaseResponseInterface;
@@ -37,10 +39,6 @@ import static com.insyslab.tooz.utils.ConstantClass.APP_URL;
 import static com.insyslab.tooz.utils.ConstantClass.DEFAULT_APP_SHARE_TEXT;
 import static com.insyslab.tooz.utils.ConstantClass.LOGOUT_REQUEST_URL;
 import static com.insyslab.tooz.utils.ConstantClass.REQUEST_TYPE_007;
-
-/**
- * Created by TaNMay on 26/09/16.
- */
 
 public class SettingsFragment extends BaseFragment implements OnSettingItemClickListener, BaseResponseInterface {
 
@@ -67,13 +65,13 @@ public class SettingsFragment extends BaseFragment implements OnSettingItemClick
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            Bundle bundle = getArguments().getBundle(ARG_PARAM1);
-        }
+//        if (getArguments() != null) {
+//            Bundle bundle = getArguments().getBundle(ARG_PARAM1);
+//        }
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View layout = inflater.inflate(R.layout.fragment_settings, container, false);
 
         updateFragment(new FragmentState(TAG));
@@ -86,11 +84,18 @@ public class SettingsFragment extends BaseFragment implements OnSettingItemClick
         return layout;
     }
 
+    @SuppressLint("SetTextI18n")
     private void setUpVersionInfo() {
         try {
-            PackageInfo pInfo = getActivity().getPackageManager().getPackageInfo(getContext().getPackageName(), 0);
-            String version = pInfo.versionName;
-            tvVersionInfo.setText("Tooz - v" + version);
+            if (getActivity() != null) {
+                PackageManager packageManager = getActivity().getPackageManager();
+                Context context = getContext();
+                if (context != null) {
+                    PackageInfo pInfo = packageManager.getPackageInfo(context.getPackageName(), 0);
+                    String version = pInfo.versionName;
+                    tvVersionInfo.setText("Tooz - v" + version);
+                }
+            }
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
@@ -127,9 +132,9 @@ public class SettingsFragment extends BaseFragment implements OnSettingItemClick
         List<SettingsItem> settings = new ArrayList<>();
         String[] settingsList = getResources().getStringArray(R.array.settings_list);
 
-        for (int i = 0; i < settingsList.length; i++) {
+        for (String aSettingsList : settingsList) {
             SettingsItem settingsItem = new SettingsItem();
-            settingsItem.setSetting(settingsList[i]);
+            settingsItem.setSetting(aSettingsList);
             settings.add(settingsItem);
         }
 
@@ -188,7 +193,7 @@ public class SettingsFragment extends BaseFragment implements OnSettingItemClick
                 initLogoutRequest();
                 break;
             default:
-                Log.d(TAG, "Some fragment error!");
+//                Log.d(TAG, "Some fragment error!");
                 break;
         }
     }
@@ -196,9 +201,8 @@ public class SettingsFragment extends BaseFragment implements OnSettingItemClick
     private void initLogoutRequest() {
         showProgressDialog(getString(R.string.loading));
 
-        String requestUrl = LOGOUT_REQUEST_URL;
         GenericDataHandler req1GenericDataHandler = new GenericDataHandler(this, getContext(), REQUEST_TYPE_007);
-        req1GenericDataHandler.jsonObjectRequest(null, requestUrl, Request.Method.GET, LogoutResponse.class);
+        req1GenericDataHandler.jsonObjectRequest(null, LOGOUT_REQUEST_URL, Request.Method.GET, LogoutResponse.class);
     }
 
 
@@ -230,7 +234,7 @@ public class SettingsFragment extends BaseFragment implements OnSettingItemClick
         Intent i = new Intent(getContext(), OnboardingActivity.class);
         i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(i);
-        getActivity().finish();
+        if (getActivity() != null) getActivity().finish();
     }
 
     private void initAppReferal() {
@@ -239,7 +243,9 @@ public class SettingsFragment extends BaseFragment implements OnSettingItemClick
     }
 
     private void redirectToThisFragment(String tag) {
-        ((SettingsActivity) getActivity()).openThisFragment(tag, null);
+        if (getActivity() != null) {
+            ((SettingsActivity) getActivity()).openThisFragment(tag, null);
+        }
     }
 
     @Override
@@ -256,8 +262,8 @@ public class SettingsFragment extends BaseFragment implements OnSettingItemClick
             }
         } else {
             Error customError = (Error) error;
-            Log.d(TAG, "Error: " + customError.getMessage() + " -- " + customError.getStatus() + " -- ");
-            if (customError.getStatus() == 000) {
+//            Log.d(TAG, "Error: " + customError.getMessage() + " -- " + customError.getStatus() + " -- ");
+            if (customError.getStatus() == 0) {
                 hideProgressDialog();
                 showNetworkErrorSnackbar(content, getString(R.string.error_no_internet), getString(R.string.retry),
                         new View.OnClickListener() {

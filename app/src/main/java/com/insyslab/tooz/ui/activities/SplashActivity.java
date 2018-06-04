@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.ActionBar;
-import android.view.MotionEvent;
 import android.view.View;
 
 import com.insyslab.tooz.R;
@@ -34,7 +33,18 @@ public class SplashActivity extends BaseActivity implements OnRuntimePermissions
         }
     };
 
-    private final String TAG = "Splash ==> ";
+//    private final String TAG = SplashActivity.class.getSimpleName() + " ==>";
+
+    //    private final View.OnTouchListener mDelayHideTouchListener = new View.OnTouchListener() {
+//        @Override
+//        public boolean onTouch(View view, MotionEvent motionEvent) {
+//            if (AUTO_HIDE) {
+//                delayedHide(AUTO_HIDE_DELAY_MILLIS);
+//            }
+//            return false;
+//        }
+//    };
+
     private View mContentView;
     private final Runnable mHidePart2Runnable = new Runnable() {
         @SuppressLint("InlinedApi")
@@ -54,15 +64,6 @@ public class SplashActivity extends BaseActivity implements OnRuntimePermissions
         @Override
         public void run() {
             hide();
-        }
-    };
-    private final View.OnTouchListener mDelayHideTouchListener = new View.OnTouchListener() {
-        @Override
-        public boolean onTouch(View view, MotionEvent motionEvent) {
-            if (AUTO_HIDE) {
-                delayedHide(AUTO_HIDE_DELAY_MILLIS);
-            }
-            return false;
         }
     };
 

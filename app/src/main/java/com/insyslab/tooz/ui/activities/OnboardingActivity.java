@@ -10,8 +10,8 @@ import android.widget.Toast;
 
 import com.insyslab.tooz.R;
 import com.insyslab.tooz.interfaces.OnRuntimePermissionsResultListener;
-import com.insyslab.tooz.models.eventbus.FragmentState;
 import com.insyslab.tooz.models.PhoneContact;
+import com.insyslab.tooz.models.eventbus.FragmentState;
 import com.insyslab.tooz.ui.fragments.CreateProfileFragment;
 import com.insyslab.tooz.ui.fragments.MobileNumberFragment;
 import com.insyslab.tooz.ui.fragments.OtpVerificationFragment;
@@ -27,7 +27,7 @@ import static android.Manifest.permission.WRITE_CONTACTS;
 
 public class OnboardingActivity extends BaseActivity implements OnRuntimePermissionsResultListener {
 
-    private final String TAG = "Onboarding ==> ";
+    private final String TAG = OnboardingActivity.class.getSimpleName() + " ==>";
 
     private String currentFragment = null;
     private boolean doubleBackToExitPressedOnce;
@@ -46,35 +46,37 @@ public class OnboardingActivity extends BaseActivity implements OnRuntimePermiss
 
     public void openThisFragment(String fragmentTag, Object bundle) {
         FragmentManager fragmentManager = getSupportFragmentManager();
-        if (fragmentTag.equals(MobileNumberFragment.TAG)) {
-            fragmentManager.beginTransaction()
-                    .replace(R.id.ao_fragment_container, MobileNumberFragment.newInstance(), fragmentTag)
-                    .commit();
-        } else if (fragmentTag.equals(OtpVerificationFragment.TAG)) {
-            fragmentManager.beginTransaction()
-                    .add(R.id.ao_fragment_container, OtpVerificationFragment.newInstance((Bundle) bundle), fragmentTag)
-                    .addToBackStack(TAG)
-                    .commitAllowingStateLoss();
-        } else if (fragmentTag.equals(CreateProfileFragment.TAG)) {
-            fragmentManager.beginTransaction()
-                    .add(R.id.ao_fragment_container, CreateProfileFragment.newInstance((Bundle) bundle), fragmentTag)
-                    .addToBackStack(TAG)
-                    .commit();
-        } else if (fragmentTag.equals(SyncContactsFragment.TAG)) {
-            fragmentManager.beginTransaction()
-                    .add(R.id.ao_fragment_container, SyncContactsFragment.newInstance((Bundle) bundle), fragmentTag)
-                    .addToBackStack(TAG)
-                    .commit();
+        switch (fragmentTag) {
+            case MobileNumberFragment.TAG:
+                fragmentManager.beginTransaction()
+                        .replace(R.id.ao_fragment_container, MobileNumberFragment.newInstance(), fragmentTag)
+                        .commit();
+                break;
+            case OtpVerificationFragment.TAG:
+                fragmentManager.beginTransaction()
+                        .add(R.id.ao_fragment_container, OtpVerificationFragment.newInstance((Bundle) bundle), fragmentTag)
+                        .addToBackStack(TAG)
+                        .commitAllowingStateLoss();
+                break;
+            case CreateProfileFragment.TAG:
+                fragmentManager.beginTransaction()
+                        .add(R.id.ao_fragment_container, CreateProfileFragment.newInstance((Bundle) bundle), fragmentTag)
+                        .addToBackStack(TAG)
+                        .commit();
+                break;
+            case SyncContactsFragment.TAG:
+                fragmentManager.beginTransaction()
+                        .add(R.id.ao_fragment_container, SyncContactsFragment.newInstance((Bundle) bundle), fragmentTag)
+                        .addToBackStack(TAG)
+                        .commit();
+                break;
         }
     }
 
     public void onEvent(FragmentState fragmentState) {
-        Log.d(TAG, fragmentState.getVisibleFragment());
+//        Log.d(TAG, fragmentState.getVisibleFragment());
         currentFragment = fragmentState.getVisibleFragment();
 
-        if (fragmentState.getVisibleFragment().equals(MobileNumberFragment.TAG)) {
-
-        }
     }
 
     @Override

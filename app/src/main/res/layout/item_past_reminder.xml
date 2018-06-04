@@ -61,42 +61,42 @@
             android:textSize="14sp" />
     </RelativeLayout>
 
-<!--
-    <LinearLayout
-        android:id="@+id/ipr_options_sec"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:weightSum="2">
-
-        <RelativeLayout
-            android:id="@+id/ipr_edit_sec"
-            android:layout_width="0dp"
+    <!--
+        <LinearLayout
+            android:id="@+id/ipr_options_sec"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:padding="4dp">
+            android:weightSum="2">
 
-            <ImageView
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:layout_centerHorizontal="true"
-                android:src="@drawable/ic_edit" />
-        </RelativeLayout>
+            <RelativeLayout
+                android:id="@+id/ipr_edit_sec"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:padding="4dp">
 
-        <RelativeLayout
-            android:id="@+id/ipr_delete_sec"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:padding="4dp">
+                <ImageView
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_centerHorizontal="true"
+                    android:src="@drawable/ic_edit" />
+            </RelativeLayout>
 
-            <ImageView
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:layout_centerHorizontal="true"
-                android:src="@drawable/ic_delete_sweep" />
-        </RelativeLayout>
-    </LinearLayout>
--->
+            <RelativeLayout
+                android:id="@+id/ipr_delete_sec"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:padding="4dp">
+
+                <ImageView
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_centerHorizontal="true"
+                    android:src="@drawable/ic_delete_sweep" />
+            </RelativeLayout>
+        </LinearLayout>
+    -->
 
     <View
         android:id="@+id/ipr_divider"

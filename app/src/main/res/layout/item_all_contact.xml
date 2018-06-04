@@ -8,16 +8,16 @@
     android:orientation="vertical">
 
     <RelativeLayout
+        android:id="@+id/iac_item"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/iac_item"
         android:padding="16dp">
 
         <ImageView
             android:id="@+id/iac_image"
-            android:layout_marginRight="16dp"
             android:layout_width="42dp"
-            android:layout_height="42dp" />
+            android:layout_height="42dp"
+            android:layout_marginRight="16dp" />
 
         <TextView
             android:id="@+id/iac_name"
@@ -33,9 +33,9 @@
             android:id="@+id/iac_status"
             style="@style/SinglelineText"
             android:layout_width="wrap_content"
-            android:layout_marginTop="4dp"
             android:layout_height="wrap_content"
             android:layout_below="@id/iac_name"
+            android:layout_marginTop="4dp"
             android:layout_toRightOf="@id/iac_image"
             android:textSize="12sp" />
     </RelativeLayout>

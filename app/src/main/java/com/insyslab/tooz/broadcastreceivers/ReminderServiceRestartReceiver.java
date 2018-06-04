@@ -7,18 +7,19 @@ import android.util.Log;
 
 import com.insyslab.tooz.services.ReminderSchedulingService;
 
-/**
- * Created by TaNMay on 20/02/18.
- */
+import java.util.Objects;
 
 public class ReminderServiceRestartReceiver extends BroadcastReceiver {
 
-    private final String TAG = "ReminderRestart ==>>";
+    private final String TAG = ReminderServiceRestartReceiver.class.getSimpleName() + " ==>";
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        Log.d(TAG, "onReceive");
-        startReminderSchedulingService(context);
+//        Log.d(TAG, "onReceive");
+
+        if (Objects.equals(intent.getAction(), "android.intent.action.BOOT_COMPLETED")) {
+            startReminderSchedulingService(context);
+        }
     }
 
     public void startReminderSchedulingService(Context context) {

@@ -1,8 +1,10 @@
 package com.insyslab.tooz.ui.fragments;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -22,21 +24,16 @@ import com.insyslab.tooz.ui.adapters.UpcomingRemindersAdapter;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.insyslab.tooz.utils.AppConstants.KEY_BUNDLE_TO_ACTIONS;
 import static com.insyslab.tooz.utils.AppConstants.KEY_GET_REMINDER_ID;
 import static com.insyslab.tooz.utils.AppConstants.KEY_TO_ACTIONS;
 
-/**
- * Created by TaNMay on 26/09/16.
- */
-
 public class UpcomingRemindersFragment extends BaseFragment implements OnUpcomingReminderClickListener {
 
-    public static final String TAG = "UpcomingFrag ==> ";
+    public static final String TAG = UpcomingRemindersFragment.class.getSimpleName() + " ==>";
 
     private static final String ARG_PARAM1 = "ARG_PARAM1";
 
-    private RelativeLayout content, noContentView;
+    private RelativeLayout noContentView;
     private TextView tvNcvTitle;
     private RecyclerView upcomingRv;
 
@@ -59,13 +56,13 @@ public class UpcomingRemindersFragment extends BaseFragment implements OnUpcomin
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            Bundle bundle = getArguments().getBundle(ARG_PARAM1);
-        }
+//        if (getArguments() != null) {
+//            Bundle bundle = getArguments().getBundle(ARG_PARAM1);
+//        }
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View layout = inflater.inflate(R.layout.fragment_upcoming_reminders, container, false);
 
         updateFragment(new FragmentState(TAG));
@@ -73,12 +70,15 @@ public class UpcomingRemindersFragment extends BaseFragment implements OnUpcomin
         setUpActions();
 
         upcomingReminderList = new ArrayList<>();
-        upcomingReminderList = ((DashboardActivity) getActivity()).getUpcomingRemindersList();
+        if (getActivity() != null) {
+            upcomingReminderList = ((DashboardActivity) getActivity()).getUpcomingRemindersList();
+        }
         setUpUpcomingRv();
 
         return layout;
     }
 
+    @SuppressLint("SetTextI18n")
     private void setUpUpcomingRv() {
         if (upcomingReminderList != null && upcomingReminderList.size() > 0) {
             noContentView.setVisibility(View.GONE);
@@ -137,7 +137,9 @@ public class UpcomingRemindersFragment extends BaseFragment implements OnUpcomin
 
     @Override
     public void onUpcomingReminderDeleteClick(int position) {
-        ((DashboardActivity) getActivity()).deleteReminder(upcomingReminderList.get(position).getId());
+        if (getActivity() != null) {
+            ((DashboardActivity) getActivity()).deleteReminder(upcomingReminderList.get(position).getId());
+        }
     }
 
     public void updateRemindersRv(List<Reminder> list) {

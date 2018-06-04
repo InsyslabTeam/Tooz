@@ -1,5 +1,6 @@
 package com.insyslab.tooz.ui.adapters;
 
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,10 +16,6 @@ import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
-
-/**
- * Created by TaNMay on 19/02/17.
- */
 public class NonAppUserContactsAdapter extends RecyclerView.Adapter<NonAppUserContactsAdapter.ViewHolder> {
 
     private OnUserContactClickListener onAllContactClickListener;
@@ -29,8 +26,9 @@ public class NonAppUserContactsAdapter extends RecyclerView.Adapter<NonAppUserCo
         this.contactItems = contactItems;
     }
 
+    @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         final View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_non_app_user_contact, parent, false);
         v.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -38,15 +36,14 @@ public class NonAppUserContactsAdapter extends RecyclerView.Adapter<NonAppUserCo
                 onAllContactClickListener.onNonAppUserContactClick(view);
             }
         });
-        ViewHolder viewHolder = new ViewHolder(v);
-        return viewHolder;
+        return new ViewHolder(v);
     }
 
     @Override
-    public void onBindViewHolder(final ViewHolder holder, final int position) {
+    public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
         User contactItem = contactItems.get(position);
 
-        Picasso.with(holder.image.getContext())
+        Picasso.get()
                 .load("abcdefghijklmnopqrstuvwxyz")
                 .placeholder(R.drawable.ic_default_user)
                 .error(R.drawable.ic_default_user)
@@ -63,7 +60,7 @@ public class NonAppUserContactsAdapter extends RecyclerView.Adapter<NonAppUserCo
         holder.invite.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                onAllContactClickListener.onNonAppUserInviteClick(position);
+                onAllContactClickListener.onNonAppUserInviteClick(holder.getAdapterPosition());
             }
         });
     }
@@ -75,9 +72,9 @@ public class NonAppUserContactsAdapter extends RecyclerView.Adapter<NonAppUserCo
 
     class ViewHolder extends RecyclerView.ViewHolder {
 
-        public TextView name, invite;
-        public ImageView image;
-        public View divider;
+        TextView name, invite;
+        ImageView image;
+        View divider;
 
         public ViewHolder(View itemView) {
             super(itemView);

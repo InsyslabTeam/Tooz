@@ -2,25 +2,19 @@ package com.insyslab.tooz.ui.fragments;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.RelativeLayout;
 
 import com.insyslab.tooz.R;
 import com.insyslab.tooz.models.eventbus.FragmentState;
 
-/**
- * Created by TaNMay on 26/09/16.
- */
-
 public class TermsPrivPolicyFragment extends BaseFragment {
 
-    public static final String TAG = "TermsPrivPolicyFrag ==> ";
+    public static final String TAG = TermsPrivPolicyFragment.class.getSimpleName() + " ==>";
 
     private static final String ARG_PARAM1 = "ARG_PARAM1";
-
-    private RelativeLayout content;
 
     public TermsPrivPolicyFragment() {
 
@@ -37,25 +31,25 @@ public class TermsPrivPolicyFragment extends BaseFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            Bundle bundle = getArguments().getBundle(ARG_PARAM1);
-        }
+//        if (getArguments() != null) {
+//            Bundle bundle = getArguments().getBundle(ARG_PARAM1);
+//        }
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View layout = inflater.inflate(R.layout.fragment_terms_priv_policy, container, false);
 
         updateFragment(new FragmentState(TAG));
-        initView(layout);
+//        initView(layout);
         setUpActions();
 
         return layout;
     }
 
-    private void initView(View rootView) {
-        content = rootView.findViewById(R.id.ftpp_content);
-    }
+//    private void initView(View rootView) {
+//
+//    }
 
     private void setUpActions() {
 

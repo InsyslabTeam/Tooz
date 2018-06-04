@@ -9,10 +9,6 @@ import com.insyslab.tooz.utils.ToozApplication;
 
 import java.util.List;
 
-/**
- * Created by TaNMay on 20/12/17.
- */
-
 public class UserRepository {
 
     private AppDatabase appDatabase;
@@ -77,7 +73,7 @@ public class UserRepository {
         }.execute();
     }
 
-    public int clearUserTable() {
-        return appDatabase.userDao().deleteAllUsers();
+    public void clearUserTable() {
+        appDatabase.userDao().deleteAllUsers();
     }
 }

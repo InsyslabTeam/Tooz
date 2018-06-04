@@ -9,10 +9,6 @@ import com.google.gson.JsonParseException;
 
 import java.lang.reflect.Type;
 
-/**
- * Created by TaNMay on 17/06/17.
- */
-
 public class UriDeserializer implements JsonDeserializer<Uri> {
 
     @Override

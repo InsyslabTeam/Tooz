@@ -10,10 +10,6 @@ import com.insyslab.tooz.models.UserGroup;
 
 import java.util.List;
 
-/**
- * Created by TaNMay on 27/12/17.
- */
-
 @Dao
 public interface UserGroupDao {
 
@@ -24,7 +20,7 @@ public interface UserGroupDao {
     int deleteUserGroup(int id);
 
     @Query("delete from UserGroup")
-    int deleteAllUserGroups();
+    void deleteAllUserGroups();
 
     @Query("select * from UserGroup where id=:id")
     LiveData<UserGroup> fetchUserGroupById(String id);

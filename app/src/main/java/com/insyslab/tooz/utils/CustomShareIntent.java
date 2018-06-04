@@ -3,10 +3,6 @@ package com.insyslab.tooz.utils;
 import android.content.Context;
 import android.content.Intent;
 
-/**
- * Created by TaNMay on 26/12/17.
- */
-
 public class CustomShareIntent {
 
     private Context context;

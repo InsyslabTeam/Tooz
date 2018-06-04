@@ -3,10 +3,6 @@ package com.insyslab.tooz.models.responses;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-/**
- * Created by TaNMay on 09/10/17.
- */
-
 public class Error {
 
     @SerializedName("message")

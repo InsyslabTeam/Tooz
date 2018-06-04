@@ -1,6 +1,7 @@
 package com.insyslab.tooz.ui.adapters;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.widget.ArrayAdapter;
 import android.widget.Filter;
 import android.widget.Filterable;
@@ -8,10 +9,6 @@ import android.widget.Filterable;
 import com.insyslab.tooz.utils.PlaceAPI;
 
 import java.util.ArrayList;
-
-/**
- * Created by TaNMay on 06/12/17.
- */
 
 public class PlacesAutoCompleteAdapter extends ArrayAdapter<String> implements Filterable {
 
@@ -33,11 +30,13 @@ public class PlacesAutoCompleteAdapter extends ArrayAdapter<String> implements F
         return resultList.get(position);
     }
 
+    @NonNull
     @Override
     public Filter getFilter() {
-        Filter filter = new Filter() {
+
+        return new Filter() {
             @Override
-            protected Filter.FilterResults performFiltering(CharSequence constraint) {
+            protected FilterResults performFiltering(CharSequence constraint) {
                 FilterResults filterResults = new FilterResults();
                 if (constraint != null) {
                     resultList = mPlaceAPI.autocomplete(constraint.toString());
@@ -58,7 +57,5 @@ public class PlacesAutoCompleteAdapter extends ArrayAdapter<String> implements F
                 }
             }
         };
-
-        return filter;
     }
 }
