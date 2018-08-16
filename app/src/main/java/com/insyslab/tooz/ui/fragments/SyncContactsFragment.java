@@ -47,6 +47,8 @@ import com.insyslab.tooz.utils.Util;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import static android.Manifest.permission.READ_CONTACTS;
@@ -164,6 +166,12 @@ public class SyncContactsFragment extends BaseFragment implements OnSyncContactI
             protected void onPostExecute(Void aVoid) {
                 super.onPostExecute(aVoid);
 //                Log.d(TAG, "Contacts Synced!");
+                Collections.sort(phoneContacts, new Comparator<PhoneContact>() {
+                    @Override
+                    public int compare(PhoneContact phoneContact1, PhoneContact phoneContact2) {
+                        return phoneContact1.getName().compareTo(phoneContact2.getName());
+                    }
+                });
                 setUpContactsRv();
             }
         }.execute();

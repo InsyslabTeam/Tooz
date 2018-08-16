@@ -17,7 +17,9 @@ public class Validator {
 //    }
 
     public static boolean isValidMobileNumber(String mobile_no) {
-        return Patterns.PHONE.matcher(mobile_no).matches() && mobile_no.trim().length() == 10;
+        return Patterns.PHONE.matcher(mobile_no).matches()
+                && mobile_no.trim().length() == 10
+                && !mobile_no.trim().substring(0, 1).equals("0");
     }
 
     public static boolean isValidName(String name) {

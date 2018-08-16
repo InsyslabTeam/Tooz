@@ -64,7 +64,7 @@
     <string name="error_no_internet">Please check your internet connection.</string>
     <string name="error_unknown">Some error occurred!</string>
     <string name="error_invalid_name">Please enter a valid name!</string>
-    <string name="error_invalid_mobile_number">Please enter a valid mobile number</string>
+    <string name="error_invalid_mobile_number">Please enter a valid mobile number. Do not add a zero before your number!</string>
 
     <!--Toasts/Snackbars-->
     <string name="retry">Retry!</string>
