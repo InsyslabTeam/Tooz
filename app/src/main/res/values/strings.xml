@@ -88,4 +88,5 @@
     <string name="group_created_successfully">Group created successfully!</string>
     <string name="send">SEND</string>
     <string name="done">DONE</string>
+    <string name="search">Search...</string>
 </resources>

@@ -11,12 +11,15 @@ import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -60,10 +63,12 @@ public class SyncContactsFragment extends BaseFragment implements OnSyncContactI
 
     private RelativeLayout content;
     private TextView tvSkip, tvSync;
+    private EditText etSearch;
+    private ImageView ivSearch;
     private CheckBox cbSelectAll;
     private RecyclerView rvContacts;
 
-    private RecyclerView.Adapter contactsAdapter;
+    private SyncContactsAdapter contactsAdapter;
 
     private List<PhoneContact> phoneContacts;
 
@@ -192,6 +197,9 @@ public class SyncContactsFragment extends BaseFragment implements OnSyncContactI
         tvSync = rootView.findViewById(R.id.fsc_sync);
         rvContacts = rootView.findViewById(R.id.fsc_contacts);
         cbSelectAll = rootView.findViewById(R.id.fsc_select_all);
+        etSearch = rootView.findViewById(R.id.fsc_search);
+        ivSearch = rootView.findViewById(R.id.fsc_search_icon);
+        ivSearch.setVisibility(View.GONE);
     }
 
     private void setUpActions() {
@@ -214,6 +222,24 @@ public class SyncContactsFragment extends BaseFragment implements OnSyncContactI
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 if (compoundButton.isChecked()) modifySelection(true);
                 else modifySelection(false);
+            }
+        });
+
+        etSearch.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                String textInput = etSearch.getText().toString().trim();
+                contactsAdapter.getFilter().filter(textInput);
             }
         });
     }
@@ -398,5 +424,17 @@ public class SyncContactsFragment extends BaseFragment implements OnSyncContactI
         phoneContacts.get(position).setSelected(!phoneContacts.get(position).getSelected());
         phoneContacts.get(position).setSynced(!phoneContacts.get(position).isSynced());
 //        contactsAdapter.notifyItemChanged(position);
+    }
+
+    @Override
+    public void onContactSelectorClick(int position, String number) {
+        for (int i = 0; i < phoneContacts.size(); i++) {
+            if (phoneContacts.get(i).getPhoneNumber() != null
+                    && phoneContacts.get(i).getPhoneNumber().equalsIgnoreCase(number)) {
+                phoneContacts.get(i).setSelected(!phoneContacts.get(i).getSelected());
+                phoneContacts.get(i).setSynced(!phoneContacts.get(i).isSynced());
+                break;
+            }
+        }
     }
 }
