@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,15 +28,19 @@ import com.insyslab.tooz.ui.activities.DashboardActivity;
 import com.insyslab.tooz.ui.adapters.AppUserContactsAdapter;
 import com.insyslab.tooz.ui.adapters.MyGroupsAdapter;
 import com.insyslab.tooz.ui.adapters.NonAppUserContactsAdapter;
+import com.insyslab.tooz.utils.CustomShareIntent;
 
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.insyslab.tooz.utils.AppConstants.KEY_GET_SELECTED_CONTACT_ID;
 import static com.insyslab.tooz.utils.AppConstants.KEY_GET_SELECTED_GROUP_ID;
 import static com.insyslab.tooz.utils.AppConstants.VAL_SEND_REMINDER;
+import static com.insyslab.tooz.utils.ConstantClass.APP_URL;
 import static com.insyslab.tooz.utils.ConstantClass.BLOCK_CONTACT_REQUEST_URL;
+import static com.insyslab.tooz.utils.ConstantClass.DEFAULT_APP_SHARE_TEXT;
 import static com.insyslab.tooz.utils.ConstantClass.INVITE_NON_APP_USER_REQUEST_URL;
 import static com.insyslab.tooz.utils.ConstantClass.REQUEST_TYPE_018;
 import static com.insyslab.tooz.utils.ConstantClass.REQUEST_TYPE_022;
@@ -96,7 +99,8 @@ public class AllContactsFragment extends BaseFragment implements OnUserContactCl
 
         appUserContactsList = ((DashboardActivity) getActivity()).getAppUserList();
         List<User> tempList = ((DashboardActivity) getActivity()).getNonAppUserList();
-        nonAppUserContactsList = tempList.subList(0, tempList.size() > 10 ? 10 : tempList.size());
+        nonAppUserContactsList = new ArrayList<>();
+        nonAppUserContactsList.addAll(tempList.subList(0, tempList.size() > 10 ? 10 : tempList.size()));
         myGroupsList = ((DashboardActivity) getActivity()).getUserGroupList();
 
         if (contactsSynced()) {
@@ -233,6 +237,7 @@ public class AllContactsFragment extends BaseFragment implements OnUserContactCl
 
     @Override
     public void onNonAppUserInviteClick(int position) {
+        new CustomShareIntent(getContext(), DEFAULT_APP_SHARE_TEXT + "\n\n" + APP_URL).shareToAllApps();
         initNonAppUserInviteRequest(nonAppUserContactsList.get(position).getMobile());
     }
 
