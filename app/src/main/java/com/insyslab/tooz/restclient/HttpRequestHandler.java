@@ -3,6 +3,7 @@ package com.insyslab.tooz.restclient;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.util.Log;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
@@ -27,6 +28,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.reflect.Type;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -54,7 +56,7 @@ class HttpRequestHandler {
                     new Response.Listener<JSONObject>() {
                         @Override
                         public void onResponse(JSONObject response) {
-//                            Log.d(TAG, "Response: " + getObjectInStringFormat(response));
+                            Log.d(TAG, "Response: " + getObjectInStringFormat(response));
                             listener.onSuccess(response, null, null, responseType);
                         }
                     },
@@ -125,7 +127,7 @@ class HttpRequestHandler {
                     new Response.Listener<JSONArray>() {
                         @Override
                         public void onResponse(JSONArray response) {
-//                            Log.d(TAG, "Response: " + getObjectInStringFormat(response));
+                            Log.d(TAG, "Response: " + getObjectInStringFormat(response));
                             listener.onSuccess(null, response, null, responseType);
                         }
                     },
@@ -199,7 +201,7 @@ class HttpRequestHandler {
                     new Response.Listener<JSONArray>() {
                         @Override
                         public void onResponse(JSONArray responseArray) {
-//                            Log.d(TAG, "Response: " + getObjectInStringFormat(responseArray));
+                            Log.d(TAG, "Response: " + getObjectInStringFormat(responseArray));
                             listener.onSuccess(null, responseArray, null, responseType);
                         }
                     },
@@ -346,7 +348,7 @@ class HttpRequestHandler {
                     new Response.Listener<NetworkResponse>() {
                         @Override
                         public void onResponse(NetworkResponse response) {
-//                            Log.d(TAG, "Response: " + Arrays.toString(response.data) + " -- " + new String(response.data));
+                            Log.d(TAG, "Response: " + Arrays.toString(response.data) + " -- " + new String(response.data));
                             if (!isStringResponse)
                                 listener.onSuccess(null, null, response.statusCode + "", responseType);
                             else
