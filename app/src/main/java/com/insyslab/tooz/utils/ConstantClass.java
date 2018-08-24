@@ -2,14 +2,14 @@ package com.insyslab.tooz.utils;
 
 public class ConstantClass {
 
-    static final boolean IS_DEV = true;
+    static final boolean IS_DEV = false;
 
 //    public static final String APP_NAME = "Tooz";
 
     public static final int SPLASH_TIME_OUT = 2000;
 
     private static final String BASE_DEV_URL = "http://35.154.234.106:1337/";
-    private static final String BASE_PROD_URL = "";
+    private static final String BASE_PROD_URL = "http://13.58.222.88:1337/";
 
     public static final String BASE_URL = IS_DEV ? BASE_DEV_URL : BASE_PROD_URL;
 
